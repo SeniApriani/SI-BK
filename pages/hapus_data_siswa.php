@@ -1,3 +1,12 @@
+<?php
+include '../config/koneksi.php';
+
+$id = $_GET['id'];
+
+$data = mysqli_query($koneksi, "SELECT * FROM data_siswa WHERE id_siswa='$id'");
+$siswa = mysqli_fetch_assoc($data);
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -117,12 +126,7 @@ body{
 </head>
 <body>
 
-<?php
 
-/* nanti ambil dari database */
-$nama_siswa = "Ahmad Fauzi";
-
-?>
 
 <div class="modal">
 
@@ -137,7 +141,7 @@ $nama_siswa = "Ahmad Fauzi";
         <br><br>
 
         <span class="student-name">
-            <?= $nama_siswa; ?>
+           <?= $siswa['nama_siswa']; ?>
         </span>
 
         ?
@@ -155,7 +159,6 @@ $nama_siswa = "Ahmad Fauzi";
 
                 <i class="fas fa-trash"></i>
                 Hapus
-
             </button>
 
         </form>
@@ -165,10 +168,10 @@ $nama_siswa = "Ahmad Fauzi";
 </div>
 
 <?php
-
 if(isset($_POST['hapus'])){
 
-    // QUERY DELETE DATABASE DI SINI
+    mysqli_query($koneksi, "DELETE FROM data_siswa WHERE id_siswa='$id'");
+    mysqli_query($koneksi, "DELETE FROM users WHERE id_siswa='$id'");
 
     echo "
     <script>
@@ -176,10 +179,8 @@ if(isset($_POST['hapus'])){
         window.location='data_siswa.php';
     </script>
     ";
-
 }
-
 ?>
-
+    
 </body>
 </html>

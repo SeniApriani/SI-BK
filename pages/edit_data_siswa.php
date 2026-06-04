@@ -1,3 +1,38 @@
+<?php
+include '../config/koneksi.php';
+
+$id = $_GET['id'];
+
+$data = mysqli_query($koneksi, "SELECT * FROM data_siswa WHERE id_siswa='$id'");
+if(isset($_POST['update'])){
+
+    $nama_siswa = $_POST['nama_siswa'];
+    $nisn = $_POST['nisn'];
+    $kelas = $_POST['kelas'];
+    
+
+    // update tabel data_siswa
+    mysqli_query($koneksi, "UPDATE data_siswa SET 
+        nama_siswa='$nama_siswa',
+        nisn='$nisn',
+        kelas='$kelas'
+        WHERE id_siswa='$id'
+    ");
+
+    // update juga tabel users
+    mysqli_query($koneksi, "UPDATE users SET 
+        nama='$nama_siswa',
+        username='$nisn',
+        password='$nisn'
+        WHERE id_siswa='$id'
+    ");
+
+    header("Location: data_siswa.php");
+    exit;
+}
+$siswa = mysqli_fetch_assoc($data);
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -159,45 +194,36 @@ body{
 
         </div>
 
-        <form>
+        
+            <form method="POST">
 
             <div class="form-group">
 
                 <label>Nama Siswa</label>
 
-                <input
-                    type="text"
-                    value="Ahmad Fauzi"
-                    required
-                >
-
+<input type="text" name="nama_siswa" value="<?= $siswa['nama_siswa']; ?>" required>
             </div>
 
             <div class="form-group">
 
                 <label>NISN</label>
 
-                <input
-                    type="text"
-                    value="1234567890"
-                    required
-                >
-
+               <input type="text" name="nisn" value="<?= $siswa['nisn']; ?>" required>
             </div>
 
             <div class="form-group">
 
                 <label>Kelas</label>
 
-                <select required>
+                <select name="kelas" required>
+                    
 
-                    <option>X RPL 1</option>
-                    <option>X RPL 2</option>
-                    <option>XI RPL 1</option>
-                    <option>XI RPL 2</option>
-                    <option>XII RPL 1</option>
+    <option <?= ($siswa['kelas']=="X TKJ")?'selected':''; ?>>X TKJ </option>
+    <option <?= ($siswa['kelas']=="XI TKJ")?'selected':''; ?>>XI TKJ </option>
+    <option <?= ($siswa['kelas']=="XII TKJ")?'selected':''; ?>>XI TKJ </option>
+    
 
-                </select>
+</select>
 
             </div>
 
@@ -209,7 +235,8 @@ body{
 
                 </a>
 
-                <button type="submit" class="btn-save">
+               
+                    <button type="submit" name="update" class="btn-save">
 
                     <i class="fas fa-pen-to-square"></i>
 

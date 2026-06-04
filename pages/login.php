@@ -15,7 +15,9 @@ if(isset($_POST['login'])){
         "SELECT * FROM users
         WHERE username='$username'
         AND password='$password'"
+        
     );
+    
 
     $cek = mysqli_num_rows($query);
 
@@ -25,6 +27,9 @@ if(isset($_POST['login'])){
 
         $_SESSION['nama'] = $data['nama'];
         $_SESSION['role'] = $data['role'];
+
+        $_SESSION['id_user'] = $data['id_user'];
+$_SESSION['id_siswa'] = $data['id_siswa'];
 
         if($data['role'] == 'wali_kelas'){
 
@@ -46,6 +51,13 @@ if(isset($_POST['login'])){
             exit;
 
         }
+
+        elseif($data['role'] == 'siswa'){
+
+    header("Location: dashboard_siswa.php");
+    exit;
+
+}
 
     }else{
 

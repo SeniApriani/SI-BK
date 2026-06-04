@@ -1,3 +1,9 @@
+<?php
+include '../config/koneksi.php';
+
+$query = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -391,137 +397,50 @@ table tbody tr:hover{
 
                 <tbody>
 
-                    <tr>
+<?php
+$no = 1;
+while($row = mysqli_fetch_assoc($query)){
+?>
 
-                        <td>1</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>1234567890</td>
-                        <td>X RPL 1</td>
+<tr>
 
-                        <td>
+    <td><?= $no++; ?></td>
+    <td><?= $row['nama_siswa']; ?></td>
+    <td><?= $row['nisn']; ?></td>
+    <td><?= $row['kelas']; ?></td>
 
-                            <div class="dropdown">
+    <td>
 
-                                <button class="btn-detail">
+        <div class="dropdown">
 
-                                    <i class="fas fa-eye"></i>
+            <button class="btn-detail">
+                <i class="fas fa-eye"></i>
+            </button>
 
-                                </button>
+            <div class="dropdown-content">
 
-                                <div class="dropdown-content">
+                
+                    <a href="edit_data_siswa.php?id=<?= $row['id_siswa']; ?>">
+                    <i class="fas fa-pen"></i>
+                    Edit
+                </a>
+                    <a href="hapus_data_siswa.php?id=<?= $row['id_siswa']; ?>">
 
-                                    <a href="edit_data_siswa.php">
+                    <i class="fas fa-trash"></i>
+                    Hapus
+                </a>
 
-                                        <i class="fas fa-pen"></i>
+            </div>
 
-                                        Edit
+        </div>
 
-                                    </a>
+    </td>
 
-                                    <a href="hapus_data_siswa.php" class="delete">
+</tr>
 
-                                        <i class="fas fa-trash"></i>
+<?php } ?>
 
-                                        Hapus
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>Siti Nurhaliza</td>
-                        <td>1234567891</td>
-                        <td>XI RPL 1</td>
-
-                        <td>
-
-                            <div class="dropdown">
-
-                                <button class="btn-detail">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-                                <div class="dropdown-content">
-
-                                    <a href="edit-siswa.html">
-
-                                        <i class="fas fa-pen"></i>
-
-                                        Edit
-
-                                    </a>
-
-                                    <a href="#" class="delete">
-
-                                        <i class="fas fa-trash"></i>
-
-                                        Hapus
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-                        <td>Budi Santoso</td>
-                        <td>1234567892</td>
-                        <td>XII RPL 1</td>
-
-                        <td>
-
-                            <div class="dropdown">
-
-                                <button class="btn-detail">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-                                <div class="dropdown-content">
-
-                                    <a href="edit-siswa.html">
-
-                                        <i class="fas fa-pen"></i>
-
-                                        Edit
-
-                                    </a>
-
-                                    <a href="#" class="delete">
-
-                                        <i class="fas fa-trash"></i>
-
-                                        Hapus
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+</tbody>
             </table>
 
         </div>

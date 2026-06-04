@@ -1,3 +1,28 @@
+<?php
+include '../config/koneksi.php';
+if(isset($_POST['simpan'])){
+
+    $nama_siswa = $_POST['nama_siswa'];
+    $nisn = $_POST['nisn'];
+    $kelas = $_POST['kelas'];
+
+    // 1. simpan ke data_siswa
+    mysqli_query($koneksi, "INSERT INTO data_siswa(nama_siswa, nisn, kelas)
+    VALUES('$nama_siswa','$nisn','$kelas')");
+
+    // 2. ambil id siswa terakhir
+    $id_siswa = mysqli_insert_id($koneksi);
+
+    // 3. simpan ke users (login siswa)
+    mysqli_query($koneksi, "INSERT INTO users(nama, username, password, role, id_siswa)
+    VALUES('$nama_siswa','$nisn','$nisn','siswa','$id_siswa')");
+
+    header("Location: data_siswa.php");
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -163,17 +188,19 @@ body{
 
         </div>
 
-        <form>
+        <form method="POST">
 
             <div class="form-group">
 
                 <label>Nama Siswa</label>
-
                 <input
-                    type="text"
-                    placeholder="Masukkan nama siswa"
-                    required
-                >
+    type="text"
+    name="nama_siswa"
+    placeholder="Masukkan nama siswa"
+    required
+>
+
+                
 
             </div>
 
@@ -181,27 +208,28 @@ body{
 
                 <label>NISN</label>
 
-                <input
-                    type="text"
-                    placeholder="Masukkan NISN"
-                    required
-                >
-
+               
+<input
+    type="text"
+    name="nisn"
+    placeholder="Masukkan NISN"
+    required
+>
             </div>
 
             <div class="form-group">
 
                 <label>Kelas</label>
 
-                <select required>
+               
+                    <select name="kelas" required>
 
                     <option value="">Pilih Kelas</option>
 
-                    <option>X RPL 1</option>
-                    <option>X RPL 2</option>
-                    <option>XI RPL 1</option>
-                    <option>XI RPL 2</option>
-                    <option>XII RPL 1</option>
+                    <option>X TKJ </option>
+                    <option>XI TKJ </option>
+                    <option>XII TKJ </option>
+                    
 
                 </select>
 
@@ -215,7 +243,8 @@ body{
 
                 </a>
 
-                <button type="submit" class="btn-save">
+                
+                    <button type="submit" name="simpan" class="btn-save">
 
                     <i class="fas fa-save"></i>
 
