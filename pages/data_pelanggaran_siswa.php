@@ -1,3 +1,29 @@
+<?php
+
+
+include __DIR__ . '/../config/koneksi.php';
+
+$siswa = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+$kategori = mysqli_query($koneksi, "SELECT DISTINCT kategori FROM jenis_pelanggaran");
+$jenisData = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran");
+
+if(isset($_POST['simpan'])){
+    
+    $id_siswa = $_POST['id_siswa'];
+    $id_pelanggaran = $_POST['id_pelanggaran'];
+    $tanggal = date('Y-m-d');
+    $catatan = $_POST['catatan'];
+
+    mysqli_query($koneksi, "INSERT INTO pelanggaran_siswa 
+    (id_siswa, id_pelanggaran, tanggal, catatan)
+    VALUES 
+    ('$id_siswa', '$id_pelanggaran', '$tanggal', '$catatan')");
+
+    header("Location: riwayat_pelanggaran_siswa.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -229,6 +255,47 @@ body{
 
 }
 
+
+/* Cari Siswa */
+.dropdown-siswa{
+    position: relative;
+    width: 100%;
+}
+
+#searchSiswa{
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.list-siswa{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.item-siswa{
+    padding:10px 12px;
+    cursor:pointer;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    display: block; /* ini penting biar gak “geser kanan” */
+}
+
+.item-siswa:hover{
+    background:#f3f4f6;
+}
+
 </style>
 
 </head>
@@ -278,15 +345,22 @@ body{
                     Nama Siswa
                     <span class="required">*</span>
                 </label>
+                
+   
 
-                <select required>
+    <div class="dropdown-siswa" style="position:relative;">
+    <input type="text" id="searchSiswa" placeholder="Cari siswa...">
 
-                    <option value="">-- Pilih Siswa --</option>
-                    <option>Ahmad Fauzi</option>
-                    <option>Siti Nurhaliza</option>
-                    <option>Budi Santoso</option>
+    <div id="listSiswa" class="list-siswa">
+        <?php while($s = mysqli_fetch_assoc($siswa)) { ?>
+            <div class="item-siswa" data-id="<?= $s['id_siswa']; ?>">
+                <?= $s['nama_siswa']; ?>
+            </div>
+        <?php } ?>
+    </div>
 
-                </select>
+    <input type="hidden" name="id_siswa" id="id_siswa">
+</div>
 
             </div>
 
@@ -297,15 +371,16 @@ body{
                     <span class="required">*</span>
                 </label>
 
-                <select required>
+              <select name="kategori" id="kategori">
+    <option value="">-- Pilih Kategori --</option>
 
-                    <option value="">-- Pilih Kategori --</option>
-                    <option>Kedisiplinan</option>
-                    <option>Kerapihan</option>
-                    <option>Etika</option>
-                    <option>Akademik</option>
+    <?php while($k = mysqli_fetch_assoc($kategori)) { ?>
+        <option value="<?= $k['kategori']; ?>">
+            <?= $k['kategori']; ?>
+        </option>
+    <?php } ?>
 
-                </select>
+</select>
 
             </div>
 
@@ -316,35 +391,24 @@ body{
                     <span class="required">*</span>
                 </label>
 
-                <select required>
-
-                    <option value="">-- Pilih Jenis Pelanggaran --</option>
-                    <option>Terlambat Masuk Sekolah</option>
-                    <option>Tidak Memakai Atribut Lengkap</option>
-                    <option>Membolos</option>
-
-                </select>
-
+                <select name="id_pelanggaran" id="jenis">
+    <option value="">-- Pilih Jenis Pelanggaran --</option>
+</select>
             </div>
 
             <div class="form-group">
 
                 <label>Bobot Poin</label>
 
-                <input
-                    type="text"
-                    class="readonly"
-                    value="Otomatis sesuai jenis pelanggaran"
-                    readonly
-                >
-
+                <input type="text" id="poin" name="poin" class="readonly" readonly>
             </div>
 
             <div class="form-group">
 
                 <label>Catatan Konseling</label>
 
-                <textarea placeholder="Masukkan catatan konseling jika diperlukan..."></textarea>
+                
+                <textarea name="catatan" placeholder="Masukkan catatan konseling jika diperlukan..."></textarea>
 
             </div>
 
@@ -356,7 +420,8 @@ body{
 
                 </a>
 
-                <button type="submit" class="btn-save">
+                
+                    <button type="submit" name="simpan" class="btn-save">
 
                     <i class="fas fa-save"></i>
 
@@ -372,5 +437,84 @@ body{
 
 </div>
 
+<script>
+
+const dataJenis = <?= json_encode(mysqli_fetch_all($jenisData, MYSQLI_ASSOC)); ?>;
+
+document.getElementById('kategori').addEventListener('change', function(){
+
+    let kategori = this.value;
+    let jenis = document.getElementById('jenis');
+
+    jenis.innerHTML = '<option value="">-- Pilih Jenis Pelanggaran --</option>';
+
+    dataJenis.forEach(item => {
+        if(item.kategori === kategori){
+            let opt = document.createElement('option');
+            opt.value = item.id_pelanggaran;
+            opt.textContent = item.jenis_pelanggaran;
+            jenis.appendChild(opt);
+        }
+    });
+
+});
+
+document.getElementById('jenis').addEventListener('change', function(){
+
+    let id = this.value;
+    let poinField = document.getElementById('poin');
+
+    let data = dataJenis.find(x => x.id_pelanggaran == id);
+
+    if(data){
+        poinField.value = data.poin;
+    }else{
+        poinField.value = '';
+    }
+
+});
+
+</script>
+
+
+<script>
+const search = document.getElementById('searchSiswa');
+const list = document.getElementById('listSiswa');
+const items = document.querySelectorAll('.item-siswa');
+const hidden = document.getElementById('id_siswa');
+
+// buka list saat klik / focus
+search.addEventListener('focus', () => {
+    list.style.display = 'block';
+});
+
+// filter
+search.addEventListener('input', function(){
+    let val = this.value.toLowerCase();
+
+    list.style.display = 'block';
+
+    items.forEach(item => {
+        let text = item.textContent.toLowerCase();
+        item.style.display = text.includes(val) ? 'block' : 'none';
+    });
+});
+
+// pilih item
+items.forEach(item => {
+    item.addEventListener('click', function(){
+        search.value = this.textContent.trim();
+        hidden.value = this.dataset.id;
+        list.style.display = 'none';
+    });
+});
+
+// klik luar
+document.addEventListener('click', function(e){
+    if(!e.target.closest('.dropdown-siswa')){
+        list.style.display = 'none';
+    }
+});
+</script>
 </body>
 </html>

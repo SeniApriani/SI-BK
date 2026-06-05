@@ -1,3 +1,8 @@
+<?php
+include __DIR__ . '/../config/koneksi.php';
+$data = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran");
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -353,96 +358,45 @@ table tbody tr:hover{
 
                 </thead>
 
-                <tbody>
+               <tbody>
+<?php
+$no = 1;
+while($row = mysqli_fetch_assoc($data)){
+?>
+<tr>
+    <td><?= $no++; ?></td>
+    <td><?= $row['kategori']; ?></td>
+    <td><?= $row['jenis_pelanggaran']; ?></td>
+    <td><?= $row['poin']; ?></td>
 
-                    <tr>
+    <td>
+        <div class="dropdown">
 
-                        <td>1</td>
-                        <td>Kedisiplinan</td>
-                        <td>Terlambat Masuk Sekolah</td>
-                        <td>5</td>
+            <button class="btn-detail">
+                <i class="fas fa-eye"></i>
+            </button>
 
-                        <td>
+            <div class="dropdown-content">
+                
 
-                            <div class="dropdown">
+                <a href="edit_jenis_pelanggaran.php?id=<?= $row['id_pelanggaran']; ?>">
+                    <i class="fas fa-pen"></i>
+                    Edit
+                </a>
+                
 
-                                <button class="btn-detail">
+                <a href="hapus_jenis_pelanggaran.php?id=<?= $row['id_pelanggaran']; ?>" class="delete">
+                    <i class="fas fa-trash"></i>
+                    Hapus
+                </a>
 
-                                    <i class="fas fa-eye"></i>
+            </div>
 
-                                </button>
-
-                                <div class="dropdown-content">
-
-                                    <a href="edit_jenis_pelanggaran.html">
-
-                                        <i class="fas fa-pen"></i>
-
-                                        Edit
-
-                                    </a>
-
-                                    <a href="hapus_jenis_pelanggaran.php" class="delete">
-
-                                        <i class="fas fa-trash"></i>
-
-                                        Hapus
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>Kerapihan</td>
-                        <td>Tidak Memakai Atribut Lengkap</td>
-                        <td>10</td>
-
-                        <td>
-
-                            <div class="dropdown">
-
-                                <button class="btn-detail">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-                                <div class="dropdown-content">
-
-                                    <a href="edit_jenis_pelanggaran.php">
-
-                                        <i class="fas fa-pen"></i>
-
-                                        Edit
-
-                                    </a>
-
-                                    <a href="hapus_jenis_pelanggaran.php" class="delete">
-
-                                        <i class="fas fa-trash"></i>
-
-                                        Hapus
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+        </div>
+    </td>
+</tr>
+<?php } ?>
+</tbody>
             </table>
 
         </div>

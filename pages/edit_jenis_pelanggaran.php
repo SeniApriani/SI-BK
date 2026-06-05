@@ -1,12 +1,15 @@
 <?php
 
-/* Nanti ambil dari database berdasarkan ID */
+include __DIR__ . '/../config/koneksi.php';
 
-$id = 1;
-$kategori = "Kedisiplinan";
-$jenis_pelanggaran = "Terlambat Masuk Sekolah";
-$bobot_poin = 5;
+$id = $_GET['id'];
 
+$data = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran WHERE id_pelanggaran='$id'");
+$row = mysqli_fetch_assoc($data);
+
+$kategori = $row['kategori'];
+$jenis_pelanggaran = $row['jenis_pelanggaran'];
+$bobot_poin = $row['poin'];
 ?>
 
 <!DOCTYPE html>
@@ -239,21 +242,25 @@ body{
 
 if(isset($_POST['update'])){
 
-    // QUERY UPDATE DATABASE DI SINI
+    $kategori = $_POST['kategori'];
+    $jenis = $_POST['jenis_pelanggaran'];
+    $poin = $_POST['bobot_poin'];
+
+    mysqli_query($koneksi, "UPDATE jenis_pelanggaran SET 
+        kategori='$kategori',
+        jenis_pelanggaran='$jenis',
+        poin='$poin'
+        WHERE id_pelanggaran='$id'
+    ");
 
     echo "
     <script>
-
-        alert('Data jenis pelanggaran berhasil diperbarui');
-
+        alert('Data berhasil diupdate');
         window.location='jenis_pelanggaran.php';
-
     </script>
     ";
-
 }
 
 ?>
-
 </body>
 </html>

@@ -1,9 +1,15 @@
+
+
 <?php
+include __DIR__ . '/../config/koneksi.php';
 
-/* nanti ambil dari database */
-$jenis_pelanggaran = "Terlambat Masuk Sekolah";
+$id = $_GET['id'];
 
+$data = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran WHERE id_pelanggaran='$id'");
+$row = mysqli_fetch_assoc($data);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -142,7 +148,8 @@ body{
 
         <span class="violation-name">
 
-            <?= $jenis_pelanggaran; ?>
+          
+            <?= $row['jenis_pelanggaran']; ?>
 
         </span>
 
@@ -152,33 +159,28 @@ body{
 
     <div class="modal-action">
 
-        <a href="data_jenis_pelanggaran.php" class="btn-cancel">
-
+       <a href="jenis_pelanggaran.php" class="btn-cancel">
             Batal
 
         </a>
 
         <form method="POST" class="form-delete">
 
-            <button type="submit" name="hapus" class="btn-delete">
+    <button type="submit" name="hapus" class="btn-delete">
+        <i class="fas fa-trash"></i>
+        Hapus
+    </button>
 
-                <i class="fas fa-trash"></i>
-
-                Hapus
-
-            </button>
-
-        </form>
+</form>
 
     </div>
 
 </div>
 
 <?php
-
 if(isset($_POST['hapus'])){
 
-    // QUERY DELETE DATABASE DI SINI
+    mysqli_query($koneksi, "DELETE FROM jenis_pelanggaran WHERE id_pelanggaran='$id'");
 
     echo "
     <script>
@@ -186,9 +188,7 @@ if(isset($_POST['hapus'])){
         window.location='jenis_pelanggaran.php';
     </script>
     ";
-
 }
-
 ?>
 
 </body>

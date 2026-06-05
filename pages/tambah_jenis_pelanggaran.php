@@ -1,3 +1,21 @@
+<?php
+include __DIR__ . '/../config/koneksi.php';
+
+if(isset($_POST['submit'])){
+
+    $kategori = $_POST['kategori'];
+    $jenis = $_POST['jenis_pelanggaran'];
+    $poin = $_POST['poin'];
+
+    mysqli_query($koneksi, "INSERT INTO jenis_pelanggaran 
+    (kategori, jenis_pelanggaran, poin)
+    VALUES ('$kategori', '$jenis', '$poin')");
+
+    header("location: jenis_pelanggaran.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -152,70 +170,42 @@ body{
 
         </div>
 
-        <form action="" method="POST">
+      <form action="" method="POST">
 
-            <div class="form-group">
+<div class="form-group">
+    <label>Kategori Pelanggaran</label>
+    <select name="kategori" required>
+        <option value="">-- Pilih Kategori --</option>
+        <option value="Kelakuan">Kelakuan</option>
+        <option value="Kerajinan">Kerajinan</option>
+        <option value="Kerapian">Kerapian</option>
+    </select>
+</div>
 
-                <label>Kategori Pelanggaran</label>
+<div class="form-group">
+    <label>Jenis Pelanggaran</label>
+    <input type="text" name="jenis_pelanggaran" placeholder="Masukkan jenis pelanggaran" required>
+</div>
 
-                <select required>
+<div class="form-group">
+    <label>Bobot Poin</label>
+    <input type="number" name="poin" placeholder="Masukkan bobot poin" required>
+</div>
 
-                    <option value="">-- Pilih Kategori --</option>
+<div class="form-action">
 
-                    <option>Kedisiplinan</option>
-                    <option>Kerapihan</option>
-                    <option>Etika</option>
-                    <option>Akademik</option>
+    <a href="jenis_pelanggaran.php" class="btn-back">
+        <i class="fas fa-chevron-left"></i>
+    </a>
 
-                </select>
+    <button type="submit" name="submit" class="btn-save">
+        <i class="fas fa-save"></i>
+        Simpan Data
+    </button>
 
-            </div>
+</div>
 
-            <div class="form-group">
-
-                <label>Jenis Pelanggaran</label>
-
-                <input
-                    type="text"
-                    placeholder="Masukkan jenis pelanggaran"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Bobot Poin</label>
-
-                <input
-                    type="number"
-                    placeholder="Masukkan bobot poin"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-action">
-
-                <a href="jenis_pelanggaran.php" class="btn-back">
-
-                    <i class="fas fa-chevron-left"></i>
-
-                </a>
-
-                <button type="submit" class="btn-save">
-
-                    <i class="fas fa-save"></i>
-
-                    Simpan Data
-
-                </button>
-
-            </div>
-
-        </form>
-
+</form>
     </div>
 
 </div>

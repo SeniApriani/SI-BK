@@ -61,7 +61,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
-            <a href="#"
+            <a href="riwayat_pelanggaran.php"
             class="menu-link">
 
                 <i class="fas fa-triangle-exclamation"></i>
