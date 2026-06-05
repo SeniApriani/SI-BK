@@ -1,27 +1,55 @@
+/* ===================================
+RESET
+=================================== */
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+}
+
+html,
+body{
+    height:100%;
 }
 
 body{
+    font-family:'Poppins',sans-serif;
     background:#f5f7fb;
     color:#374151;
 }
 
-/* WRAPPER */
+a{
+    text-decoration:none;
+}
+
+button{
+    font-family:'Poppins',sans-serif;
+}
+
+/* ===================================
+LAYOUT
+=================================== */
+
 .wrapper{
     display:flex;
     min-height:100vh;
 }
 
-/* SIDEBAR */
+/* ===================================
+SIDEBAR
+=================================== */
+
 .sidebar{
     width:280px;
     background:#fff;
     border-right:1px solid #e5e7eb;
     transition:.3s ease;
+    overflow:hidden;
+}
+
+.sidebar.collapsed{
+    width:70px;
 }
 
 .sidebar-header{
@@ -34,16 +62,30 @@ body{
 
 .sidebar-header img{
     width:50px;
+    height:50px;
+    object-fit:contain;
 }
 
 .logo-text h3{
     font-size:14px;
-    color:#16a34a;
+    color:#15803d;
+    font-weight:700;
 }
 
 .logo-text p{
     font-size:11px;
     color:#6b7280;
+}
+
+.sidebar-btn{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:10px;
+    background:#ecfdf3;
+    color:#15803d;
+    cursor:pointer;
+    margin-left:auto;
 }
 
 .sidebar-menu{
@@ -56,8 +98,7 @@ body{
     gap:12px;
     padding:13px 15px;
     border-radius:12px;
-    color:#374151;
-    text-decoration:none;
+    color:#15803d;
     font-weight:600;
     margin-bottom:8px;
     transition:.3s;
@@ -66,29 +107,49 @@ body{
 .menu-link:hover,
 .menu-link.current{
     background:#ecfdf3;
-    color:#16a34a;
 }
 
-/* CONTENT */
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .menu-link span{
+    display:none;
+}
+
+.sidebar.collapsed .sidebar-header img{
+    display:none;
+}
+
+.sidebar.collapsed .menu-link{
+    justify-content:center;
+}
+
+/* ===================================
+CONTENT
+=================================== */
+
 .content{
     flex:1;
     padding:18px;
 }
 
-/* TOPBAR */
+/* ===================================
+TOPBAR
+=================================== */
+
 .topbar{
     height:65px;
     background:#fff;
     margin:-18px -18px 18px -18px;
     padding:0 25px;
+    border-bottom:1px solid #e5e7eb;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
-    border-bottom:1px solid #e5e7eb;
 }
 
 .topbar-title h2{
-    color:#16a34a;
+    font-size:24px;
+    color:#15803d;
 }
 
 .user-dropdown{
@@ -102,62 +163,146 @@ body{
     height:38px;
     border-radius:50%;
     background:#ecfdf3;
+
     display:flex;
     justify-content:center;
     align-items:center;
+
     color:#16a34a;
 }
 
-/* WELCOME */
+/* ===================================
+WELCOME
+=================================== */
+
 .welcome-banner{
     background:#fff;
     border-radius:18px;
-    padding:18px 25px;
+    padding:20px 25px;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     margin-bottom:18px;
-    box-shadow:0 3px 12px rgba(0,0,0,.05);
+
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+    transition:.3s;
+}
+
+.welcome-banner:hover{
+    transform:translateY(-2px);
+}
+
+.welcome-left{
+    display:flex;
+    align-items:center;
+    gap:18px;
 }
 
 .welcome-banner-icon{
-    width:70px;
-    height:70px;
+    width:75px;
+    height:75px;
     border-radius:50%;
     background:#ecfdf3;
+
     display:flex;
     justify-content:center;
     align-items:center;
+}
+
+.welcome-banner-icon i{
+    font-size:34px;
     color:#16a34a;
-    font-size:28px;
 }
 
 .welcome-banner-text h1{
     font-size:28px;
-    color:#16a34a;
+    color:#15803d;
+    margin-bottom:3px;
 }
 
 .welcome-banner-text p{
-    font-size:14px;
     color:#64748b;
+    font-size:14px;
 }
 
-/* GRID */
+.remisi-notification{
+    background:#f0fdf4;
+    border:1px solid #dcfce7;
+    border-radius:12px;
+    padding:15px 20px;
+    min-width:180px;
+    text-align:center;
+}
+
+.notif-icon{
+    position:relative;
+    display:inline-block;
+    margin-bottom:8px;
+}
+
+.notif-icon i{
+    font-size:28px;
+    color:#16a34a;
+}
+
+.notif-badge{
+    position:absolute;
+    top:-8px;
+    right:-10px;
+
+    width:20px;
+    height:20px;
+
+    border-radius:50%;
+
+    background:#ef4444;
+    color:#fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:11px;
+    font-weight:700;
+}
+
+.remisi-notification p{
+    color:#15803d;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* ===================================
+GRID
+=================================== */
+
 .dashboard-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:18px;
 }
 
-/* CARD */
+/* ===================================
+CARD
+=================================== */
+
 .dashboard-card{
     background:#fff;
     border-radius:18px;
-    padding:18px;
-    box-shadow:0 3px 12px rgba(0,0,0,.05);
+    padding:20px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+
+    transition:.3s;
 }
 
-/* HEADER */
+.dashboard-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
 .card-header{
     display:flex;
     align-items:center;
@@ -168,36 +313,214 @@ body{
 .header-icon{
     width:42px;
     height:42px;
-    background:#ecfdf3;
     border-radius:10px;
+    background:#ecfdf3;
+
     display:flex;
     justify-content:center;
     align-items:center;
+
     color:#16a34a;
 }
 
-/* TABLE */
-table{
-    width:100%;
-    border-collapse:collapse;
+.card-header h3{
+    font-size:18px;
 }
 
-table th, table td{
-    border:1px solid #eee;
-    padding:10px;
+/* ===================================
+TOTAL
+=================================== */
+
+.total-number{
+    text-align:center;
+    font-size:55px;
+    font-weight:700;
+    color:#16a34a;
+    margin:15px 0;
 }
 
-table th{
+/* ===================================
+DATE
+=================================== */
+
+.date-box{
     background:#ecfdf3;
-    color:#166534;
+    padding:12px;
+    border-radius:12px;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
-/* FOOTER */
+.date-box i{
+    font-size:22px;
+    color:#16a34a;
+}
+
+.date-box h4{
+    color:#15803d;
+    font-size:14px;
+}
+
+.date-box span{
+    color:#64748b;
+    font-size:12px;
+}
+
+/* ===================================
+CHART FOOTER
+=================================== */
+
 .chart-footer{
     margin-top:10px;
-    padding:10px;
     background:#ecfdf3;
-    border-radius:10px;
-    color:#166534;
+    color:#15803d;
+    padding:10px;
     text-align:center;
+    border-radius:10px;
+    font-size:13px;
+}
+
+/* ===================================
+RESPONSIVE
+=================================== */
+
+@media(max-width:992px){
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+    .welcome-banner{
+        flex-direction:column;
+        gap:20px;
+        text-align:center;
+    }
+
+}
+
+.chart-container{
+    height:180px;
+    display:flex;
+    justify-content:space-evenly;
+    align-items:flex-end;
+}
+
+.bar-item{
+    text-align:center;
+}
+
+.bar-item span{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.bar{
+    width:45px;
+    background:#16a34a;
+    border-radius:10px 10px 0 0;
+}
+
+.bar-jan{
+    height:60px;
+}
+
+.bar-feb{
+    height:100px;
+}
+
+.bar-mar{
+    height:140px;
+}
+
+.bar-item small{
+    display:block;
+    margin-top:8px;
+}
+
+
+.donut-wrapper{
+    display:flex;
+    justify-content:center;
+    margin:15px 0;
+}
+
+.donut-chart{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    border:12px solid #16a34a;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.donut-content h2{
+    font-size:40px;
+    /* color:#16a34a; */
+    color: black;
+    font-weight:700;
+}
+
+.activity-list{
+    margin:15px 0;
+}
+
+.activity-item{
+    background:#f0fdf4;
+    padding:8px 12px;   /* diperkecil */
+    border-radius:8px;
+    margin-bottom:5px;  /* jarak diperkecil biar rapat */
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:#15803d;
+    font-size:13px;
+    font-weight:500;
+    line-height:1.2;   /* biar teks nggak renggang */
+}
+.activity-item i{
+    font-size:7px;
+}
+
+.date-box{
+    margin-top:15px;
+}
+
+
+/* LOGOUT */
+.logout-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 14px;
+    border-radius:12px;
+    color:#15803d;
+    font-weight:600;
+    margin:8px 15px;
+}
+
+.logout-link:hover{
+    background:#ecfdf3;
+}
+
+@media(max-width:768px){
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .topbar{
+        margin:-15px -15px 20px -15px;
+    }
+
 }
