@@ -303,10 +303,9 @@ table tbody tr:hover{
 
             <select>
                 <option>Semua Kategori</option>
-                <option>Kedisiplinan</option>
-                <option>Kerapihan</option>
-                <option>Etika</option>
-                <option>Akademik</option>
+                <option>Kelakuan</option>
+                <option>Kerajinan</option>
+                 <option>Kerapian</option>
             </select>
 
             <button class="btn-search">

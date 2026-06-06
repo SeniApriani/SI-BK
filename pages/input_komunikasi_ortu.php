@@ -1,3 +1,67 @@
+
+<?php
+include "../config/koneksi.php";
+
+/* ambil id siswa */
+$id = $_GET['id'] ?? '';
+
+/* SIMPAN DATA */
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $id = $_POST['id_siswa'];
+    $nama_ortu = mysqli_real_escape_string($koneksi, $_POST['nama_ortu']);
+    $tanggal = $_POST['tanggal'];
+    $jenis = $_POST['jenis'];
+
+    $file = '';
+
+    if(isset($_FILES['berita_acara']) && $_FILES['berita_acara']['error'] == 0){
+
+        $file = time().'_'.$_FILES['berita_acara']['name'];
+        $tmp  = $_FILES['berita_acara']['tmp_name'];
+
+        if(!move_uploaded_file($tmp, "../upload/".$file)){
+            die("Upload file gagal!");
+        }
+    }
+
+    $insert = mysqli_query($koneksi,"
+        INSERT INTO komunikasi_ortu
+        (id_siswa, nama_ortu, tanggal, jenis_pertemuan, file_ba, status)
+        VALUES
+        ('$id','$nama_ortu','$tanggal','$jenis','$file','proses')
+    ");
+
+    if(!$insert){
+        die("Error MySQL : ".mysqli_error($koneksi));
+    }
+
+    echo "
+    <script>
+        alert('Data berhasil disimpan');
+        window.location='komunikasi_orangtua.php';
+    </script>";
+    exit;
+}
+
+/* ambil data siswa */
+$data = mysqli_query($koneksi,"
+SELECT 
+    s.id_siswa,
+    s.nama_siswa,
+    s.nisn,
+    s.kelas,
+    COALESCE(SUM(jp.poin),0) AS total_poin
+FROM pelanggaran_siswa ps
+JOIN data_siswa s ON ps.id_siswa = s.id_siswa
+LEFT JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+WHERE s.id_siswa = '$id'
+GROUP BY s.id_siswa, s.nama_siswa, s.nisn, s.kelas
+");
+
+$row = mysqli_fetch_assoc($data);
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -142,7 +206,7 @@ body{
     background:#15803d;
 }
 
-```html id="mx8r2q"
+
 
 /* BACK BUTTON */
 
@@ -216,135 +280,78 @@ body{
 
     </div>
 
+   
+
     <!-- IDENTITAS SISWA -->
+<div class="card">
 
-    <div class="card">
+    <div class="info-grid">
 
-        <div class="info-grid">
+        <div class="info-item">
+            <small>Nama Siswa</small>
+            <strong><?= $row['nama_siswa']; ?></strong>
+        </div>
 
-            <div class="info-item">
+        <div class="info-item">
+            <small>NISN</small>
+            <strong><?= $row['nisn']; ?></strong>
+        </div>
 
-                <small>Nama Siswa</small>
+        <div class="info-item">
+            <small>Kelas</small>
+            <strong><?= $row['kelas']; ?></strong>
+        </div>
 
-                <strong>Ahmad Fauzi</strong>
-
-            </div>
-
-            <div class="info-item">
-
-                <small>NISN</small>
-
-                <strong>1234567890</strong>
-
-            </div>
-
-            <div class="info-item">
-
-                <small>Kelas</small>
-
-                <strong>XI RPL 1</strong>
-
-            </div>
-
-            <div class="info-item">
-
-                <small>Total Poin</small>
-
-                <strong>120 Poin</strong>
-
-            </div>
-
+        <div class="info-item">
+            <small>Total Poin</small>
+            <strong><?= $row['total_poin']; ?> Poin</strong>
         </div>
 
     </div>
 
+</div>
     <!-- FORM -->
 
     <div class="card">
 
-        <form method="POST" enctype="multipart/form-data">
+       
+           <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="id_siswa" value="<?= $row['id_siswa']; ?>">
 
-            <div class="form-grid">
+<div class="form-grid">
 
-                <div class="form-group">
+    <div class="form-group">
+        <label>Nama Orang Tua / Wali *</label>
+        <input type="text" name="nama_ortu" required>
+    </div>
 
-                    <label>
+    <div class="form-group">
+        <label>Tanggal Pertemuan *</label>
+        <input type="date" name="tanggal" required>
+    </div>
 
-                        Nama Orang Tua / Wali
-                        <span class="required">*</span>
+    <div class="form-group">
+        <label>Jenis Pertemuan *</label>
+        <select name="jenis" required>
+            <option value="">-- Pilih --</option>
+            <option value="Sekolah">Sekolah</option>
+            <option value="Home Visit">Home Visit</option>
+        </select>
+    </div>
 
-                    </label>
+    <div class="form-group">
+        <label>Upload Berita Acara *</label>
+        <input type="file" name="berita_acara" required>
+    </div>
 
-                    <input
-                        type="text"
-                        placeholder="Masukkan nama orang tua / wali"
-                        required
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-
-                        Tanggal Pertemuan
-                        <span class="required">*</span>
-
-                    </label>
-
-                    <input
-                        type="date"
-                        required
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-
-                        Jenis Pertemuan
-                        <span class="required">*</span>
-
-                    </label>
-
-                    <select required>
-
-                        <option value="">
-                            -- Pilih Jenis Pertemuan --
-                        </option>
-
-                        <option>
-                            Sekolah
-                        </option>
-
-                        <option>
-                            Home Visit
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-
-                        Upload Berita Acara
-                        <span class="required">*</span>
-
-                    </label>
-
-                    <input
-                        type="file"
-                        required
-                    >
+</div>
 
                 </div>
 
             </div>
 
             <div class="form-action">
+                
 
                 <button type="submit" class="btn-save">
 
@@ -376,4 +383,4 @@ body{
 
 </body>
 </html>
-```
+

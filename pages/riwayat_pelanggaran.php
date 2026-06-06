@@ -1,8 +1,7 @@
 <?php
 session_start();
 include "../config/koneksi.php";
-
-$nisn = $_SESSION['id_siswa'] ?? '';
+$nisn = $_SESSION['id_siswa'];
 $nama = $_SESSION['nama'] ?? 'Siswa';
 
 /* =========================
@@ -14,18 +13,21 @@ $start = ($page - 1) * $limit;
 
 /* TOTAL DATA */
 $totalData = mysqli_num_rows(mysqli_query($koneksi,"
-    SELECT * FROM pelanggaran_siswa WHERE id_siswa='$nisn'
+SELECT * FROM pelanggaran_siswa
+WHERE id_siswa='$nisn'
 "));
 
 $totalPage = ceil($totalData / $limit);
 
 /* DATA RIWAYAT */
+
 $query = mysqli_query($koneksi,"
-    SELECT * 
-    FROM pelanggaran_siswa 
-    WHERE id_siswa='$nisn'
-    ORDER BY tanggal DESC
-    LIMIT $start, $limit
+SELECT ps.tanggal, jp.jenis_pelanggaran, jp.poin, ps.catatan
+FROM pelanggaran_siswa ps
+JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+WHERE ps.id_siswa='$nisn'
+ORDER BY ps.tanggal DESC
+LIMIT $start, $limit
 ");
 ?>
 

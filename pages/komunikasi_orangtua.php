@@ -1,4 +1,20 @@
-```html
+<?php
+include "../config/koneksi.php";
+
+$query = mysqli_query($koneksi, "
+SELECT 
+    s.id_siswa,
+    s.nama_siswa,
+    s.kelas,
+    SUM(jp.poin) AS total_poin
+FROM pelanggaran_siswa ps
+JOIN data_siswa s ON ps.id_siswa = s.id_siswa
+JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+GROUP BY s.id_siswa
+HAVING total_poin >= 26
+ORDER BY total_poin DESC
+");
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -449,96 +465,41 @@ table tbody tr:hover{
 
                 </thead>
 
-                <tbody>
+               <tbody>
+<?php $no = 1; while($row = mysqli_fetch_assoc($query)) { ?>
+<tr>
+    <td><?= $no++; ?></td>
+    <td><?= $row['nama_siswa']; ?></td>
+    <td><?= $row['kelas']; ?></td>
+    <td><?= $row['total_poin']; ?></td>
+    <td>
 
-                    <tr>
+        <div class="dropdown">
 
-                        <td>1</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>XI RPL 1</td>
-                        <td>120</td>
+            <button class="btn-detail">
+                <i class="fas fa-eye"></i>
+            </button>
 
-                        <td>
+            <div class="dropdown-content">
 
-                            <div class="dropdown">
+                <a href="input_komunikasi_ortu.php?id=<?= $row['id_siswa']; ?>">
+                    <i class="fas fa-comments"></i>
+                    Proses
+                </a>
 
-                                <button class="btn-detail">
+                <a href="#">
+                    <i class="fas fa-check-circle"></i>
+                    Selesai
+                </a>
 
-                                    <i class="fas fa-eye"></i>
+            </div>
 
-                                </button>
+        </div>
 
-                                <div class="dropdown-content">
-
-                                    <a href="input_komunikasi_ortu.php">
-
-                                        <i class="fas fa-comments"></i>
-
-                                        Proses
-
-                                    </a>
-
-                                    <a href="#">
-
-                                        <i class="fas fa-check-circle"></i>
-
-                                        Selesai
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>Siti Nurhaliza</td>
-                        <td>XI RPL 2</td>
-                        <td>115</td>
-
-                        <td>
-
-                            <div class="dropdown">
-
-                                <button class="btn-detail">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-                                <div class="dropdown-content">
-
-                                    <a href="#">
-
-                                        <i class="fas fa-comments"></i>
-
-                                        Proses
-
-                                    </a>
-
-                                    <a href="#">
-
-                                        <i class="fas fa-check-circle"></i>
-
-                                        Selesai
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+    </td>
+</tr>
+<?php } ?>
+</tbody>
             </table>
 
         </div>

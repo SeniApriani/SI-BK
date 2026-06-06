@@ -1,3 +1,45 @@
+<?php
+include __DIR__ . '/../config/koneksi.php';
+
+$limit = 20;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+$bulan = $_GET['bulan'] ?? '';
+$kelas = $_GET['kelas'] ?? '';
+
+$where = "WHERE 1=1";
+
+if ($bulan != '') {
+    $where .= " AND MONTH(ps.tanggal) = '$bulan'";
+}
+
+if ($kelas != '') {
+    $where .= " AND s.kelas = '$kelas'";
+}
+
+/* ===================== DATA ===================== */
+$data = mysqli_query($koneksi, "
+SELECT ps.tanggal, s.nama_siswa, s.kelas, jp.jenis_pelanggaran, jp.poin, ps.catatan
+FROM pelanggaran_siswa ps
+JOIN data_siswa s ON ps.id_siswa = s.id_siswa
+JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+$where
+ORDER BY ps.tanggal DESC
+LIMIT $limit OFFSET $offset
+");
+
+/* ===================== TOTAL PAGINATION ===================== */
+$totalQuery = mysqli_query($koneksi, "
+SELECT COUNT(*) as total
+FROM pelanggaran_siswa ps
+JOIN data_siswa s ON ps.id_siswa = s.id_siswa
+$where
+");
+
+$total = mysqli_fetch_assoc($totalQuery);
+$total_pages = ceil($total['total'] / $limit);
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -168,19 +210,23 @@ table tbody tr:hover{
 .pagination{
     display:flex;
     justify-content:center;
+    align-items:center;
     gap:8px;
     margin-top:20px;
 }
 
 .page-btn{
-    width:40px;
-    height:40px;
-    border:none;
-    border-radius:10px;
-    background:#fff;
+    padding:8px 12px;
+    border-radius:8px;
     border:1px solid #d1d5db;
+    background:#fff;
     cursor:pointer;
     transition:.3s;
+    text-decoration:none;
+    color:#374151;
+    display:inline-block;
+    min-width:36px;
+    text-align:center;
 }
 
 .page-btn:hover{
@@ -267,6 +313,62 @@ table tbody tr:hover{
 
 }
 
+/* FILTER */
+.filter-wrap{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+}
+
+.select-box{
+    position:relative;
+    display:flex;
+    align-items:center;
+}
+
+.select-box i{
+    position:absolute;
+    left:12px;
+    color:#16a34a;
+    font-size:14px;
+}
+
+.select-box select{
+    padding:10px 12px 10px 35px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    font-family:'Poppins',sans-serif;
+    outline:none;
+    background:#fff;
+    min-width:180px;
+    cursor:pointer;
+}
+
+.select-box select:focus{
+    border-color:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,.1);
+}
+
+.btn-filter{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    background:#16a34a;
+    color:#fff;
+    cursor:pointer;
+    font-weight:500;
+    transition:.3s;
+}
+
+.btn-filter:hover{
+    background:#15803d;
+}
+
 </style>
 </head>
 <body>
@@ -311,21 +413,45 @@ table tbody tr:hover{
 
         <div class="filter-section">
 
-            <select>
-                <option>Semua Bulan</option>
-                <option>Januari</option>
-                <option>Februari</option>
-                <option>Maret</option>
-                <option>April</option>
-            </select>
+          <form method="GET" class="filter-wrap">
 
-            <select>
-                <option>Semua Kelas</option>
-                <option>X RPL 1</option>
-                <option>X RPL 2</option>
-                <option>XI RPL 1</option>
-                <option>XII RPL 1</option>
-            </select>
+    <!-- BULAN -->
+    <div class="select-box">
+        <i class="fas fa-calendar"></i>
+        <select name="bulan">
+            <option value="">Semua Bulan</option>
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Maret</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">Agustus</option>
+            <option value="9">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+        </select>
+    </div>
+
+    <!-- KELAS -->
+    <div class="select-box">
+        <i class="fas fa-users"></i>
+        <select name="kelas">
+            <option value="">Semua Kelas</option>
+            <option value="X TKJ">X TKJ</option>
+            <option value="XI TKJ">XI TKJ</option>
+            <option value="XII TKJ">XII TKJ</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn-filter">
+        <i class="fas fa-search"></i>
+        Cari
+    </button>
+
+</form>
 
         </div>
 
@@ -334,74 +460,57 @@ table tbody tr:hover{
         <div class="table-responsive">
 
             <table>
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Nama Siswa</th>
+            <th>Kelas</th>
+            <th>Pelanggaran</th>
+            <th>Poin</th>
+            <th>Catatan</th>
+        </tr>
+    </thead>
 
-                <thead>
+    <tbody>
+        <?php while($r = mysqli_fetch_assoc($data)) { ?>
+        <tr>
+            <td><?= $r['tanggal']; ?></td>
+            <td><?= $r['nama_siswa']; ?></td>
+            <td><?= $r['kelas']; ?></td>
+            <td><?= $r['jenis_pelanggaran']; ?></td>
+            <td><?= $r['poin']; ?></td>
+            <td><?= $r['catatan']; ?></td>
+        </tr>
+        <?php } ?>
+    </tbody>
+</table>
 
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Nama Siswa</th>
-                        <th>Kelas</th>
-                        <th>Pelanggaran</th>
-                        <th>Poin</th>
-                        <th>Catatan Konseling</th>
-                    </tr>
 
-                </thead>
-
-                <tbody>
-
-                    <tr>
-                        <td>05-07-2025</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>X RPL 1</td>
-                        <td>Terlambat Masuk Sekolah</td>
-                        <td>5</td>
-                        <td>Telah diberikan pembinaan.</td>
-                    </tr>
-
-                    <tr>
-                        <td>08-07-2025</td>
-                        <td>Siti Nurhaliza</td>
-                        <td>XI RPL 1</td>
-                        <td>Tidak Memakai Atribut</td>
-                        <td>10</td>
-                        <td>Diingatkan untuk melengkapi atribut.</td>
-                    </tr>
-
-                    <tr>
-                        <td>12-07-2025</td>
-                        <td>Budi Santoso</td>
-                        <td>XII RPL 1</td>
-                        <td>Membolos</td>
-                        <td>20</td>
-                        <td>Pemanggilan orang tua.</td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
 
         <!-- PAGINATION -->
 
-        <div class="pagination">
+      <div class="pagination">
 
-            <button class="page-btn">
-                <i class="fas fa-chevron-left"></i>
-            </button>
+<?php if($page > 1){ ?>
+    <a class="page-btn" href="?page=<?= $page-1 ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>">‹</a>
+<?php } ?>
 
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
+<?php
+$start = max(1, $page - 2);
+$end = min($total_pages, $page + 2);
 
-            <button class="page-btn">
-                <i class="fas fa-chevron-right"></i>
-            </button>
+for ($i = $start; $i <= $end; $i++) { ?>
+    <a href="?page=<?= $i ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>"
+       class="page-btn <?= ($i == $page) ? 'active' : '' ?>">
+        <?= $i ?>
+    </a>
+<?php } ?>
 
-        </div>
+<?php if($page < $total_pages){ ?>
+    <a class="page-btn" href="?page=<?= $page+1 ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>">›</a>
+<?php } ?>
 
-    </div>
+</div>
 
     <!-- BOTTOM -->
 
@@ -411,10 +520,10 @@ table tbody tr:hover{
             <i class="fas fa-chevron-left"></i>
         </a>
 
-        <a href="#" class="btn-download">
+        <!-- <a href="#" class="btn-download">
             <i class="fas fa-download"></i>
             Unduh Data
-        </a>
+        </a> -->
 
     </div>
 
