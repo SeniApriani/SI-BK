@@ -239,7 +239,7 @@ tr:hover{
         </div>
  <div class="bottom-action">
 
-        <a href="dashboard_walikelas.php" class="btn-back">
+        <a href="dashboard_siswa.php" class="btn-back">
 
             <i class="fas fa-chevron-left"></i>
 

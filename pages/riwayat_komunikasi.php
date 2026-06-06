@@ -1,4 +1,20 @@
 
+<?php
+include "../config/koneksi.php";
+
+$data = mysqli_query($koneksi,"
+SELECT 
+    k.*,
+    s.nama_siswa,
+    s.kelas
+FROM komunikasi_ortu k
+JOIN data_siswa s ON k.id_siswa = s.id_siswa
+ORDER BY k.id_komunikasi DESC
+");
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -388,71 +404,28 @@ table tbody tr:hover{
 
                 <tbody>
 
-                    <tr>
+<?php $no = 1; while($row = mysqli_fetch_assoc($data)) { ?>
 
-                        <td>1</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>XI RPL 1</td>
-                        <td>Bapak Fauzi</td>
-                        <td>12 Januari 2025</td>
-                        <td>Sekolah</td>
+<tr>
+    <td><?= $no++; ?></td>
+    <td><?= $row['nama_siswa']; ?></td>
+    <td><?= $row['kelas']; ?></td>
+    <td><?= $row['nama_ortu']; ?></td>
+    <td><?= $row['tanggal']; ?></td>
+    <td><?= $row['jenis_pertemuan']; ?></td>
 
-                        <td>
+    <td>
+        
 
-                            <a href="#" class="btn-view">
+        <a href="../upload/<?= $row['file_ba']; ?>" target="_blank" class="btn-view">
+            Lihat Berita Acara
+        </a>
+    </td>
+</tr>
 
-                                Lihat Berita Acara
+<?php } ?>
 
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>2</td>
-                        <td>Siti Nurhaliza</td>
-                        <td>XI RPL 2</td>
-                        <td>Ibu Nurhayati</td>
-                        <td>18 Januari 2025</td>
-                        <td>Home Visit</td>
-
-                        <td>
-
-                            <a href="#" class="btn-view">
-
-                                Lihat Berita Acara
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-                        <td>Budi Santoso</td>
-                        <td>XII RPL 1</td>
-                        <td>Bapak Santoso</td>
-                        <td>25 Januari 2025</td>
-                        <td>Sekolah</td>
-
-                        <td>
-
-                            <a href="#" class="btn-view">
-
-                                Lihat Berita Acara
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+</tbody>
             </table>
 
         </div>
@@ -503,5 +476,4 @@ table tbody tr:hover{
 
 </body>
 </html>
-```
 
