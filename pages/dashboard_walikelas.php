@@ -1,4 +1,8 @@
 
+<?php
+session_start();
+$nama = $_SESSION['nama'];
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -192,7 +196,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             <div class="topbar-title">
 
-                <h2>Dashboard</h2>
+                <h3>Dashboard Wali Kelas</h3>
 
             </div>
 
@@ -204,7 +208,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 </div>
 
-                <span>Wali Kelas</span>
+                <span><?= $nama; ?> </span>
 
                 <i class="fas fa-chevron-down"></i>
 
