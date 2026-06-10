@@ -136,7 +136,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     </a>
 
-                    <a href="penilaian_poin_pelanggaran.php">
+                    <a href="pengajuan_remisi_wakasek.php">
 
                         <i class="fas fa-star"></i>
 

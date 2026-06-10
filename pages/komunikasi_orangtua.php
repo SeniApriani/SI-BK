@@ -1,16 +1,34 @@
+
+
+
+
+
+
 <?php
 include "../config/koneksi.php";
+
+if (isset($_GET['selesai'])) {
+    $id = $_GET['selesai'];
+
+    mysqli_query($koneksi, "
+        UPDATE pelanggaran_siswa 
+        SET status='selesai'
+        WHERE id_siswa='$id'
+    ");
+}
 
 $query = mysqli_query($koneksi, "
 SELECT 
     s.id_siswa,
     s.nama_siswa,
     s.kelas,
-    SUM(jp.poin) AS total_poin
+    SUM(jp.poin) AS total_poin,
+    COALESCE(k.status, 'proses') AS status
 FROM pelanggaran_siswa ps
 JOIN data_siswa s ON ps.id_siswa = s.id_siswa
 JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
-GROUP BY s.id_siswa
+LEFT JOIN komunikasi_ortu k ON k.id_siswa = s.id_siswa
+GROUP BY s.id_siswa, s.nama_siswa, s.kelas, k.status
 HAVING total_poin >= 26
 ORDER BY total_poin DESC
 ");
@@ -186,12 +204,14 @@ table tbody tr:hover{
 }
 
 .btn-detail{
-    width:38px;
-    height:38px;
+    padding:8px 12px;
+    background:#22c55e;
+    color:white;
     border:none;
-    border-radius:8px;
-    background:#16a34a;
-    color:#fff;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    gap:6px;
     cursor:pointer;
 }
 
@@ -304,7 +324,7 @@ table tbody tr:hover{
     display:flex;
     justify-content:flex-end;
 }
-```html id="r0k3fy"
+
 
 /* PAGINATION */
 
@@ -477,8 +497,18 @@ table tbody tr:hover{
         <div class="dropdown">
 
             <button class="btn-detail">
-                <i class="fas fa-eye"></i>
-            </button>
+
+<?php if(trim(strtolower($row['status'])) == 'selesai'){ ?>
+
+    <i class="fas fa-check-circle"></i> Selesai
+
+<?php } else { ?>
+
+    <i class="fas fa-eye"></i>
+
+<?php } ?>
+
+</button>
 
             <div class="dropdown-content">
 
@@ -487,10 +517,10 @@ table tbody tr:hover{
                     Proses
                 </a>
 
-                <a href="#">
-                    <i class="fas fa-check-circle"></i>
-                    Selesai
-                </a>
+                <a href="?selesai=<?= $row['id_siswa']; ?>">
+    <i class="fas fa-check-circle"></i>
+    Selesai
+</a>
 
             </div>
 

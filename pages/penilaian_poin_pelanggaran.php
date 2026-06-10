@@ -1,4 +1,44 @@
-```html
+<?php
+include "../config/koneksi.php";
+
+$simpan = false;
+
+if(isset($_POST['simpan'])){
+
+    $id_siswa = $_POST['id_siswa'];
+    $jenis_prestasi = $_POST['jenis_prestasi'];
+    $nama_prestasi = $_POST['nama_prestasi'];
+    $poin_remisi = $_POST['poin_remisi'];
+
+    // upload file
+    $bukti = $_FILES['bukti']['name'];
+    $tmp   = $_FILES['bukti']['tmp_name'];
+
+    if(!empty($bukti)){
+        move_uploaded_file($tmp, "../upload/bukti_remisi/".$bukti);
+    }
+
+    // insert ke database
+    $simpan = mysqli_query($koneksi,"
+    INSERT INTO pengajuan_remisi
+    (id_siswa, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
+    VALUES
+    ('$id_siswa','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
+    ");
+
+    if($simpan){
+        echo "
+        <script>
+        localStorage.setItem('remisi_berhasil','1');
+        window.location='penilaian_poin_pelanggaran.php';
+        </script>
+        ";
+        exit;
+    }
+}
+
+$siswa = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -242,6 +282,36 @@ input[type=file]{
 
 }
 
+/* DROPDOWNN */
+.dropdown-siswa{
+    position: relative;
+    width: 100%;
+}
+
+.list-siswa{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.item-siswa{
+    padding:10px 12px;
+    cursor:pointer;
+}
+
+.item-siswa:hover{
+    background:#f3f4f6;
+}
+
 </style>
 
 </head>
@@ -257,16 +327,6 @@ input[type=file]{
 
             <a href="penilaian_poin_pelanggaran.php" class="tab active">
                 <i class="fas fa-award"></i>
-                Remisi Poin
-            </a>
-
-            <a href="rekap_poin.php" class="tab">
-                <i class="fas fa-chart-bar"></i>
-                Rekap Poin
-            </a>
-
-            <a href="pengajuan_remisi.php" class="tab">
-                <i class="fas fa-file-signature"></i>
                 Pengajuan Remisi
             </a>
 
@@ -275,125 +335,255 @@ input[type=file]{
                 Riwayat Remisi
             </a>
 
+            <a href="rekap_poin.php" class="tab">
+                <i class="fas fa-chart-bar"></i>
+                Rekap Poin pelanggaran
+            </a>
+
+            
+
         </div>
 
     </div>
 
     <!-- FORM REMISI -->
 
-    <div class="card">
+<div class="card">
 
-        <div class="page-header">
+<div class="page-header">
 
-            <h1>Input Remisi Prestasi</h1>
+    <h1>Input Remisi Prestasi</h1>
 
-            <p>
-                Tambahkan remisi poin berdasarkan prestasi yang diperoleh siswa.
-            </p>
+    <p>
+        Ajukan remisi poin pelanggaran berdasarkan prestasi yang diperoleh siswa.
+    </p>
+
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+
+   <div class="form-group">
+
+    <label>
+        Pilih Siswa
+        <span class="required">*</span>
+    </label>
+
+    <div class="dropdown-siswa">
+
+        <input type="text" id="searchSiswa"
+        placeholder="Cari siswa..." required>
+
+        <div id="listSiswa" class="list-siswa">
+
+            <?php while($s = mysqli_fetch_assoc($siswa)) { ?>
+
+                <div class="item-siswa"
+                     data-id="<?= $s['id_siswa']; ?>">
+
+                    <?= $s['nama_siswa']; ?>
+
+                </div>
+
+            <?php } ?>
 
         </div>
 
-        <form method="POST" enctype="multipart/form-data">
-
-            <div class="form-group">
-
-                <label>
-                    Pilih Siswa
-                    <span class="required">*</span>
-                </label>
-
-                <select required>
-                    <option value="">-- Pilih Siswa --</option>
-                    <option>Ahmad Fauzi</option>
-                    <option>Siti Nurhaliza</option>
-                    <option>Budi Santoso</option>
-                </select>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Jenis Prestasi
-                    <span class="required">*</span>
-                </label>
-
-                <select required>
-                    <option value="">-- Pilih Jenis Prestasi --</option>
-                    <option>Akademik</option>
-                    <option>Non Akademik</option>
-                    <option>Kejuaraan Sekolah</option>
-                    <option>Kejuaraan Kabupaten</option>
-                    <option>Kejuaraan Provinsi</option>
-                    <option>Kejuaraan Nasional</option>
-                </select>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Nama Prestasi / Lomba
-                    <span class="required">*</span>
-                </label>
-
-                <input
-                    type="text"
-                    placeholder="Masukkan nama prestasi atau lomba"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Poin Remisi</label>
-
-                <input
-                    type="text"
-                    class="readonly"
-                    value="Otomatis sesuai jenis prestasi"
-                    readonly
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Upload Bukti Sertifikat
-                    <span class="required">*</span>
-                </label>
-
-                <input
-                    type="file"
-                    required
-                >
-
-            </div>
-
-            <div class="form-action">
-
-                <a href="dashboard_walikelas.php" class="btn-cancel">
-                    Batal
-                </a>
-
-                <button type="submit" class="btn-save">
-
-                    <i class="fas fa-save"></i>
-
-                    Simpan
-
-                </button>
-
-            </div>
-
-        </form>
+        <input type="hidden"
+               name="id_siswa"
+               id="id_siswa">
 
     </div>
 
 </div>
+    <div class="form-group">
+        
+
+        <label>
+            Tingkat Prestasi
+            <span class="required">*</span>
+        </label>
+
+        <select name="jenis_prestasi" id="jenis_prestasi" required>
+            <option value="">-- Pilih Tingkat Prestasi --</option>
+
+            <option value="15">
+                Juara I/II/III Tingkat Sekolah 
+            </option>
+
+            <option value="25">
+                Juara I/II/III Tingkat Kabupaten/Kota 
+            </option>
+
+            <option value="50">
+                Juara I/II/III Tingkat Provinsi 
+            </option>
+
+            <option value="100">
+                Juara I/II/III Tingkat Nasional/Internasional 
+            </option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+    <label>Persentase Remisi</label>
+
+    <input
+        type="text"
+        name="poin_remisi"
+        id="poin_remisi"
+        class="readonly"
+        readonly
+    >
+
+</div>
+
+    <div class="form-group">
+
+        <label>
+            Nama Prestasi / Lomba
+            <span class="required">*</span>
+        </label>
+
+        <input
+            type="text"
+            name="nama_prestasi"
+            placeholder="Masukkan nama prestasi atau lomba"
+            required
+        >
+
+    </div>
+
+    
+
+    <div class="form-group">
+
+        <label>
+            Upload Bukti Prestasi
+            <span class="required">*</span>
+        </label>
+
+        <input
+            type="file"
+            name="bukti"
+            required
+        >
+
+        <small style="color:#6b7280;">
+            Tingkat Sekolah: Surat Keterangan Wakasis.
+            Tingkat Kabupaten/Kota, Provinsi, Nasional/Internasional:
+            Sertifikat, Piagam, atau dokumen sejenis.
+        </small>
+
+    </div>
+
+    <div class="form-action">
+
+        <a href="dashboard_walikelas.php" class="btn-cancel">
+            Batal
+        </a>
+
+        <button type="submit" name="simpan" class="btn-save">
+
+            <i class="fas fa-paper-plane"></i>
+
+            Ajukan Remisi
+
+        </button>
+
+    </div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+const search = document.getElementById('searchSiswa');
+const list = document.getElementById('listSiswa');
+const items = document.querySelectorAll('.item-siswa');
+const hidden = document.getElementById('id_siswa');
+
+// buka list saat klik / focus
+search.addEventListener('focus', () => {
+    list.style.display = 'block';
+});
+
+// filter
+search.addEventListener('input', function(){
+    let val = this.value.toLowerCase();
+
+    list.style.display = 'block';
+
+    items.forEach(item => {
+        let text = item.textContent.toLowerCase();
+        item.style.display = text.includes(val) ? 'block' : 'none';
+    });
+});
+
+// pilih item
+items.forEach(item => {
+    item.addEventListener('click', function(){
+        search.value = this.textContent.trim();
+        hidden.value = this.dataset.id;
+        list.style.display = 'none';
+    });
+});
+
+document.addEventListener('click', function(e){
+    if(!e.target.closest('.dropdown-siswa')){
+        list.style.display = 'none';
+    }
+});
+</script>
+
+<script>
+
+const jenisPrestasi = document.getElementById('jenis_prestasi');
+const poinRemisi = document.getElementById('poin_remisi');
+
+jenisPrestasi.addEventListener('change', function(){
+
+    if(this.value == '15'){
+        poinRemisi.value = '15';
+    }
+    else if(this.value == '25'){
+        poinRemisi.value = '25';
+    }
+    else if(this.value == '50'){
+        poinRemisi.value = '50';
+    }
+    else if(this.value == '100'){
+        poinRemisi.value = '100';
+    }
+    else{
+        poinRemisi.value = '';
+    }
+
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+if(localStorage.getItem('remisi_berhasil') === '1'){
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: 'Pengajuan remisi berhasil diajukan.',
+        confirmButtonColor: '#16a34a'
+    });
+
+    localStorage.removeItem('remisi_berhasil');
+}
+</script>
+
 
 </body>
-</html>
-```
+</html
