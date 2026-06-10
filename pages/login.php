@@ -30,6 +30,7 @@ if(isset($_POST['login'])){
 
         $_SESSION['id_user'] = $data['id_user'];
 $_SESSION['id_siswa'] = $data['id_siswa'];
+$_SESSION['kelas'] = $data['kelas'];
 
         if($data['role'] == 'wali_kelas'){
 

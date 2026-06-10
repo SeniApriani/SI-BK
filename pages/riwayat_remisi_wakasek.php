@@ -328,16 +328,6 @@ table tbody tr:hover{
 
         <div class="tab-menu">
 
-            <a href="penilaian_poin_pelanggaran.php" class="tab">
-                <i class="fas fa-award"></i>
-                Remisi Poin
-            </a>
-
-            <a href="rekap_poin.php" class="tab">
-                <i class="fas fa-chart-bar"></i>
-                Rekap Poin
-            </a>
-
             <a href="pengajuan_remisi.php" class="tab">
                 <i class="fas fa-file-signature"></i>
                 Pengajuan Remisi
@@ -348,6 +338,13 @@ table tbody tr:hover{
                 Riwayat Remisi
             </a>
 
+            <a href="rekap_poin.php" class="tab">
+                <i class="fas fa-chart-bar"></i>
+                Rekap Poin
+            </a>
+
+           
+            
         </div>
 
     </div>
@@ -450,7 +447,7 @@ table tbody tr:hover{
                         <td>Ahmad Fauzi</td>
                         <td>01/02/2025</td>
                         <td>Otomatis</td>
-                        <td>Remisi Otomatis 5%</td>
+                        <td>Remisi Otomatis 6%</td>
                         <td>-4</td>
                         <td>
                             <span class="badge-system">
@@ -505,7 +502,7 @@ table tbody tr:hover{
 
     <div class="bottom-action">
 
-        <a href="dashboard_walikelas.php" class="btn-back">
+        <a href="dashboard_wakasek.php" class="btn-back">
 
             <i class="fas fa-chevron-left"></i>
 

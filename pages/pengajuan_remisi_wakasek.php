@@ -48,12 +48,20 @@ if(isset($_POST['simpan'])){
         move_uploaded_file($tmp, $folder.$bukti);
     }
 
+   
+
     $simpan = mysqli_query($koneksi,"
-    INSERT INTO pengajuan_remisi
-    (id_siswa, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
-    VALUES
-    ('$id_siswa','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
-    ");
+INSERT INTO pengajuan_remisi
+(id_siswa, kelas, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
+VALUES
+('$id_siswa','$kelas','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
+");
+
+     $data = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT kelas FROM data_siswa WHERE id_siswa='$id_siswa'
+"));
+
+$kelas = $data['kelas'];
 
     if($simpan){
         echo "
@@ -67,11 +75,12 @@ if(isset($_POST['simpan'])){
 }
 
 $remisi = mysqli_query($koneksi,"
-SELECT pr.*, ds.nama_siswa
+SELECT pr.*, ds.nama_siswa, ds.kelas
 FROM pengajuan_remisi pr
 JOIN data_siswa ds
 ON pr.id_siswa = ds.id_siswa
 ");
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -472,6 +481,7 @@ Daftar pengajuan remisi yang menunggu persetujuan Wakasek Kesiswaan.
             <tr>
                 <th>No</th>
                 <th>Nama Siswa</th>
+                <th>Kelas</th>
                 <th>Prestasi</th>
                 <th>Remisi</th>
                 <th>Bukti</th>
@@ -492,6 +502,7 @@ Daftar pengajuan remisi yang menunggu persetujuan Wakasek Kesiswaan.
                 <td><?= $no++; ?></td>
 
                 <td><?= $r['nama_siswa']; ?></td>
+                <td><?= $r['kelas']; ?></td>
 
                 <td><?= $r['nama_prestasi']; ?></td>
 
