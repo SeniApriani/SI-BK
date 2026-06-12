@@ -51,6 +51,8 @@ if(isset($_POST['simpan'])){
    
 
     $simpan = mysqli_query($koneksi,"
+
+    
 INSERT INTO pengajuan_remisi
 (id_siswa, kelas, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
 VALUES
@@ -439,9 +441,9 @@ tbody tr:hover{
 
         <div class="tab-menu">
 
-            <a href="penilaian_poin_pelanggaran.php" class="tab active">
+            <a href="pengajuan_remisi_wakasek.php" class="tab active">
                 <i class="fas fa-award"></i>
-                Pengajuan Remisi
+                Daftar Pengajuan Remisi
             </a>
 
             <a href="riwayat_remisi_wakasek.php" class="tab">
@@ -449,7 +451,7 @@ tbody tr:hover{
                 Riwayat Remisi
             </a>
 
-            <a href="rekap_poin.php" class="tab">
+            <a href="rekap_poin_wakasek.php" class="tab">
                 <i class="fas fa-chart-bar"></i>
                 Rekap Poin pelanggaran
             </a>

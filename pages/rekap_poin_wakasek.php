@@ -1,4 +1,37 @@
 
+
+<?php
+include "../config/koneksi.php";
+
+$kelas = $_GET['kelas'] ?? '';
+
+if($kelas != ''){
+
+    $rekap = mysqli_query($koneksi,"
+    SELECT
+        id_siswa,
+        nisn,
+        nama_siswa,
+        kelas
+    FROM data_siswa
+    WHERE kelas='$kelas'
+    ORDER BY nama_siswa ASC
+    ");
+
+}else{
+
+    $rekap = mysqli_query($koneksi,"
+    SELECT
+        id_siswa,
+        nisn,
+        nama_siswa,
+        kelas
+    FROM data_siswa
+    ORDER BY nama_siswa ASC
+    ");
+
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -221,7 +254,6 @@ table tbody tr:hover{
     box-shadow:0 4px 12px rgba(22,163,74,.25);
 }
 
-```html
 <style>
 
 .page{
@@ -287,6 +319,18 @@ table tbody tr:hover{
 
 }
 
+/* Nama Siswa */
+.nama-siswa{
+    text-decoration:none;
+    color:#374151;
+    font-weight:500;
+    transition:.3s;
+}
+
+.nama-siswa:hover{
+    color:#16a34a;
+}
+
 </style>
 </head>
 <body>
@@ -296,20 +340,16 @@ table tbody tr:hover{
 <div class="tab-card">
 <div class="tab-menu">
 
-<a href="penilaian_poin_pelanggaran.php" class="tab">
-<i class="fas fa-award"></i> Remisi Poin
-</a>
-
-<a href="rekap_poin.php" class="tab active">
-<i class="fas fa-chart-bar"></i> Rekap Poin
-</a>
-
-<a href="pengajuan_remisi.php" class="tab">
-<i class="fas fa-file-signature"></i> Pengajuan Remisi
+<a href="pengajuan_remisi_wakasek.php" class="tab">
+<i class="fas fa-file-signature"></i> Daftar Pengajuan Remisi
 </a>
 
 <a href="riwayat_remisi.php" class="tab">
 <i class="fas fa-history"></i> Riwayat Remisi
+</a>
+
+<a href="rekap_poin_wakasek.php" class="tab active">
+<i class="fas fa-chart-bar"></i> Rekap Poin Pelanggaran
 </a>
 
 </div>
@@ -318,7 +358,7 @@ table tbody tr:hover{
 <div class="card">
 
 <div class="page-header">
-<h1>Rekap Poin Siswa</h1>
+<h1>Rekap Poin Pelanggaran Siswa</h1>
 </div>
 
 <div class="filter-box">
@@ -335,14 +375,28 @@ table tbody tr:hover{
 <option>2025/2026</option>
 </select>
 
-<select>
-<option>Kelas</option>
-<option>X IPA 1</option>
-<option>X IPA 2</option>
-<option>XI IPA 1</option>
-<option>XII IPA 1</option>
-</select>
+<form method="GET">
+    <select name="kelas" onchange="this.form.submit()">
 
+        <option value="">Semua Kelas</option>
+
+        <option value="X TKJ"
+        <?= ($kelas=='X TKJ') ? 'selected' : ''; ?>>
+        X TKJ
+        </option>
+
+        <option value="XI TKJ"
+        <?= ($kelas=='XI TKJ') ? 'selected' : ''; ?>>
+        XI TKJ
+        </option>
+
+        <option value="XII TKJ"
+        <?= ($kelas=='XII TKJ') ? 'selected' : ''; ?>>
+        XII TKJ
+        </option>
+
+    </select>
+</form>
 </div>
 
 <div class="table-container">
@@ -352,41 +406,89 @@ table tbody tr:hover{
 <thead>
 <tr>
 <th>No</th>
+<th>NISN</th>
 <th>Nama Siswa</th>
 <th>Kelas</th>
-<th>Total Poin</th>
+<th>Total Poin Pelanggaran</th>
+<th>Total Remisi</th>
+<th>Poin Akhir</th>
 </tr>
 </thead>
 
 <tbody>
 
-<tr>
-<td>1</td>
-<td>Ahmad Fauzi</td>
-<td>XI IPA 1</td>
-<td><span class="badge-poin">25 Poin</span></td>
-</tr>
+<?php
+$no = 1;
+while($s = mysqli_fetch_assoc($rekap)){
+?>
 
 <tr>
-<td>2</td>
-<td>Siti Nurhaliza</td>
-<td>XI IPA 1</td>
-<td><span class="badge-poin">15 Poin</span></td>
+    
+
+    <td><?= $no++; ?></td>
+    <td><?= $s['nisn']; ?></td>
+   <td>
+   <a class="nama-siswa" href="detail_rekap_poin.php?id=<?= $s['id_siswa']; ?>">
+    <?= $s['nama_siswa']; ?>
+</a>
+</td>
+    <td><?= $s['kelas']; ?></td>
+
+    <?php
+$pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT SUM(jp.poin) AS total
+FROM pelanggaran_siswa ps
+JOIN jenis_pelanggaran jp
+ON ps.id_pelanggaran = jp.id_pelanggaran
+WHERE ps.id_siswa='".$s['id_siswa']."'
+"));
+
+$total_pelanggaran = $pelanggaran['total'] ?? 0;
+?>
+
+<td><?= $total_pelanggaran; ?></td>
+    <?php
+
+$remisi = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT SUM(poin_remisi) AS total_remisi
+FROM pengajuan_remisi
+WHERE id_siswa='".$s['id_siswa']."'
+AND status='Disetujui'
+"));
+
+$remisi_otomatis = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT SUM(persen_remisi) AS total_otomatis
+FROM remisi_otomatis
+WHERE id_siswa='".$s['id_siswa']."'
+"));
+
+$total_remisi =
+($remisi['total_remisi'] ?? 0)
++
+($remisi_otomatis['total_otomatis'] ?? 0);
+
+?>
+
+<td><?= $total_remisi; ?>%</td>
+    <?php
+
+$nilai_remisi = round(($total_pelanggaran * $total_remisi) / 100);
+
+$poin_akhir = max(
+    0,
+    round($total_pelanggaran - $nilai_remisi)
+);
+
+?>
+
+<td>
+    <span class="badge-poin">
+        <?= $poin_akhir; ?> Poin
+    </span>
+</td>
 </tr>
 
-<tr>
-<td>3</td>
-<td>Budi Santoso</td>
-<td>XI IPA 2</td>
-<td><span class="badge-poin">40 Poin</span></td>
-</tr>
-
-<tr>
-<td>4</td>
-<td>Dewi Lestari</td>
-<td>X IPA 1</td>
-<td><span class="badge-poin">10 Poin</span></td>
-</tr>
+<?php } ?>
 
 </tbody>
 
@@ -396,7 +498,7 @@ table tbody tr:hover{
 
 <div class="table-footer">
 
-<a href="dashboard_walikelas.php" class="btn-back">
+<a href="dashboard_wakasek.php" class="btn-back">
 <i class="fas fa-chevron-left"></i>
 </a>
 
@@ -429,4 +531,4 @@ Unduh
 
 </body>
 </html>
-```
+

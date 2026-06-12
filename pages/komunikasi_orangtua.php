@@ -1,9 +1,4 @@
 
-
-
-
-
-
 <?php
 include "../config/koneksi.php";
 
@@ -22,16 +17,50 @@ SELECT
     s.id_siswa,
     s.nama_siswa,
     s.kelas,
-    SUM(jp.poin) AS total_poin,
-    COALESCE(k.status, 'proses') AS status
-FROM pelanggaran_siswa ps
-JOIN data_siswa s ON ps.id_siswa = s.id_siswa
-JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
-LEFT JOIN komunikasi_ortu k ON k.id_siswa = s.id_siswa
-GROUP BY s.id_siswa, s.nama_siswa, s.kelas, k.status
-HAVING total_poin >= 26
+
+    ROUND(
+        p.total_poin - 
+       ROUND(p.total_poin * (COALESCE(r.persen,0) + COALESCE(ro.persen,0)) / 100)
+    ) AS total_poin,
+
+    COALESCE(k.status,'proses') AS status
+
+FROM data_siswa s
+
+LEFT JOIN komunikasi_ortu k 
+ON k.id_siswa = s.id_siswa
+
+LEFT JOIN (
+    SELECT 
+        ps.id_siswa,
+        SUM(jp.poin) AS total_poin
+    FROM pelanggaran_siswa ps
+    JOIN jenis_pelanggaran jp 
+        ON ps.id_pelanggaran = jp.id_pelanggaran
+    GROUP BY ps.id_siswa
+) p ON p.id_siswa = s.id_siswa
+
+LEFT JOIN (
+    SELECT 
+        id_siswa,
+        SUM(poin_remisi) AS persen
+    FROM pengajuan_remisi
+    WHERE status='Disetujui'
+    GROUP BY id_siswa
+) r ON r.id_siswa = s.id_siswa
+
+LEFT JOIN (
+    SELECT 
+        id_siswa,
+        SUM(persen_remisi) AS persen
+    FROM remisi_otomatis
+    GROUP BY id_siswa
+) ro ON ro.id_siswa = s.id_siswa
+
+HAVING total_poin >= 21
+
 ORDER BY total_poin DESC
-");
+") or die(mysqli_error($koneksi));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -324,7 +353,6 @@ table tbody tr:hover{
     display:flex;
     justify-content:flex-end;
 }
-
 
 /* PAGINATION */
 
@@ -653,7 +681,7 @@ table tbody tr:hover{
 
     <div class="bottom-action">
 
-        <a href="dashboard_walikelas.php" class="btn-back">
+        <a href="dashboard_wakasek.php" class="btn-back">
 
             <i class="fas fa-chevron-left"></i>
 
@@ -703,5 +731,6 @@ document.addEventListener('click', function(e){
 
 </body>
 </html>
-```
+
+
 

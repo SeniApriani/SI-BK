@@ -1,4 +1,146 @@
 
+
+<?php
+include "../config/koneksi.php";
+
+/* ==================================================
+   REMISI OTOMATIS 6%
+   Siswa tidak melakukan pelanggaran selama 30 hari
+================================================== */
+
+$siswa_remisi = mysqli_query($koneksi,"
+SELECT DISTINCT id_siswa
+FROM pelanggaran_siswa
+");
+while($sr = mysqli_fetch_assoc($siswa_remisi)){
+
+   $id_siswa = $sr['id_siswa'];
+
+$terakhir = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT MAX(tanggal) AS tanggal_terakhir
+FROM pelanggaran_siswa
+WHERE id_siswa='$id_siswa'
+"));
+
+$tanggal_terakhir = $terakhir['tanggal_terakhir'];
+
+$hari_ini = date('Y-m-d');
+
+$selisih = (strtotime($hari_ini) - strtotime($tanggal_terakhir)) / (60 * 60 * 24);
+}
+
+if($selisih >= 30){
+
+    $cek_remisi = mysqli_num_rows(mysqli_query($koneksi,"
+    SELECT *
+    FROM remisi_otomatis
+    WHERE id_siswa='$id_siswa'
+    AND MONTH(tanggal_remisi)=MONTH(CURDATE())
+    AND YEAR(tanggal_remisi)=YEAR(CURDATE())
+    "));
+
+}
+    $pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
+    SELECT SUM(jp.poin) AS total_poin
+    FROM pelanggaran_siswa ps
+    JOIN jenis_pelanggaran jp
+    ON ps.id_pelanggaran = jp.id_pelanggaran
+    WHERE ps.id_siswa='$id_siswa'
+    "));
+
+    $total_poin = $pelanggaran['total_poin'] ?? 0;
+
+    if($selisih >= 30){
+
+
+
+    $total_poin = $pelanggaran['total_poin'] ?? 0;
+
+    if($cek_remisi == 0 && $total_poin > 0){
+
+        mysqli_query($koneksi,"
+        INSERT INTO remisi_otomatis
+        (id_siswa, persen_remisi, tanggal_remisi, keterangan)
+        VALUES
+        (
+            '$id_siswa',
+            '6',
+            CURDATE(),
+            'Tidak melakukan pelanggaran selama 1 bulan'
+        )
+        ");
+
+    }
+
+}
+// Pengajuan Remisi
+
+$siswa = mysqli_query($koneksi,"
+SELECT DISTINCT ds.id_siswa, ds.nama_siswa
+FROM data_siswa ds
+JOIN (
+    SELECT id_siswa FROM pengajuan_remisi
+    UNION
+    SELECT id_siswa FROM remisi_otomatis
+) r ON ds.id_siswa = r.id_siswa
+ORDER BY ds.nama_siswa
+");
+
+$id_siswa = isset($_GET['id_siswa']) ? $_GET['id_siswa'] : '';
+$data_siswa = null;
+
+if($id_siswa != ''){
+
+    $data_siswa = mysqli_fetch_assoc(mysqli_query($koneksi,"
+    SELECT *
+    FROM data_siswa
+    WHERE id_siswa='$id_siswa'
+    "));
+}
+
+
+$total_poin = 0;
+
+if($id_siswa != ''){
+
+    // Total Pelanggaran
+    $pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
+    SELECT SUM(jp.poin) AS total
+    FROM pelanggaran_siswa ps
+    JOIN jenis_pelanggaran jp
+    ON ps.id_pelanggaran = jp.id_pelanggaran
+    WHERE ps.id_siswa='$id_siswa'
+    "));
+
+    // Total Remisi Prestasi
+$remisi = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT SUM(poin_remisi) AS total_remisi
+FROM pengajuan_remisi
+WHERE id_siswa='$id_siswa'
+AND status='Disetujui'
+"));
+
+// Total Remisi Otomatis
+$remisi_otomatis = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT SUM(persen_remisi) AS total_otomatis
+FROM remisi_otomatis
+WHERE id_siswa='$id_siswa'
+"));
+
+  $total_pelanggaran = $pelanggaran['total'] ?? 0;
+$persen_prestasi = $remisi['total_remisi'] ?? 0;
+$persen_otomatis = $remisi_otomatis['total_otomatis'] ?? 0;
+
+$total_persen = $persen_prestasi + $persen_otomatis;
+
+$nilai_remisi = round(($total_pelanggaran * $total_persen) / 100);
+
+$total_poin = max(0, round($total_pelanggaran - $nilai_remisi));
+
+// $total_poin = round($total_pelanggaran - $nilai_remisi);
+
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -329,25 +471,22 @@ table tbody tr:hover{
         <div class="tab-menu">
 
             <a href="penilaian_poin_pelanggaran.php" class="tab">
-                <i class="fas fa-award"></i>
-                Remisi Poin
-            </a>
-
-            <a href="rekap_poin.php" class="tab">
-                <i class="fas fa-chart-bar"></i>
-                Rekap Poin
-            </a>
-
-            <a href="pengajuan_remisi.php" class="tab">
                 <i class="fas fa-file-signature"></i>
                 Pengajuan Remisi
             </a>
 
-            <a href="riwayat_remisi.php" class="tab active">
+            <a href="riwayat_remisi_walikelas.php" class="tab active">
                 <i class="fas fa-history"></i>
                 Riwayat Remisi
             </a>
 
+            <a href="rekap_poin.php" class="tab">
+                <i class="fas fa-chart-bar"></i>
+                Rekap Poin Pelanggaran
+            </a>
+
+           
+            
         </div>
 
     </div>
@@ -368,39 +507,43 @@ table tbody tr:hover{
 
             <label>Pilih Siswa</label>
 
-            <select id="siswaSelect">
+           <select id="siswaSelect">
 
-                <option value="">-- Pilih Siswa --</option>
+    <option value="">-- Pilih Siswa --</option>
 
-                <option value="1">Ahmad Fauzi</option>
-                <option value="2">Siti Nurhaliza</option>
-                <option value="3">Budi Santoso</option>
+    <?php while($s = mysqli_fetch_assoc($siswa)){ ?>
 
-            </select>
+        <option value="<?= $s['id_siswa']; ?>">
+            <?= $s['nama_siswa']; ?>
+        </option>
 
+    <?php } ?>
+
+</select>
         </div>
 
         <!-- MUNCUL SETELAH PILIH SISWA -->
 
-        <div class="student-info" id="studentInfo">
-
+        <div class="student-info <?= ($id_siswa != '') ? 'active' : ''; ?>" id="studentInfo">
             <div class="info-grid">
 
-                <div class="info-item">
-                    <small>Nama Siswa</small>
-                    <strong>Ahmad Fauzi</strong>
-                </div>
+              <div class="info-item">
+    <small>Nama Siswa</small>
+    <strong>
+        <?= ($data_siswa) ? $data_siswa['nama_siswa'] : '-'; ?>
+    </strong>
+</div>
 
                 <div class="info-item">
-                    <small>NISN</small>
-                    <strong>1234567890</strong>
-                </div>
-
+    <small>NISN</small>
+    <strong>
+        <?= ($data_siswa) ? $data_siswa['nisn'] : '-'; ?>
+    </strong>
+</div>
                 <div class="info-item total-point">
-                    <small>Total Poin Saat Ini</small>
-                    <strong>85 Poin</strong>
-                </div>
-
+    <small>Total Poin Saat Ini</small>
+    <strong><?= $total_poin; ?> Poin</strong>
+</div>
             </div>
 
         </div>
@@ -423,58 +566,78 @@ table tbody tr:hover{
                         <th>Tanggal</th>
                         <th>Tipe Remisi</th>
                         <th>Keterangan</th>
-                        <th>Poin</th>
+                        <th>Remisi</th>
                         <th>Bukti</th>
                     </tr>
 
                 </thead>
 
-                <tbody>
+              <tbody>
 
-                    <tr>
-                        <td>1</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>12/01/2025</td>
-                        <td>Prestasi</td>
-                        <td>Juara 1 Olimpiade Matematika</td>
-                        <td>-20</td>
-                        <td>
-                            <a href="#" class="btn-view">
-                                Lihat Sertifikat
-                            </a>
-                        </td>
-                    </tr>
+<?php
 
-                    <tr>
-                        <td>2</td>
-                        <td>Ahmad Fauzi</td>
-                        <td>01/02/2025</td>
-                        <td>Otomatis</td>
-                        <td>Remisi Otomatis 5%</td>
-                        <td>-4</td>
-                        <td>
-                            <span class="badge-system">
-                                Sistem
-                            </span>
-                        </td>
-                    </tr>
+$remisi = mysqli_query($koneksi,"
+SELECT
+    ds.nama_siswa,
+    pr.tanggal_pengajuan AS tanggal,
+    'Prestasi' AS tipe_remisi,
+    pr.nama_prestasi AS keterangan,
+    CONCAT(pr.poin_remisi,'%') AS remisi,
+    pr.bukti
+FROM pengajuan_remisi pr
+JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
 
-                    <tr>
-                        <td>3</td>
-                        <td>Siti Nurhaliza</td>
-                        <td>15/03/2025</td>
-                        <td>Prestasi</td>
-                        <td>Juara 2 MTQ Kabupaten</td>
-                        <td>-15</td>
-                        <td>
-                            <a href="#" class="btn-view">
-                                Lihat Sertifikat
-                            </a>
-                        </td>
-                    </tr>
+UNION ALL
 
-                </tbody>
+SELECT
+    ds.nama_siswa,
+    ro.tanggal_remisi AS tanggal,
+    'Otomatis' AS tipe_remisi,
+    ro.keterangan,
+    CONCAT(ro.persen_remisi,'%') AS remisi,
+    '' AS bukti
+FROM remisi_otomatis ro
+JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
 
+ORDER BY tanggal DESC
+");
+
+
+$no = 1;
+
+while($r = mysqli_fetch_assoc($remisi)){
+
+?>
+
+<tr>
+
+    <td><?= $no++; ?></td>
+
+    <td><?= $r['nama_siswa']; ?></td>
+
+    <td><?= date('d/m/Y', strtotime($r['tanggal'])); ?></td>
+    <td><?= $r['tipe_remisi']; ?></td>
+
+   <td><?= $r['keterangan']; ?></td>
+
+    <td><?= $r['remisi']; ?></td>
+    <td>
+
+        <?php if(!empty($r['bukti'])){ ?>
+
+            <a href="../upload/bukti_remisi/<?= $r['bukti']; ?>" class="btn-view" target="_blank">
+                Lihat Bukti
+            </a>
+
+        <?php } ?>
+
+    </td>
+
+</tr>
+
+<?php } ?>
+
+</tbody>
             </table>
 
         </div>
@@ -522,21 +685,19 @@ const studentInfo = document.getElementById('studentInfo');
 
 siswaSelect.addEventListener('change', function(){
 
-    if(this.value !== ''){
+    if(this.value != ''){
 
-        studentInfo.classList.add('active');
-
-    }else{
-
-        studentInfo.classList.remove('active');
+        window.location =
+        'riwayat_remisi_walikelas.php?id_siswa=' + this.value;
 
     }
 
 });
 
+
 </script>
 
 </body>
 </html>
-```
+
 

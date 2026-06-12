@@ -330,7 +330,7 @@ input[type=file]{
                 Pengajuan Remisi
             </a>
 
-            <a href="riwayat_remisi.php" class="tab">
+            <a href="riwayat_remisi_walikelas.php" class="tab">
                 <i class="fas fa-history"></i>
                 Riwayat Remisi
             </a>
