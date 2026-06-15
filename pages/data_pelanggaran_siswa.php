@@ -1,6 +1,4 @@
 <?php
-
-
 include __DIR__ . '/../config/koneksi.php';
 
 $siswa = mysqli_query($koneksi, "SELECT * FROM data_siswa");
@@ -8,16 +6,70 @@ $kategori = mysqli_query($koneksi, "SELECT DISTINCT kategori FROM jenis_pelangga
 $jenisData = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran");
 
 if(isset($_POST['simpan'])){
-    
+
     $id_siswa = $_POST['id_siswa'];
     $id_pelanggaran = $_POST['id_pelanggaran'];
     $tanggal = date('Y-m-d');
     $catatan = $_POST['catatan'];
 
-    mysqli_query($koneksi, "INSERT INTO pelanggaran_siswa 
-    (id_siswa, id_pelanggaran, tanggal, catatan)
-    VALUES 
-    ('$id_siswa', '$id_pelanggaran', '$tanggal', '$catatan')");
+    // 1. ambil poin dulu
+    $data_pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
+        SELECT poin
+        FROM jenis_pelanggaran
+        WHERE id_pelanggaran='$id_pelanggaran'
+    "));
+
+    $poin = $data_pelanggaran['poin'];
+
+    // 2. simpan pelanggaran
+    mysqli_query($koneksi, "
+        INSERT INTO pelanggaran_siswa
+        (id_siswa, id_pelanggaran, tanggal, catatan, poin)
+        VALUES
+        ('$id_siswa', '$id_pelanggaran', '$tanggal', '$catatan', '$poin')
+    ");
+
+    $id_siswa = $_POST['id_siswa'];
+
+// ambil nama pelanggaran (kalau ada)
+$nama_pelanggaran = $_POST['nama_pelanggaran'];
+
+mysqli_query($koneksi,"
+INSERT INTO notifikasi
+(
+    id_user,
+    role,
+    judul,
+    pesan,
+    tipe,
+    link
+)
+VALUES
+(
+    '$id_siswa',
+    'siswa',
+    'Pelanggaran Baru',
+    'Kamu mendapatkan pelanggaran: $nama_pelanggaran',
+    'pelanggaran',
+    'riwayat_pelanggaran.php'
+)
+");
+
+    // 3. update rekap poin
+    $cek = mysqli_query($koneksi,"SELECT * FROM rekap_poin WHERE id_siswa='$id_siswa'");
+
+if(mysqli_num_rows($cek) > 0){
+    mysqli_query($koneksi,"
+        UPDATE rekap_poin 
+        SET total_poin = total_poin + $poin
+        WHERE id_siswa='$id_siswa'
+    ");
+} else {
+    mysqli_query($koneksi,"
+        INSERT INTO rekap_poin (id_siswa, total_poin)
+        VALUES ('$id_siswa', $poin)
+    ");
+}
 
     header("Location: riwayat_pelanggaran_siswa.php");
     exit;

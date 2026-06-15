@@ -2,92 +2,22 @@
 
 <?php
 include "../config/koneksi.php";
+include "remisi_otomatis.php";
 
-/* ==================================================
-   REMISI OTOMATIS 6%
-   Siswa tidak melakukan pelanggaran selama 30 hari
-================================================== */
-
-$siswa_remisi = mysqli_query($koneksi,"
-SELECT DISTINCT id_siswa
-FROM pelanggaran_siswa
-");
-while($sr = mysqli_fetch_assoc($siswa_remisi)){
-
-   $id_siswa = $sr['id_siswa'];
-
-$terakhir = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT MAX(tanggal) AS tanggal_terakhir
-FROM pelanggaran_siswa
-WHERE id_siswa='$id_siswa'
-"));
-
-$tanggal_terakhir = $terakhir['tanggal_terakhir'];
-
-$hari_ini = date('Y-m-d');
-
-$selisih = (strtotime($hari_ini) - strtotime($tanggal_terakhir)) / (60 * 60 * 24);
-}
-
-if($selisih >= 30){
-
-    $cek_remisi = mysqli_num_rows(mysqli_query($koneksi,"
-    SELECT *
-    FROM remisi_otomatis
-    WHERE id_siswa='$id_siswa'
-    AND MONTH(tanggal_remisi)=MONTH(CURDATE())
-    AND YEAR(tanggal_remisi)=YEAR(CURDATE())
-    "));
-
-}
-    $pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
-    SELECT SUM(jp.poin) AS total_poin
-    FROM pelanggaran_siswa ps
-    JOIN jenis_pelanggaran jp
-    ON ps.id_pelanggaran = jp.id_pelanggaran
-    WHERE ps.id_siswa='$id_siswa'
-    "));
-
-    $total_poin = $pelanggaran['total_poin'] ?? 0;
-
-    if($selisih >= 30){
-
-
-
-    $total_poin = $pelanggaran['total_poin'] ?? 0;
-
-    if($cek_remisi == 0 && $total_poin > 0){
-
-        mysqli_query($koneksi,"
-        INSERT INTO remisi_otomatis
-        (id_siswa, persen_remisi, tanggal_remisi, keterangan)
-        VALUES
-        (
-            '$id_siswa',
-            '6',
-            CURDATE(),
-            'Tidak melakukan pelanggaran selama 1 bulan'
-        )
-        ");
-
-    }
-
-}
-// Pengajuan Remisi
-
+/* =========================
+   AMBIL LIST SISWA
+========================= */
 $siswa = mysqli_query($koneksi,"
-SELECT DISTINCT ds.id_siswa, ds.nama_siswa
-FROM data_siswa ds
-JOIN (
-    SELECT id_siswa FROM pengajuan_remisi
-    UNION
-    SELECT id_siswa FROM remisi_otomatis
-) r ON ds.id_siswa = r.id_siswa
-ORDER BY ds.nama_siswa
+SELECT DISTINCT id_siswa, nama_siswa
+FROM data_siswa
 ");
 
+/* =========================
+   SELECT SISWA
+========================= */
 $id_siswa = isset($_GET['id_siswa']) ? $_GET['id_siswa'] : '';
 $data_siswa = null;
+$total_poin = 0;
 
 if($id_siswa != ''){
 
@@ -96,49 +26,40 @@ if($id_siswa != ''){
     FROM data_siswa
     WHERE id_siswa='$id_siswa'
     "));
+
+    // 🔥 PAKAI INI SAJA (TIDAK HITUNG ULANG LAGI)
+    $total_poin = $data_siswa['total_poin'];
 }
 
+/* =========================
+   QUERY RIWAYAT REMISI
+   (TETAP DIPAKAI)
+========================= */
+$remisi = mysqli_query($koneksi,"
+SELECT
+    ds.nama_siswa,
+    pr.tanggal_pengajuan AS tanggal,
+    'Prestasi' AS tipe_remisi,
+    pr.nama_prestasi AS keterangan,
+    CONCAT(pr.poin_remisi,'%') AS remisi,
+    pr.bukti
+FROM pengajuan_remisi pr
+JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
 
-$total_poin = 0;
+UNION ALL
 
-if($id_siswa != ''){
+SELECT
+    ds.nama_siswa,
+    ro.tanggal_remisi AS tanggal,
+    'Otomatis' AS tipe_remisi,
+    ro.keterangan,
+    CONCAT(ro.persen_remisi,'%') AS remisi,
+    '' AS bukti
+FROM remisi_otomatis ro
+JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
 
-    // Total Pelanggaran
-    $pelanggaran = mysqli_fetch_assoc(mysqli_query($koneksi,"
-    SELECT SUM(jp.poin) AS total
-    FROM pelanggaran_siswa ps
-    JOIN jenis_pelanggaran jp
-    ON ps.id_pelanggaran = jp.id_pelanggaran
-    WHERE ps.id_siswa='$id_siswa'
-    "));
-
-    // Total Remisi Prestasi
-$remisi = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT SUM(poin_remisi) AS total_remisi
-FROM pengajuan_remisi
-WHERE id_siswa='$id_siswa'
-AND status='Disetujui'
-"));
-
-// Total Remisi Otomatis
-$remisi_otomatis = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT SUM(persen_remisi) AS total_otomatis
-FROM remisi_otomatis
-WHERE id_siswa='$id_siswa'
-"));
-
-  $total_pelanggaran = $pelanggaran['total'] ?? 0;
-$persen_prestasi = $remisi['total_remisi'] ?? 0;
-$persen_otomatis = $remisi_otomatis['total_otomatis'] ?? 0;
-
-$total_persen = $persen_prestasi + $persen_otomatis;
-
-$nilai_remisi = round(($total_pelanggaran * $total_persen) / 100);
-
-// $total_poin = round($total_pelanggaran - $nilai_remisi);
-$total_poin = max(0, round($total_pelanggaran - $nilai_remisi));
-
-}
+ORDER BY tanggal DESC
+");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -699,4 +620,3 @@ siswaSelect.addEventListener('change', function(){
 </body>
 </html>
 remisi wakasek 
-

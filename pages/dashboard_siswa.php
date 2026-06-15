@@ -2,8 +2,38 @@
 session_start();
 include "../config/koneksi.php";
 
+$id_siswa = $_SESSION['id_siswa'];
 $nama = $_SESSION['nama'] ?? 'Siswa';
-$total = 0;
+
+// TOTAL POIN
+$total = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT COALESCE(SUM(poin),0) AS total
+FROM pelanggaran_siswa
+WHERE id_siswa='$id_siswa'
+"))['total'];
+
+// AKTIVITAS HARI INI (JUMLAH KEJADIAN)
+$aktivitas_hari_ini = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT COUNT(*) AS jml
+FROM pelanggaran_siswa
+WHERE id_siswa='$id_siswa'
+AND DATE(tanggal)=CURDATE()
+"))['jml'];
+
+// NOTIF)
+$result = mysqli_query($koneksi,"
+SELECT COUNT(*) AS jml
+FROM notifikasi
+WHERE id_user='$id_siswa'
+
+");
+
+if(!$result){
+    die(mysqli_error($koneksi));
+}
+
+$data = mysqli_fetch_assoc($result);
+$notif_count = $data['jml'];
 ?>
 
 <!DOCTYPE html>
@@ -88,6 +118,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
+           
+
         </div>
 
         <a href="logout.php" class="menu-link logout-link">
@@ -151,115 +183,92 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </div>
 
-            <div class="remisi-notification">
 
-                <div class="notif-icon">
+           <div class="remisi-notification">
+    <a href="riwayat_pelanggaran_siswa.php" class="notif-icon">
+        <i class="fas fa-bell"></i>
 
-                    <i class="fas fa-bell"></i>
+        <?php if($notif_count > 0){ ?>
+            <span class="notif-badge"><?= $notif_count ?></span>
+        <?php } ?>
+    </a>
 
-                    <span class="notif-badge">1</span>
+    <p>Pelanggaran Hari Ini</p>
 
-                </div>
-
-                <p>Pelanggaran Hari Ini</p>
-
-            </div>
+</div>
 
         </section>
 
         <!-- DASHBOARD CARD -->
 
-        <section class="dashboard-grid">
+       <section class="dashboard-grid">
 
-            <!-- STATISTIK -->
+    <!-- TOTAL POIN -->
+    <div class="dashboard-card">
 
-            <div class="dashboard-card">
+        <div class="card-header">
 
-                <div class="card-header">
+            <div class="header-icon">
+                <i class="fas fa-star"></i>
+            </div>
 
-                    <div class="header-icon">
+            <h3>Total Poin Pelanggaran</h3>
 
-                        <i class="fas fa-chart-column"></i>
+        </div>
 
-                    </div>
+        <div style="
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:160px;
+            flex-direction:column;
+        ">
 
-                    <h3>Statistik Pelanggaran</h3>
+            <div style="
+                font-size:50px;
+                font-weight:700;
+                color:#dc2626;
+            ">
+                <?= $total; ?>
+            </div>
 
+            <p style="margin-top:10px;color:#6b7280;">
+                Poin saat ini
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="dashboard-card">
+
+        <div class="card-header">
+            <div class="header-icon">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+           <h3>Aktivitas Pelanggaran</h3>
+        </div>
+
+        <div class="donut-wrapper">
+            <div class="donut-chart">
+                <div class="donut-content">
+                    <h2><?= $aktivitas_hari_ini; ?></h2>
                 </div>
-
-               
-
-                <div class="chart-container">
-
-    <div class="bar-item">
-        <span>2</span>
-        <div class="bar bar-jan"></div>
-        <small>Jan</small>
-    </div>
-
-    <div class="bar-item">
-        <span>4</span>
-        <div class="bar bar-feb"></div>
-        <small>Feb</small>
-    </div>
-
-    <div class="bar-item">
-        <span>6</span>
-        <div class="bar bar-mar"></div>
-        <small>Mar</small>
-    </div>
-
-</div>
-
-<div class="chart-footer">
-    Statistik Pelanggaran Per-bulan
-</div>
-
             </div>
-
-            <!-- Aktivitas PELANGGARAN -->
-
-            <div class="dashboard-card">
-
-    <div class="card-header">
-
-        <div class="header-icon">
-            <i class="fas fa-triangle-exclamation"></i>
         </div>
 
-        <h3>Aktivitas Pelanggaran</h3>
-
-    </div>
-
-    <div class="donut-wrapper">
-
-        <div class="donut-chart">
-
-            <div class="donut-content">
-                <h2><?= $total; ?></h2>
+        <div class="date-box">
+            <i class="fas fa-calendar-days"></i>
+            <div>
+                <h4><?= date('d F Y'); ?></h4>
+                
             </div>
-
         </div>
 
     </div>
 
-    
-
-    <div class="date-box">
-
-        <i class="fas fa-calendar-days"></i>
-
-        <div>
-            <h4><?= date('d F Y'); ?></h4>
-            <span>Tanggal Berjalan</span>
-        </div>
-
-    </div>
-
-</div>
-
-        </section>
-
+</section>
     </main>
 
 </div>

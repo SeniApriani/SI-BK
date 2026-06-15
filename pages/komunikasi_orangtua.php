@@ -1,65 +1,23 @@
 
 <?php
 include "../config/koneksi.php";
-
-if (isset($_GET['selesai'])) {
-    $id = $_GET['selesai'];
-
-    mysqli_query($koneksi, "
-        UPDATE pelanggaran_siswa 
-        SET status='selesai'
-        WHERE id_siswa='$id'
-    ");
-}
-
 $query = mysqli_query($koneksi, "
-SELECT 
+SELECT
     s.id_siswa,
     s.nama_siswa,
     s.kelas,
-
-    ROUND(
-        p.total_poin - 
-       ROUND(p.total_poin * (COALESCE(r.persen,0) + COALESCE(ro.persen,0)) / 100)
-    ) AS total_poin,
-
-    COALESCE(k.status,'proses') AS status
+    COALESCE(p.total_poin,0) AS total_poin
+    
 
 FROM data_siswa s
 
-LEFT JOIN komunikasi_ortu k 
-ON k.id_siswa = s.id_siswa
+LEFT JOIN rekap_poin p
+ON p.id_siswa = s.id_siswa
 
-LEFT JOIN (
-    SELECT 
-        ps.id_siswa,
-        SUM(jp.poin) AS total_poin
-    FROM pelanggaran_siswa ps
-    JOIN jenis_pelanggaran jp 
-        ON ps.id_pelanggaran = jp.id_pelanggaran
-    GROUP BY ps.id_siswa
-) p ON p.id_siswa = s.id_siswa
 
-LEFT JOIN (
-    SELECT 
-        id_siswa,
-        SUM(poin_remisi) AS persen
-    FROM pengajuan_remisi
-    WHERE status='Disetujui'
-    GROUP BY id_siswa
-) r ON r.id_siswa = s.id_siswa
-
-LEFT JOIN (
-    SELECT 
-        id_siswa,
-        SUM(persen_remisi) AS persen
-    FROM remisi_otomatis
-    GROUP BY id_siswa
-) ro ON ro.id_siswa = s.id_siswa
-
-HAVING total_poin >= 21
-
+WHERE COALESCE(p.total_poin,0) >= 21
 ORDER BY total_poin DESC
+
 ") or die(mysqli_error($koneksi));
 ?>
 <!DOCTYPE html>
@@ -508,7 +466,7 @@ table tbody tr:hover{
                         <th>Nama Siswa</th>
                         <th>Kelas</th>
                         <th>Total Poin</th>
-                        <th>Detail</th>
+                       <th>Tindak Lanjut</th>
                     </tr>
 
                 </thead>
@@ -520,41 +478,14 @@ table tbody tr:hover{
     <td><?= $row['nama_siswa']; ?></td>
     <td><?= $row['kelas']; ?></td>
     <td><?= $row['total_poin']; ?></td>
-    <td>
+    
 
-        <div class="dropdown">
-
-            <button class="btn-detail">
-
-<?php if(trim(strtolower($row['status'])) == 'selesai'){ ?>
-
-    <i class="fas fa-check-circle"></i> Selesai
-
-<?php } else { ?>
-
-    <i class="fas fa-eye"></i>
-
-<?php } ?>
-
-</button>
-
-            <div class="dropdown-content">
-
-                <a href="input_komunikasi_ortu.php?id=<?= $row['id_siswa']; ?>">
-                    <i class="fas fa-comments"></i>
-                    Proses
-                </a>
-
-                <a href="?selesai=<?= $row['id_siswa']; ?>">
-    <i class="fas fa-check-circle"></i>
-    Selesai
-</a>
-
-            </div>
-
-        </div>
-
-    </td>
+    
+   <td>
+    <a href="input_komunikasi_ortu.php?id=<?= $row['id_siswa']; ?>" class="btn-proses">
+        <i class="fas fa-comments"></i> Proses
+    </a>
+</td>
 </tr>
 <?php } ?>
 </tbody>
@@ -573,32 +504,6 @@ table tbody tr:hover{
             <i class="fas fa-comments"></i>
 
             Input Hasil Komunikasi Orang Tua
-
-        </div>
-
-        <div class="info-grid">
-
-            <div class="info-item">
-                <small>Nama Siswa</small>
-                <strong>Ahmad Fauzi</strong>
-            </div>
-
-            <div class="info-item">
-                <small>NISN</small>
-                <strong>1234567890</strong>
-            </div>
-
-            <div class="info-item">
-                <small>Kelas</small>
-                <strong>XI RPL 1</strong>
-            </div>
-
-            <div class="info-item">
-                <small>Total Poin</small>
-                <strong>120</strong>
-            </div>
-
-        </div>
 
         <form>
 

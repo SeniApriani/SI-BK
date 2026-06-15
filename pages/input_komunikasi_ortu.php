@@ -46,16 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 /* ambil data siswa */
 $data = mysqli_query($koneksi,"
-SELECT 
+SELECT
     s.id_siswa,
     s.nama_siswa,
     s.nisn,
     s.kelas,
-    COALESCE(SUM(jp.poin),0) AS total_poin
-FROM pelanggaran_siswa ps
-JOIN data_siswa s ON ps.id_siswa = s.id_siswa
-LEFT JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
-WHERE s.id_siswa = '$id'
+    COALESCE(rp.total_poin,0) AS total_poin
+FROM data_siswa s
+LEFT JOIN rekap_poin rp
+ON s.id_siswa = rp.id_siswa
+WHERE s.id_siswa='$id'
 GROUP BY s.id_siswa, s.nama_siswa, s.nisn, s.kelas
 ");
 

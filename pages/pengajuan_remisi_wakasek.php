@@ -1,43 +1,103 @@
 <?php
 include "../config/koneksi.php";
 
-/* =========================
-   ACTION SETUJUI / TOLAK
-========================= */
+/* =====================================================
+   ACTION: SETUJUI / TOLAK PENGAJUAN REMISI
+===================================================== */
 if(isset($_GET['action']) && isset($_GET['id'])){
 
     $id = $_GET['id'];
     $action = $_GET['action'];
 
+    /* =========================
+       SETUJUI REMISI
+    ========================= */
     if($action == 'setujui'){
+
+        // 1. update status pengajuan
+        // mysqli_query($koneksi,"
+        //     UPDATE pengajuan_remisi
+        //     SET status='Disetujui'
+        //     WHERE id_remisi='$id'
+        // ");
+
+        // 2. ambil data remisi (siswa + persen)
+        $data_remisi = mysqli_fetch_assoc(mysqli_query($koneksi,"
+            SELECT id_siswa, poin_remisi
+            FROM pengajuan_remisi
+            WHERE id_remisi='$id'
+        "));
+
+        $id_siswa = $data_remisi['id_siswa'];
+        $persen_remisi = $data_remisi['poin_remisi'];
+
+        // 3. ambil total poin dari rekap (SUMBER UTAMA SISTEM BARU)
+        $data = mysqli_fetch_assoc(mysqli_query($koneksi,"
+            SELECT total_poin
+            FROM rekap_poin
+            WHERE id_siswa='$id_siswa'
+        "));
+
+        $total_poin = $data['total_poin'];
+
+        // 4. hitung potongan remisi
+        // rumus: (total_poin * persen) / 100
+        $potongan = round(($total_poin * $persen_remisi) / 100);
+
+        // simpan status + hasil potongan(terbaruuuu)
+mysqli_query($koneksi,"
+    UPDATE pengajuan_remisi
+    SET
+        status='Disetujui',
+        potongan_poin='$potongan'
+    WHERE id_remisi='$id'
+");
+
+        // 5. hasil akhir (tidak boleh minus)
+        $total_baru = max(0, $total_poin - $potongan);
+
+        // 6. update ke rekap poin
         mysqli_query($koneksi,"
-        UPDATE pengajuan_remisi
-        SET status='Disetujui'
-        WHERE id_remisi='$id'
+            UPDATE rekap_poin
+            SET total_poin = $total_baru
+            WHERE id_siswa='$id_siswa'
         ");
     }
 
+    /* =========================
+       TOLAK REMISI
+    ========================= */
     if($action == 'tolak'){
+
         mysqli_query($koneksi,"
-        UPDATE pengajuan_remisi
-        SET status='Ditolak'
-        WHERE id_remisi='$id'
+            UPDATE pengajuan_remisi
+            SET status='Ditolak'
+            WHERE id_remisi='$id'
         ");
     }
 
+    // redirect kembali
     echo "<script>window.location='pengajuan_remisi_wakasek.php';</script>";
     exit;
 }
 
-/* =========================
-   SIMPAN PENGAJUAN (ADA BUKTI)
-========================= */
+/* =====================================================
+   SIMPAN PENGAJUAN REMISI (INPUT PRESTASI)
+===================================================== */
 if(isset($_POST['simpan'])){
 
     $id_siswa = $_POST['id_siswa'];
     $jenis_prestasi = $_POST['jenis_prestasi'];
     $nama_prestasi = $_POST['nama_prestasi'];
     $poin_remisi = $_POST['poin_remisi'];
+
+    // ambil kelas siswa (untuk arsip pengajuan)
+    $data = mysqli_fetch_assoc(mysqli_query($koneksi,"
+        SELECT kelas
+        FROM data_siswa
+        WHERE id_siswa='$id_siswa'
+    "));
+    $kelas = $data['kelas'];
 
     // upload bukti
     $bukti = $_FILES['bukti']['name'];
@@ -48,41 +108,35 @@ if(isset($_POST['simpan'])){
         move_uploaded_file($tmp, $folder.$bukti);
     }
 
-   
-
+    // simpan pengajuan remisi
     $simpan = mysqli_query($koneksi,"
+        INSERT INTO pengajuan_remisi
+        (id_siswa, kelas, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
+        VALUES
+        ('$id_siswa','$kelas','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
+    ");
 
-    
-INSERT INTO pengajuan_remisi
-(id_siswa, kelas, jenis_prestasi, nama_prestasi, poin_remisi, status, bukti)
-VALUES
-('$id_siswa','$kelas','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
-");
-
-     $data = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT kelas FROM data_siswa WHERE id_siswa='$id_siswa'
-"));
-
-$kelas = $data['kelas'];
-
+    // notifikasi sukses
     if($simpan){
         echo "
         <script>
-        localStorage.setItem('remisi_berhasil','1');
-        window.location='penilaian_poin_pelanggaran.php';
+            localStorage.setItem('remisi_berhasil','1');
+            window.location='penilaian_poin_pelanggaran.php';
         </script>
         ";
         exit;
     }
 }
 
+/* =====================================================
+   AMBIL DATA TABEL PENGAJUAN REMISI
+===================================================== */
 $remisi = mysqli_query($koneksi,"
-SELECT pr.*, ds.nama_siswa, ds.kelas
-FROM pengajuan_remisi pr
-JOIN data_siswa ds
-ON pr.id_siswa = ds.id_siswa
+    SELECT pr.*, ds.nama_siswa, ds.kelas
+    FROM pengajuan_remisi pr
+    JOIN data_siswa ds
+    ON pr.id_siswa = ds.id_siswa
 ");
-
 ?>
 <!DOCTYPE html>
 <html lang="id">

@@ -331,8 +331,7 @@ html{
     display:block;
 
 }
-
-```html
+html
 @media(max-width:950px){
 
     .hero-content{
