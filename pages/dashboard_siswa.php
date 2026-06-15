@@ -7,8 +7,8 @@ $nama = $_SESSION['nama'] ?? 'Siswa';
 
 // TOTAL POIN
 $total = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT COALESCE(SUM(poin),0) AS total
-FROM pelanggaran_siswa
+SELECT COALESCE(SUM(total_poin),0) AS total
+FROM rekap_poin
 WHERE id_siswa='$id_siswa'
 "))['total'];
 
@@ -205,6 +205,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <!-- TOTAL POIN -->
     <div class="dashboard-card">
+        <a href="rekap_poin_siswa.php?id=<?= $id_siswa ?>" style="text-decoration:none;color:inherit;">
 
         <div class="card-header">
 
@@ -233,7 +234,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             </div>
 
             <p style="margin-top:10px;color:#6b7280;">
-                Poin saat ini
+                Lihat Monitoring Poin
             </p>
 
         </div>

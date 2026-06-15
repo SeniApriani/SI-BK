@@ -2,12 +2,13 @@
 include "../config/koneksi.php";
 session_start();
 
+if(!isset($_SESSION['id_siswa'])){
+    die("Session login siswa tidak ditemukan");
+}
+
 $id_siswa = $_SESSION['id_siswa'];
 $kelas = $_SESSION['kelas'];
 
-if(!isset($id_siswa)){
-    die("Session login siswa tidak ditemukan");
-}
 
 if(isset($_POST['simpan'])){
 
@@ -30,11 +31,11 @@ if(isset($_POST['simpan'])){
         ('$id_siswa','$kelas','$jenis_prestasi','$nama_prestasi','$poin_remisi','Menunggu','$bukti')
     ");
 
-    echo "<script>
-        localStorage.setItem('remisi_berhasil','1');
-        window.location='pengajuan_remisi_siswa.php';
-    </script>";
-    exit;
+    $_SESSION['success'] = 'Pengajuan berhasil';
+header("Location: riwayat_remisi_siswa.php");
+exit;
+
+
 }
 ?>
 <!DOCTYPE html>
@@ -323,14 +324,14 @@ input[type=file]{
 
         <div class="tab-menu">
 
-            <a href="penilaian_poin_pelanggaran.php" class="tab active">
+            <a href="pengajuan_remisi_siswa.php" class="tab active">
                 <i class="fas fa-award"></i>
                 Pengajuan Remisi
             </a>
 
-            <a href="riwayat_remisi.php" class="tab">
+            <a href="riwayat_remisi_siswa.php" class="tab">
                 <i class="fas fa-history"></i>
-                Riwayat Remisi
+                Riwayat Pengajuan Remisi
             </a>
         </div>
 

@@ -85,13 +85,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     </a>
 
-                    <a href="jenis_pelanggaran.php">
+                    <!-- <a href="jenis_pelanggaran.php">
 
                         <i class="fas fa-list"></i>
 
                         Data Jenis Pelanggaran
 
-                    </a>
+                    </a> -->
 
                 </div>
 
@@ -163,13 +163,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     </a>
 
-                    <a href="surat_peringatan.php">
+                    <!-- <a href="surat_peringatan.php">
 
                         <i class="fas fa-envelope-open-text"></i>
 
                         Surat Peringatan
 
-                    </a>
+                    </a> -->
 
                 </div>
 

@@ -43,8 +43,10 @@ SELECT
     pr.nama_prestasi AS keterangan,
     CONCAT(pr.poin_remisi,'%') AS remisi,
     pr.bukti
+
 FROM pengajuan_remisi pr
 JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
+WHERE pr.status='Disetujui'
 
 UNION ALL
 
@@ -289,7 +291,6 @@ table tbody tr:hover{
     background:#dbeafe;
 }
 
-```html id="x7d9ql"
 /* PAGINATION */
 
 .pagination-wrapper{
@@ -506,6 +507,7 @@ SELECT
     pr.bukti
 FROM pengajuan_remisi pr
 JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
+WHERE pr.status='Disetujui'
 
 UNION ALL
 
