@@ -1,7 +1,6 @@
 
 <?php
 include "../config/koneksi.php";
-
 /* ambil id siswa */
 $id = $_GET['id'] ?? '';
 
