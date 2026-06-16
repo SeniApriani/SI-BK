@@ -10,7 +10,7 @@ SELECT DISTINCT id_siswa
 FROM pelanggaran_siswa
 ");
 
-echo "Remisi otomatis berjalan <br>";
+// echo "Remisi otomatis berjalan <br>";
 while($row = mysqli_fetch_assoc($siswa)){
 
     $id_siswa = $row['id_siswa'];

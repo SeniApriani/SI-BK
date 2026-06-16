@@ -39,6 +39,7 @@ if(isset($_GET['action']) && isset($_GET['id'])){
         "));
 
         $total_poin = $data['total_poin'];
+        
 
         // 4. hitung potongan remisi
         // rumus: (total_poin * persen) / 100

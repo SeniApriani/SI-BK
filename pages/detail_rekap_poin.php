@@ -355,7 +355,7 @@ while($r = mysqli_fetch_assoc($riwayat)){
 
 </table>
 
-</div>
+<!-- </div>
 
 <div class="keterangan">
 
@@ -385,7 +385,7 @@ while($r = mysqli_fetch_assoc($riwayat)){
 <h1>0</h1>
 </div>
 
-</div>
+</div> -->
 
 <a href="rekap_poin_wakasek.php" class="btn-back">
 <i class="fas fa-chevron-left"></i>

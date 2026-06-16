@@ -373,7 +373,7 @@ table tbody tr:hover{
 
 <div class="filter-box">
 
-<select>
+<!-- <select>
 <option>Semester</option>
 <option>Ganjil</option>
 <option>Genap</option>
@@ -382,7 +382,7 @@ table tbody tr:hover{
 <select>
 <option>Tahun Ajaran</option>
 <option>2024/2025</option>
-<option>2025/2026</option>
+<option>2025/2026</option> -->
 </select>
 
 <form method="GET">

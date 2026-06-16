@@ -430,11 +430,9 @@ html
 
             <p>
 
-                Memudahkan wali kelas, guru BK,
-                dan pihak sekolah dalam memantau,
+                Memudahkan pihak sekolah dalam memantau,
                 mengelola, serta menindaklanjuti
-                pelanggaran siswa secara digital,
-                terintegrasi, dan terdokumentasi.
+                pelanggaran siswa secara digital dan terdokumentasi.
 
             </p>
 
@@ -517,7 +515,7 @@ html
 
         </div>
 
-        <div class="feature-card">
+        <!-- <div class="feature-card">
 
             <i class="fas fa-users"></i>
 
@@ -529,7 +527,7 @@ html
 
             </p>
 
-        </div>
+        </div> -->
 
         <div class="feature-card">
 
