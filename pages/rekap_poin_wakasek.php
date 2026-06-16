@@ -475,10 +475,10 @@ table tbody tr:hover{
 
 </div>
 
-<button class="btn-download">
-<i class="fas fa-download"></i>
-Unduh
-</button>
+<a href="cetak_rekap_poin.php?kelas=<?= $kelas; ?>" class="btn-download">
+    <i class="fas fa-download"></i>
+    Unduh
+</a>
 
 </div>
 
