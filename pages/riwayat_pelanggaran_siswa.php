@@ -463,9 +463,9 @@ table tbody tr:hover{
     <thead>
         <tr>
             <th>Tanggal</th>
-            <th>Nama Siswa</th>
+             <th>Nama</th>
             <th>Kelas</th>
-            <th>Pelanggaran</th>
+            <th>Jenis Pelanggaran</th>
             <th>Poin</th>
             <th>Catatan</th>
         </tr>

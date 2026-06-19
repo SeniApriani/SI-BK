@@ -515,20 +515,7 @@ html
 
         </div>
 
-        <!-- <div class="feature-card">
-
-            <i class="fas fa-users"></i>
-
-            <h3>Komunikasi Orang Tua</h3>
-
-            <p>
-
-                Dokumentasi pemanggilan, komunikasi dan home visit.
-
-            </p>
-
-        </div> -->
-
+       
         <div class="feature-card">
 
             <i class="fas fa-file-signature"></i>

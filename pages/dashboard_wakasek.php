@@ -128,13 +128,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <div class="submenu">
 
-                    <a href="data_pelanggaran_siswa.php">
+                    <!-- <a href="data_pelanggaran_siswa.php">
 
                         <i class="fas fa-file-circle-exclamation"></i>
 
                         Data Pelanggaran Siswa
 
-                    </a>
+                    </a> -->
 
                     <a href="pengajuan_remisi_wakasek.php">
 

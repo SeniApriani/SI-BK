@@ -404,11 +404,12 @@ body{
     <input type="text" id="searchSiswa" placeholder="Cari siswa...">
 
     <div id="listSiswa" class="list-siswa">
-        <?php while($s = mysqli_fetch_assoc($siswa)) { ?>
-            <div class="item-siswa" data-id="<?= $s['id_siswa']; ?>">
-                <?= $s['nama_siswa']; ?>
-            </div>
-        <?php } ?>
+
+    <?php while($s = mysqli_fetch_assoc($siswa)) { ?>
+    <div class="item-siswa" data-id="<?= $s['id_siswa']; ?>">
+        <?= $s['nama_siswa']; ?> - <?= $s['kelas']; ?> (<?= $s['nisn']; ?>)
+    </div>
+<?php } ?>
     </div>
 
     <input type="hidden" name="id_siswa" id="id_siswa">
@@ -457,7 +458,7 @@ body{
 
             <div class="form-group">
 
-                <label>Catatan Konseling</label>
+                <label>Catatan</label>
 
                 
                 <textarea name="catatan" placeholder="Masukkan catatan konseling jika diperlukan..."></textarea>
