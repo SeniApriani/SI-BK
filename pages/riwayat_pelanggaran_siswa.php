@@ -20,7 +20,15 @@ if ($kelas != '') {
 
 /* ===================== DATA ===================== */
 $data = mysqli_query($koneksi, "
-SELECT ps.id, ps.tanggal, s.nama_siswa, s.kelas, jp.jenis_pelanggaran, jp.poin, ps.catatan
+SELECT ps.id,
+       ps.tanggal,
+       s.nama_siswa,
+       s.nisn,
+       s.kelas,
+       jp.kategori,
+       jp.jenis_pelanggaran,
+       jp.poin,
+       ps.catatan
 FROM pelanggaran_siswa ps
 JOIN data_siswa s ON ps.id_siswa = s.id_siswa
 JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
@@ -463,10 +471,12 @@ table tbody tr:hover{
     <thead>
         <tr>
             <th>Tanggal</th>
-             <th>Nama</th>
+            <th>Nama</th>
+            <th>NISN</th>
             <th>Kelas</th>
+            <th>Kategori</th>
             <th>Jenis Pelanggaran</th>
-            <th>Poin</th>
+            <th>Bobot Poin</th>
             <th>Catatan</th>
         </tr>
     </thead>
@@ -474,9 +484,11 @@ table tbody tr:hover{
     <tbody>
         <?php while($r = mysqli_fetch_assoc($data)) { ?>
         <tr>
-            <td><?= $r['tanggal']; ?></td>
-            <td><?= $r['nama_siswa']; ?></td>
-            <td><?= $r['kelas']; ?></td>
+           <td><?= date('d/m/Y', strtotime($r['tanggal'])); ?></td>
+          <td><?= $r['nama_siswa']; ?></td>
+<td><?= $r['nisn']; ?></td>
+<td><?= $r['kelas']; ?></td>
+<td><?= $r['kategori']; ?></td>
             <td><a href="hapus_pelanggaran.php?id=<?= $r['id']; ?>"
        onclick="return confirm('Data ini akan dihapus dan total poin akan berkurang. Lanjutkan?');"
        style="color:#374151;; font-weight:500; text-decoration:none;">
