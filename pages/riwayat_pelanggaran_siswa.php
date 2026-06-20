@@ -28,10 +28,13 @@ SELECT ps.id,
        jp.kategori,
        jp.jenis_pelanggaran,
        jp.poin,
-       ps.catatan
+       ps.catatan,
+       lk.id_laporan
 FROM pelanggaran_siswa ps
 JOIN data_siswa s ON ps.id_siswa = s.id_siswa
 JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+LEFT JOIN laporan_konseling lk
+ON ps.id = lk.id_pelanggaran_siswa
 $where
 ORDER BY ps.tanggal DESC
 LIMIT $limit OFFSET $offset
@@ -377,10 +380,151 @@ table tbody tr:hover{
     background:#15803d;
 }
 
+
+/* STATUS */
+.status-awal{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:10px;
+    background:#fee2e2;
+    color:#dc2626;
+    text-decoration:none;
+    font-weight:600;
+    font-size:13px;
+}
+
+.status-laporan{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:10px;
+    background:#dcfce7;
+    color:#15803d;
+    text-decoration:none;
+    font-weight:600;
+    font-size:13px;
+}
+
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+}
+
+.modal-content{
+    background:#fff;
+    width:90%;
+    max-width:700px;
+    margin:50px auto;
+    padding:25px;
+    border-radius:15px;
+    max-height:85vh;
+    overflow-y:auto;
+}
+
+.close-modal{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+.detail-card{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:10px;
+}
+
+.detail-label{
+    font-weight:600;
+    color:#374151;
+}
+
+.detail-value{
+    color:#6b7280;
+}
+
+.judul-section{
+    color:#15803d;
+    font-size:18px;
+    margin-bottom:15px;
+    font-weight:600;
+}
 </style>
 </head>
 <body>
 
+<!-- MODAL POP-UP -->
+ <div id="modalLaporan" class="modal">
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+       <h3>Tindak Lanjut Pelanggaran</h3>
+
+<div id="detailPelanggaran"></div>
+
+<div id="formLaporan">
+
+<div style="margin-top:15px;">
+    <label>Tanggal Tindak Lanjut</label>
+
+    <input
+        type="date"
+        id="tanggal_tindak_lanjut"
+        style="
+        width:100%;
+        padding:10px;
+        border:1px solid #d1d5db;
+        border-radius:10px;
+        margin-top:8px;"
+    >
+</div>
+
+<div style="margin-top:15px;">
+    <label>Catatan Konseling/Tindak Lanjut</label>
+
+    <textarea
+        id="catatan_konseling"
+        style="
+        width:100%;
+        min-height:120px;
+        padding:10px;
+        border:1px solid #d1d5db;
+        border-radius:10px;
+        margin-top:8px;"
+    ></textarea>
+</div>
+
+<input type="hidden" id="id_pelanggaran_siswa">
+
+<button id="btnSimpanLaporan"
+        class="btn-filter"
+        style="margin-top:15px;">
+    Simpan
+</button>
+    </div>
+</div>
+</div>
+
+
+
+<!-- CONTAINER -->
 <div class="container">
 
     <!-- TAB -->
@@ -477,7 +621,8 @@ table tbody tr:hover{
             <th>Kategori</th>
             <th>Jenis Pelanggaran</th>
             <th>Bobot Poin</th>
-            <th>Catatan</th>
+            <th>Detail Pelanggaran</th>
+            <th>Status</th>
         </tr>
     </thead>
 
@@ -497,6 +642,41 @@ table tbody tr:hover{
 </td>
             <td><?= $r['poin']; ?></td>
             <td><?= $r['catatan']; ?></td>
+         <td>
+
+<?php if(empty($r['id_laporan'])){ ?>
+
+    <a href="#"
+       class="laporan-awal"
+       data-id="<?= $r['id']; ?>"
+       style="
+       background:#fee2e2;
+       color:#dc2626;
+       padding:8px 12px;
+       border-radius:10px;
+       text-decoration:none;
+       font-weight:600;">
+        Laporan Awal
+    </a>
+
+<?php } else { ?>
+
+    <a href="#"
+       class="lihat-laporan"
+       data-id="<?= $r['id']; ?>"
+       style="
+       background:#dcfce7;
+       color:#15803d;
+       padding:8px 12px;
+       border-radius:10px;
+       text-decoration:none;
+       font-weight:600;">
+        Lihat Laporan
+    </a>
+
+<?php } ?>
+
+</td>
         </tr>
         <?php } ?>
     </tbody>
@@ -537,14 +717,194 @@ for ($i = $start; $i <= $end; $i++) { ?>
             <i class="fas fa-chevron-left"></i>
         </a>
 
-        <!-- <a href="#" class="btn-download">
-            <i class="fas fa-download"></i>
-            Unduh Data
-        </a> -->
-
     </div>
 
 </div>
 
+
+<!-- POP-UP MODAL -->
+
+<script>
+
+const modal = document.getElementById('modalLaporan');
+
+document.addEventListener('click', function(e){
+
+    // LAPORAN AWAL
+    if(e.target.classList.contains('laporan-awal')){
+
+        e.preventDefault();
+
+        let id = e.target.dataset.id;
+        document.getElementById('formLaporan').style.display = 'block';
+
+        document.getElementById('tanggal_tindak_lanjut').style.display = 'block';
+        document.getElementById('catatan_konseling').style.display = 'block';
+        document.getElementById('btnSimpanLaporan').style.display = 'inline-block';
+
+        fetch('get_detail_pelanggaran.php?id=' + id)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById('id_pelanggaran_siswa').value = data.id;
+
+            document.getElementById('detailPelanggaran').innerHTML = `
+                <div class="detail-card">
+                    <div class="detail-grid">
+
+                        <div class="detail-label">Tanggal</div>
+                        <div class="detail-value">${data.tanggal}</div>
+
+                        <div class="detail-label">Nama Siswa</div>
+                        <div class="detail-value">${data.nama_siswa}</div>
+
+                        <div class="detail-label">NISN</div>
+                        <div class="detail-value">${data.nisn}</div>
+
+                        <div class="detail-label">Kelas</div>
+                        <div class="detail-value">${data.kelas}</div>
+
+                        <div class="detail-label">Kategori</div>
+                        <div class="detail-value">${data.kategori}</div>
+
+                        <div class="detail-label">Jenis Pelanggaran</div>
+                        <div class="detail-value">${data.jenis_pelanggaran}</div>
+
+                        <div class="detail-label">Bobot Poin</div>
+                        <div class="detail-value">${data.poin}</div>
+
+                        <div class="detail-label">Detail Pelanggaran</div>
+                        <div class="detail-value">${data.catatan ?? '-'}</div>
+
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+
+        });
+
+    }
+
+    // LIHAT LAPORAN
+    if(e.target.classList.contains('lihat-laporan')){
+
+        e.preventDefault();
+
+        let id = e.target.dataset.id;
+
+        fetch('get_laporan_konseling.php?id=' + id)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('detailPelanggaran').innerHTML = `
+    <div class="detail-card">
+        <div class="detail-grid">
+
+            <div class="detail-label">Nama Siswa</div>
+            <div class="detail-value">${data.nama_siswa}</div>
+
+            <div class="detail-label">NISN</div>
+            <div class="detail-value">${data.nisn}</div>
+
+            <div class="detail-label">Kelas</div>
+            <div class="detail-value">${data.kelas}</div>
+
+            <div class="detail-label">Kategori</div>
+            <div class="detail-value">${data.kategori}</div>
+
+            <div class="detail-label">Jenis Pelanggaran</div>
+            <div class="detail-value">${data.jenis_pelanggaran}</div>
+
+            <div class="detail-label">Bobot Poin</div>
+            <div class="detail-value">${data.poin}</div>
+
+            <div class="detail-label">Detail Pelanggaran</div>
+            <div class="detail-value">${data.catatan ?? '-'}</div>
+
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-grid">
+
+            <div class="detail-label">Tanggal Tindak Lanjut</div>
+            <div class="detail-value">${data.tanggal_tindak_lanjut}</div>
+
+            <div class="detail-label">Catatan Konseling</div>
+            <div class="detail-value">${data.catatan_konseling}</div>
+
+        </div>
+    </div>
+`;
+
+           document.getElementById('formLaporan').style.display = 'none';
+            modal.style.display = 'block';
+
+        });
+
+    }
+
+});
+
+document.querySelector('.close-modal').onclick = function(){
+    modal.style.display = 'none';
+}
+
+window.onclick = function(event){
+    if(event.target == modal){
+        modal.style.display = 'none';
+    }
+}
+
+document.getElementById('btnSimpanLaporan').addEventListener('click', function(){
+
+    let id = document.getElementById('id_pelanggaran_siswa').value;
+    let catatan = document.getElementById('catatan_konseling').value;
+    let tanggal = document.getElementById('tanggal_tindak_lanjut').value;
+
+    if(tanggal == ''){
+        alert('Tanggal tindak lanjut wajib diisi!');
+        return;
+    }
+
+    if(catatan.trim() == ''){
+        alert('Catatan konseling wajib diisi!');
+        return;
+    }
+
+    fetch('simpan_laporan_konseling.php', {
+
+        method:'POST',
+
+        headers:{
+            'Content-Type':'application/x-www-form-urlencoded'
+        },
+
+        body:
+        'id_pelanggaran_siswa=' + id +
+        '&catatan_konseling=' + encodeURIComponent(catatan) +
+        '&tanggal_tindak_lanjut=' + tanggal
+
+    })
+
+    .then(response => response.text())
+    .then(result => {
+
+        if(result.trim() == 'success'){
+
+            alert('Laporan berhasil disimpan');
+            location.reload();
+
+        }else{
+
+            alert(result);
+
+        }
+
+    });
+
+});
+
+</script>
 </body>
 </html>

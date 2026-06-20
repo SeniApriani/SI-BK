@@ -22,12 +22,22 @@ $totalPage = ceil($totalData / $limit);
 /* DATA RIWAYAT */
 
 $query = mysqli_query($koneksi,"
-SELECT ps.tanggal, jp.jenis_pelanggaran, jp.poin, ps.catatan
+SELECT
+    ps.id,
+    ps.tanggal,
+    jp.kategori,
+    jp.jenis_pelanggaran,
+    jp.poin,
+    ps.catatan,
+    lk.id_laporan
 FROM pelanggaran_siswa ps
-JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+JOIN jenis_pelanggaran jp
+ON ps.id_pelanggaran = jp.id_pelanggaran
+LEFT JOIN laporan_konseling lk
+ON ps.id = lk.id_pelanggaran_siswa
 WHERE ps.id_siswa='$nisn'
 ORDER BY ps.tanggal DESC
-LIMIT $start, $limit
+LIMIT $start,$limit
 ");
 ?>
 
@@ -174,11 +184,83 @@ tr:hover{
     color:#fff;
 }
 
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+}
+
+
+
+.modal-content{
+    background:#fff;
+    width:90%;
+    max-width:700px;
+    margin:50px auto;
+    padding:25px;
+    border-radius:15px;
+    max-height:85vh;
+    overflow-y:auto;
+    scrollbar-width:thin;
+}
+
+.close-modal{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.detail-card{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:10px;
+}
+
+.detail-label{
+    font-weight:600;
+    color:#374151;
+}
+
+.detail-value{
+    color:#6b7280;
+}
+
 
 </style>
 </head>
 
 <body>
+
+
+<!-- POP-UP MODAL -->
+ <div id="modalLaporan" class="modal">
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+        <h3>Tindak Lanjut Pelanggaran</h3>
+
+        <div id="detailLaporan"></div>
+
+    </div>
+</div>
+
+<!-- POP-UP CONTAINER -->
 
 <div class="container">
 
@@ -196,9 +278,11 @@ tr:hover{
             <thead>
                 <tr>
                     <th>Tanggal</th>
-                    <th>Pelanggaran</th>
-                    <th>Poin</th>
-                    <th>Keterangan</th>
+<th>Kategori</th>
+<th>Jenis Pelanggaran</th>
+<th>Bobot Poin</th>
+<th>Detail Pelanggaran</th>
+<th>Status</th>
                 </tr>
             </thead>
 
@@ -208,10 +292,53 @@ tr:hover{
 
                 <?php while($row = mysqli_fetch_assoc($query)){ ?>
                 <tr>
-                    <td><?= $row['tanggal']; ?></td>
-                    <td><?= $row['jenis_pelanggaran']; ?></td>
-                    <td><span class="badge"><?= $row['poin']; ?></span></td>
-                    <td><?= $row['catatan'] ?? '-' ?></td>
+                    <td><?= date('d/m/Y', strtotime($row['tanggal'])); ?></td>
+
+<td><?= $row['kategori']; ?></td>
+
+<td><?= $row['jenis_pelanggaran']; ?></td>
+
+<td>
+    <span class="badge">
+        <?= $row['poin']; ?>
+    </span>
+</td>
+
+<td><?= $row['catatan'] ?: '-'; ?></td>
+
+<td>
+
+<?php if(empty($row['id_laporan'])){ ?>
+
+    <span style="
+    background:#fee2e2;
+    color:#dc2626;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;">
+        Laporan Awal
+    </span>
+
+<?php } else { ?>
+
+    <a href="#"
+       class="lihat-laporan"
+       data-id="<?= $row['id']; ?>"
+       style="
+       background:#dcfce7;
+       color:#15803d;
+       padding:6px 10px;
+       border-radius:8px;
+       text-decoration:none;
+       font-size:12px;
+       font-weight:600;">
+        Lihat Laporan
+    </a>
+
+<?php } ?>
+
+</td>
                 </tr>
                 <?php } ?>
 
@@ -250,6 +377,79 @@ tr:hover{
     </div>
 
 </div>
+
+<!-- MODAL -->
+ <script>
+
+const modal = document.getElementById('modalLaporan');
+
+document.addEventListener('click', function(e){
+
+    if(e.target.classList.contains('lihat-laporan')){
+
+        e.preventDefault();
+
+        let id = e.target.dataset.id;
+
+        fetch('get_laporan_konseling.php?id=' + id)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById('detailLaporan').innerHTML = `
+                <div class="detail-card">
+                    <div class="detail-grid">
+
+                        <div class="detail-label">Tanggal Pelanggaran</div>
+                        <div class="detail-value">${data.tanggal}</div>
+
+                        <div class="detail-label">Kategori</div>
+                        <div class="detail-value">${data.kategori}</div>
+
+                        <div class="detail-label">Jenis Pelanggaran</div>
+                        <div class="detail-value">${data.jenis_pelanggaran}</div>
+
+                        <div class="detail-label">Bobot Poin</div>
+                        <div class="detail-value">${data.poin}</div>
+
+                        <div class="detail-label">Detail Pelanggaran</div>
+                        <div class="detail-value">${data.catatan ? data.catatan : '-'}</div>
+                      
+
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-grid">
+
+                        <div class="detail-label">Tanggal Tindak Lanjut</div>
+                        <div class="detail-value">${data.tanggal_tindak_lanjut}</div>
+
+                        <div class="detail-label">Catatan Konseling</div>
+                        <div class="detail-value">${data.catatan_konseling}</div>
+
+                    </div>
+                </div>
+            `;
+
+           modal.style.display='flex';
+
+        });
+
+    }
+
+});
+
+document.querySelector('.close-modal').onclick = function(){
+    modal.style.display='none';
+}
+
+window.onclick = function(event){
+    if(event.target==modal){
+        modal.style.display='none';
+    }
+}
+
+</script>
 
 </body>
 </html>
