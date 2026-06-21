@@ -1,34 +1,53 @@
 <?php
 include "../config/koneksi.php";
 
+// PREDIKAT
+function getPredikat($poin) {
+    if ($poin <= 25) return ['A','Sangat Baik'];
+    elseif ($poin <= 50) return ['B','Baik'];
+    elseif ($poin <= 75) return ['C','Cukup'];
+    elseif ($poin <= 100) return ['D','Kurang'];
+    else return ['E','Sangat Kurang'];
+}
+
 $kelas = $_GET['kelas'] ?? '';
 
+// QUERY
+$sql = "
+SELECT 
+    ds.id_siswa,
+    ds.nisn,
+    ds.nama_siswa,
+    ds.kelas,
+    COALESCE(rp.total_poin,0) AS total_poin,
+    cs.catatan_walikelas
+FROM data_siswa ds
+LEFT JOIN rekap_poin rp ON ds.id_siswa = rp.id_siswa
+LEFT JOIN catatan_semester cs 
+    ON ds.id_siswa = cs.id_siswa
+    AND cs.semester='Ganjil'
+    AND cs.tahun_ajaran='2025/2026'
+WHERE 1=1
+";
+
 if($kelas != ''){
+    $sql .= " AND ds.kelas='$kelas' ";
+}
 
-    $rekap = mysqli_query($koneksi,"
-    SELECT
-        ds.nisn,
-        ds.nama_siswa,
-        ds.kelas,
-        rp.total_poin
-    FROM rekap_poin rp
-    JOIN data_siswa ds ON rp.id_siswa = ds.id_siswa
-    WHERE ds.kelas='$kelas'
-    ORDER BY ds.nama_siswa ASC
-    ");
+$sql .= " ORDER BY ds.kelas, ds.nama_siswa";
 
-}else{
+$rekap = mysqli_query($koneksi, $sql);
 
-    $rekap = mysqli_query($koneksi,"
-    SELECT
-        ds.nisn,
-        ds.nama_siswa,
-        ds.kelas,
-        rp.total_poin
-    FROM rekap_poin rp
-    JOIN data_siswa ds ON rp.id_siswa = ds.id_siswa
-    ORDER BY ds.nama_siswa ASC
-    ");
+// ambil data dulu
+$data = [];
+while($r = mysqli_fetch_assoc($rekap)){
+    $data[] = $r;
+}
+
+// grouping kelas
+$groupKelas = [];
+foreach($data as $d){
+    $groupKelas[$d['kelas']][] = $d;
 }
 ?>
 
@@ -215,36 +234,43 @@ th{
 </div>
 
 <table>
-
 <tr>
     <th>No</th>
     <th>NISN</th>
     <th>Nama Siswa</th>
     <th>Kelas</th>
     <th>Total Poin</th>
+    <th>Predikat</th>
+    <th>Kategori</th>
+    <th>Catatan Wali Kelas</th>
 </tr>
 
-<?php
-$no = 1;
+<?php $no = 1; ?>
 
-while($r = mysqli_fetch_assoc($rekap)){
+<?php foreach($groupKelas as $namaKelas => $rows){ ?>
+
+<tr>
+    <td colspan="8" style="background:#eee;font-weight:bold;text-align:left;">
+        KELAS <?= $namaKelas; ?>
+    </td>
+</tr>
+
+<?php foreach($rows as $r){ 
+    $predikat = getPredikat($r['total_poin']);
 ?>
 
 <tr>
-
     <td><?= $no++; ?></td>
-
     <td><?= $r['nisn']; ?></td>
-
-    <td style="text-align:left;">
-        <?= $r['nama_siswa']; ?>
-    </td>
-
+    <td style="text-align:left;"><?= $r['nama_siswa']; ?></td>
     <td><?= $r['kelas']; ?></td>
-
     <td><?= $r['total_poin']; ?></td>
-
+    <td><?= $predikat[0]; ?></td>
+    <td><?= $predikat[1]; ?></td>
+    <td><?= $r['catatan_walikelas'] ?? '-'; ?></td>
 </tr>
+
+<?php } ?>
 
 <?php } ?>
 

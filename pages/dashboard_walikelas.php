@@ -132,6 +132,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     </a>
 
+                    
+                    <a href="catatan_semester.php">
+
+                        <i class="fas fa-star"></i>
+
+                       Catatan Semester
+
+                    </a>
+
                 </div>
 
             </div>

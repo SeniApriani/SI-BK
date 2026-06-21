@@ -11,7 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama_ortu = mysqli_real_escape_string($koneksi, $_POST['nama_ortu']);
     $tanggal = $_POST['tanggal'];
     $jenis = $_POST['jenis'];
-
+    $hasil_komunikasi = mysqli_real_escape_string(
+    $koneksi,
+    $_POST['hasil_komunikasi']
+);
     $file = '';
 
     if(isset($_FILES['berita_acara']) && $_FILES['berita_acara']['error'] == 0){
@@ -26,9 +29,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $insert = mysqli_query($koneksi,"
         INSERT INTO komunikasi_ortu
-        (id_siswa, nama_ortu, tanggal, jenis_pertemuan, file_ba, status)
-        VALUES
-        ('$id','$nama_ortu','$tanggal','$jenis','$file','proses')
+(
+    id_siswa,
+    nama_ortu,
+    tanggal,
+    jenis_pertemuan,
+    hasil_komunikasi,
+    file_ba,
+    status
+)
+VALUES
+(
+    '$id',
+    '$nama_ortu',
+    '$tanggal',
+    '$jenis',
+    '$hasil_komunikasi',
+    '$file',
+    'proses'
+)
     ");
 
     if(!$insert){
@@ -158,7 +177,18 @@ body{
 }
 
 .form-group input,
-.form-group select{
+.form-group select,
+.form-group textarea{
+    width:100%;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    padding:12px 15px;
+    outline:none;
+    font-family:'Poppins',sans-serif;
+}
+
+/* .form-group input, */
+/* .form-group select{
     width:100%;
     height:45px;
     border:1px solid #d1d5db;
@@ -166,7 +196,7 @@ body{
     padding:0 15px;
     outline:none;
     font-family:'Poppins',sans-serif;
-}
+} */
 
 .form-group input[type=file]{
     padding:10px;
@@ -337,6 +367,15 @@ body{
             <option value="Home Visit">Home Visit</option>
         </select>
     </div>
+
+    <div class="form-group">
+    <label>Hasil Komunikasi *</label>
+
+    <textarea
+        name="hasil_komunikasi"
+        placeholder="Tuliskan hasil komunikasi dengan orang tua, kesepakatan, komitmen siswa, tindak lanjut, dan lain-lain"
+        required></textarea>
+</div>
 
     <div class="form-group">
         <label>Upload Berita Acara *</label>

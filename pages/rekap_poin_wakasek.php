@@ -3,6 +3,26 @@
 <?php
 include "../config/koneksi.php";
 
+// PREDIKAT PHP
+function predikat($poin){
+
+    if($poin <= 25){
+        return "A (Sangat Baik)";
+    }
+    elseif($poin <= 50){
+        return "B (Baik)";
+    }
+    elseif($poin <= 75){
+        return "C (Cukup)";
+    }
+    elseif($poin <= 100){
+        return "D (Kurang)";
+    }
+    else{
+        return "E (Sangat Kurang)";
+    }
+
+}
 $kelas = $_GET['kelas'] ?? '';
 
 // QUERY REKAP REALTIME
@@ -373,16 +393,6 @@ table tbody tr:hover{
 
 <div class="filter-box">
 
-<!-- <select>
-<option>Semester</option>
-<option>Ganjil</option>
-<option>Genap</option>
-</select>
-
-<select>
-<option>Tahun Ajaran</option>
-<option>2024/2025</option>
-<option>2025/2026</option> -->
 </select>
 
 <form method="GET">

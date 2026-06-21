@@ -304,9 +304,87 @@ table tbody tr:hover{
 
 }
 
+/* hasil komunikasi */
+
+.hasil-komunikasi{
+    text-align:left;
+    max-width:300px;
+    white-space:normal;
+}
+
+.btn-view-hasil{
+    border:none;
+    background:#dcfce7;
+    color:#166534;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+}
+
+.btn-view-hasil:hover{
+    background:#bbf7d0;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+}
+
+.modal-content{
+    background:#fff;
+    width:90%;
+    max-width:700px;
+    padding:25px;
+    border-radius:15px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+
+.close-modal{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+#isiHasil{
+    line-height:1.8;
+    white-space:pre-wrap;
+    max-height:400px;
+    overflow-y:auto;
+    padding-right:10px;
+}
+
 </style>
 </head>
 <body>
+<!-- MODAL HASIL KOMUNIKASI -->
+<div id="modalHasil" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal">&times;</span>
+
+        <h3>Hasil Komunikasi Orang Tua</h3>
+
+        <br>
+
+        <div id="isiHasil"></div>
+
+    </div>
+
+</div>
+<!-- container -->
 
 <div class="container">
 
@@ -315,14 +393,14 @@ table tbody tr:hover{
     <div class="tab-card">
 
         <div class="tab-menu">
-
+<!-- 
             <a href="komunikasi_orangtua.php" class="tab">
 
                 <i class="fas fa-user-clock"></i>
 
                 Daftar Tindak Lanjut
 
-            </a>
+            </a> -->
 
             <a href="riwayat_komunikasi.php" class="tab active">
 
@@ -382,6 +460,7 @@ table tbody tr:hover{
                         <th>Nama Orang Tua</th>
                         <th>Tanggal Pertemuan</th>
                         <th>Jenis Pertemuan</th>
+                        <th>Hasil Komunikasi</th>
                         <th>Berita Acara</th>
                     </tr>
 
@@ -396,6 +475,19 @@ table tbody tr:hover{
     <td><?= $row['nama_ortu']; ?></td>
     <td><?= $row['tanggal']; ?></td>
     <td><?= $row['jenis_pertemuan']; ?></td>
+    <td>
+
+<button
+type="button"
+class="btn-view-hasil"
+data-hasil="<?= htmlspecialchars($row['hasil_komunikasi']); ?>">
+
+Lihat Hasil Komunikasi
+
+</button>
+
+</td>
+
     <td>
         <a href="../upload/<?= $row['file_ba']; ?>" target="_blank" class="btn-view">
             Lihat Berita Acara
@@ -455,7 +547,49 @@ table tbody tr:hover{
     </div>
 
 </div>
+<!-- pop-up modal -->
+ <script>
 
+const modal =
+document.getElementById('modalHasil');
+
+const isi =
+document.getElementById('isiHasil');
+
+document
+.querySelectorAll('.btn-view-hasil')
+.forEach(function(btn){
+
+    btn.onclick = function(){
+
+        isi.innerHTML =
+        this.dataset.hasil;
+
+        modal.style.display='block';
+
+    }
+
+});
+
+document
+.querySelector('.close-modal')
+.onclick = function(){
+
+    modal.style.display='none';
+
+}
+
+window.onclick = function(e){
+
+    if(e.target == modal){
+
+        modal.style.display='none';
+
+    }
+
+}
+
+</script>
 </body>
 </html>
 
