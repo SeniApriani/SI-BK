@@ -359,6 +359,27 @@ table tbody tr:hover{
     padding-right:10px;
 }
 
+.btn-icon{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:10px;
+    background:#dcfce7;
+    color:#15803d;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.3s;
+    font-size:15px;
+}
+
+.btn-icon:hover{
+    background:#bbf7d0;
+    transform:scale(1.05);
+}
+
 </style>
 </head>
 <body>
@@ -493,24 +514,28 @@ table tbody tr:hover{
     <td><?= $row['tanggal']; ?></td>
     <td><?= $row['jenis_pertemuan']; ?></td>
 
-    <td>
-
+    <<td>
 <button
 type="button"
-class="btn-view-hasil"
-data-hasil="<?= htmlspecialchars($row['hasil_komunikasi']); ?>">
+class="btn-icon btn-view-hasil"
+data-hasil="<?= htmlspecialchars($row['hasil_komunikasi']); ?>"
+title="Hasil Komunikasi">
 
-Lihat Hasil Komunikasi
+<i class="fas fa-comments"></i>
 
 </button>
-
 </td>
+   <td>
+<a
+href="../upload/<?= $row['file_ba']; ?>"
+target="_blank"
+class="btn-icon"
+title="Berita Acara">
 
-    <td>
-        <a href="../upload/<?= $row['file_ba']; ?>" target="_blank" class="btn-view">
-            Lihat Berita Acara
-        </a>
-    </td>
+<i class="fas fa-file-lines"></i>
+
+</a>
+</td>
 </tr>
 
 <?php } ?>

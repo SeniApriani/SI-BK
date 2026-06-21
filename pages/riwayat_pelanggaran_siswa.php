@@ -192,6 +192,7 @@ body{
 
 .table-responsive{
     overflow-x:auto;
+    border:1px solid #e5e7eb;
 }
 
 table{
@@ -215,6 +216,8 @@ table td{
 table tbody tr:hover{
     background:#f9fafb;
 }
+
+
 
 /* PAGINATION */
 
@@ -382,28 +385,30 @@ table tbody tr:hover{
 
 
 /* STATUS */
-.status-awal{
-    display:inline-block;
+.status-awal,
+.status-laporan{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    min-width:125px;
     padding:8px 14px;
     border-radius:10px;
-    background:#fee2e2;
-    color:#dc2626;
     text-decoration:none;
     font-weight:600;
     font-size:13px;
+    white-space:nowrap;
+}
+
+.status-awal{
+    background:#fee2e2;
+    color:#dc2626;
 }
 
 .status-laporan{
-    display:inline-block;
-    padding:8px 14px;
-    border-radius:10px;
     background:#dcfce7;
     color:#15803d;
-    text-decoration:none;
-    font-weight:600;
-    font-size:13px;
 }
-
 
 /* MODAL */
 .modal{
@@ -647,32 +652,24 @@ table tbody tr:hover{
 <?php if(empty($r['id_laporan'])){ ?>
 
     <a href="#"
-       class="laporan-awal"
-       data-id="<?= $r['id']; ?>"
-       style="
-       background:#fee2e2;
-       color:#dc2626;
-       padding:8px 12px;
-       border-radius:10px;
-       text-decoration:none;
-       font-weight:600;">
-        Laporan Awal
-    </a>
+   class="laporan-awal status-awal"
+   data-id="<?= $r['id']; ?>">
+
+   <i class="fas fa-triangle-exclamation"></i>
+   Laporan Awal
+
+</a>
 
 <?php } else { ?>
 
     <a href="#"
-       class="lihat-laporan"
-       data-id="<?= $r['id']; ?>"
-       style="
-       background:#dcfce7;
-       color:#15803d;
-       padding:8px 12px;
-       border-radius:10px;
-       text-decoration:none;
-       font-weight:600;">
-        Lihat Laporan
-    </a>
+   class="lihat-laporan status-laporan"
+   data-id="<?= $r['id']; ?>">
+
+   <i class="fas fa-file-lines"></i>
+   Lihat Laporan
+
+</a>
 
 <?php } ?>
 
@@ -681,8 +678,6 @@ table tbody tr:hover{
         <?php } ?>
     </tbody>
 </table>
-
-
 
         <!-- PAGINATION -->
 

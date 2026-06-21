@@ -458,7 +458,7 @@ body{
 
             <div class="form-group">
 
-                <label>Catatan</label>
+                <label>Detail Pelanggaran</label>
 
                 
                 <textarea name="catatan" placeholder="Masukkan catatan konseling jika diperlukan..."></textarea>

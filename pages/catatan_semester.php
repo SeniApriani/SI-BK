@@ -99,7 +99,7 @@ ORDER BY ds.kelas, ds.nama_siswa
 <title>Catatan Semester</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 
 body{
@@ -120,8 +120,8 @@ border-collapse:collapse;
 }
 
 th{
-background:#16a34a;
-color:#fff;
+background:#dcfce7;
+    color:#15803d;
 }
 
 th,td{
@@ -139,6 +139,7 @@ font-weight:600;
 }
 
 .btn{
+    
 background:#16a34a;
 color:#fff;
 border:none;
@@ -195,48 +196,103 @@ text-align:left;
 max-width:300px;
 }
 
+.btn-icon{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:10px;
+    background:#dcfce7;
+    color:#15803d;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    transition:.3s;
+}
+
+.btn-icon:hover{
+    background:#bbf7d0;
+}
+
+/* card semester */
+.title-card{
+    background:#dcfce7;
+    color:#15803d;
+    padding:14px 18px;
+    border-radius:12px;
+    font-weight:600;
+    margin-bottom:20px;
+   display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:16px;
+}
+
+/* filter kelas */
+.filter-box{
+    position:relative;
+    display:inline-block;
+    margin-bottom:20px;
+}
+
+.filter-box i{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#16a34a;
+}
+
+.filter-box select{
+    min-width:230px;
+    padding:12px 15px 12px 42px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    background:#fff;
+    font-family:'Poppins',sans-serif;
+}
+
+
 </style>
 </head>
 <body>
 
 <div class="card">
 
-<h2>Catatan Semester Wali Kelas</h2>
+<div class="title-card">
+    <i class="fas fa-book-open"></i>
+    Catatan Semester Wali Kelas
+</div>
 
 <br>
 
-<br>
 
 <form method="GET">
 
+<div class="filter-box">
+<i class="fas fa-users"></i>
 <select
 name="kelas"
-onchange="this.form.submit()"
-style="
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
-margin-bottom:20px;
-">
+onchange="this.form.submit()">
 
 <option value="">Semua Kelas</option>
 
-<option value="X TKJ"
-<?= ($kelas=='X TKJ')?'selected':''; ?>>
+<option value="X TKJ" <?= ($kelas=='X TKJ')?'selected':''; ?>>
 X TKJ
 </option>
 
-<option value="XI TKJ"
-<?= ($kelas=='XI TKJ')?'selected':''; ?>>
+<option value="XI TKJ" <?= ($kelas=='XI TKJ')?'selected':''; ?>>
 XI TKJ
 </option>
 
-<option value="XII TKJ"
-<?= ($kelas=='XII TKJ')?'selected':''; ?>>
+<option value="XII TKJ" <?= ($kelas=='XII TKJ')?'selected':''; ?>>
 XII TKJ
 </option>
 
 </select>
+
+</div>
 
 </form>
 
@@ -295,20 +351,15 @@ echo "<i>Belum ada catatan</i>";
 
 <button
 type="button"
-class="btn editBtn"
+class="btn-icon editBtn"
 
 data-id="<?= $r['id_siswa']; ?>"
-
 data-nama="<?= htmlspecialchars($r['nama_siswa']); ?>"
-
 data-kelas="<?= htmlspecialchars($r['kelas']); ?>"
-
 data-poin="<?= $r['total_poin']; ?>"
+data-catatan="<?= htmlspecialchars($r['catatan_walikelas']); ?>">
 
-data-catatan="<?= htmlspecialchars($r['catatan_walikelas']); ?>"
->
-
-Edit
+<i class="fas fa-pen"></i>
 
 </button>
 

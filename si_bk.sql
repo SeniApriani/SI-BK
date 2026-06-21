@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 16, 2026 at 06:18 PM
+-- Generation Time: Jun 21, 2026 at 05:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `si_bk`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catatan_semester`
+--
+
+CREATE TABLE `catatan_semester` (
+  `id_catatan` int(11) NOT NULL,
+  `id_siswa` int(11) NOT NULL,
+  `semester` enum('Ganjil','Genap') NOT NULL,
+  `tahun_ajaran` varchar(20) NOT NULL,
+  `catatan_walikelas` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `catatan_semester`
+--
+
+INSERT INTO `catatan_semester` (`id_catatan`, `id_siswa`, `semester`, `tahun_ajaran`, `catatan_walikelas`, `created_at`) VALUES
+(1, 28, 'Ganjil', '2025/2026', 'Bagus', '2026-06-20 13:47:48'),
+(2, 23, 'Ganjil', '2025/2026', 'Tingkatkan ya ', '2026-06-21 14:54:28');
 
 -- --------------------------------------------------------
 
@@ -75,10 +98,10 @@ INSERT INTO `data_siswa` (`id_siswa`, `nama_siswa`, `nisn`, `kelas`) VALUES
 (29, 'Surya', '8246719530', 'XI TKJ'),
 (30, 'Sandi', '9572136840', 'XI TKJ'),
 (31, 'Fadina', '4718293650', 'XII TKJ'),
-(32, 'Elsa', '6183549270', 'XII TKJ'),
 (33, 'Rizky Pratama', '7529614380', 'XII TKJ'),
 (34, 'Putri Ayunda', '8392175640', 'XII TKJ'),
-(35, 'Dimas Saputra', '9645827310', 'XII TKJ');
+(35, 'Dimas Saputra', '9645827310', 'XII TKJ'),
+(36, 'Zara', '25', 'X TKJ');
 
 -- --------------------------------------------------------
 
@@ -159,6 +182,7 @@ CREATE TABLE `komunikasi_ortu` (
   `tanggal` date DEFAULT NULL,
   `jenis_pertemuan` varchar(50) DEFAULT NULL,
   `file_ba` varchar(255) DEFAULT NULL,
+  `hasil_komunikasi` text DEFAULT NULL,
   `status` enum('proses','selesai') DEFAULT 'proses',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `nama_ortu` varchar(100) DEFAULT NULL
@@ -168,12 +192,41 @@ CREATE TABLE `komunikasi_ortu` (
 -- Dumping data for table `komunikasi_ortu`
 --
 
-INSERT INTO `komunikasi_ortu` (`id_komunikasi`, `id_siswa`, `tanggal`, `jenis_pertemuan`, `file_ba`, `status`, `created_at`, `nama_ortu`) VALUES
-(11, 7, '2026-06-11', 'Sekolah', '1781143429_Tugas_Perbaikan_Nilai_INLAN.pdf', 'proses', '2026-06-11 02:03:49', 'Jaya'),
-(12, 7, '2026-06-15', 'Home Visit', '1781447821_ChatGPT Image Jun 7, 2026, 10_21_17 AM.png', 'proses', '2026-06-14 14:37:01', 'Jalan'),
-(13, 7, '2026-07-09', 'Sekolah', '1781447900_riwayat remisi.txt', 'proses', '2026-06-14 14:38:20', 'ira'),
-(14, 7, '2026-06-30', 'Sekolah', '1781448279_riwayat remisi.txt', 'proses', '2026-06-14 14:44:39', 'Jalan'),
-(15, 23, '2026-06-16', 'Sekolah', '1781626278_Struktur Penulisan BAB III.pdf', 'proses', '2026-06-16 16:11:18', 'Ira');
+INSERT INTO `komunikasi_ortu` (`id_komunikasi`, `id_siswa`, `tanggal`, `jenis_pertemuan`, `file_ba`, `hasil_komunikasi`, `status`, `created_at`, `nama_ortu`) VALUES
+(11, 7, '2026-06-11', 'Sekolah', '1781143429_Tugas_Perbaikan_Nilai_INLAN.pdf', NULL, 'proses', '2026-06-11 02:03:49', 'Jaya'),
+(12, 7, '2026-06-15', 'Home Visit', '1781447821_ChatGPT Image Jun 7, 2026, 10_21_17 AM.png', NULL, 'proses', '2026-06-14 14:37:01', 'Jalan'),
+(13, 7, '2026-07-09', 'Sekolah', '1781447900_riwayat remisi.txt', NULL, 'proses', '2026-06-14 14:38:20', 'ira'),
+(14, 7, '2026-06-30', 'Sekolah', '1781448279_riwayat remisi.txt', NULL, 'proses', '2026-06-14 14:44:39', 'Jalan'),
+(15, 23, '2026-06-16', 'Sekolah', '1781626278_Struktur Penulisan BAB III.pdf', NULL, 'proses', '2026-06-16 16:11:18', 'Ira'),
+(16, 25, '2026-06-21', 'Sekolah', '1782034649_form pencatatan.png', 'kamu nakl sih', 'proses', '2026-06-21 09:37:29', 'Jalan'),
+(17, 25, '2026-06-28', 'Sekolah', '1782035195_form pencatatan.png', 'Untuk membantu saya menyesuaikan format dokumen dengan situasi Anda, beritahu saya:Untuk keperluan apa berita acara ini dibuat? (Misal: pelanggaran disiplin, mediasi masalah antar siswa, atau sosialisasi program sekolah)Apakah ada kesepakatan khusus atau sanksi spesifik yang perlu dimasukkan ke dalam dokumen?\r\ncvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv', 'proses', '2026-06-21 09:46:35', 'ira'),
+(18, 25, '2026-06-21', 'Sekolah', '1782035560_g_tahapan penelitian.png', 'BERITA ACARA PEMANGGILAN ORANG TUA / WALI SISWASMA/SMK [Nama Sekolah Anda]Nomor: [Isi Nomor Surat jika ada]Pada hari ini, [Hari, Contoh: Senin], tanggal [Tanggal] bulan [Bulan] tahun [Tahun], telah dilakukan pertemuan dan musyawarah antara pihak sekolah dengan orang tua/wali siswa, terkait pelanggaran tata tertib atau evaluasi perkembangan belajar siswa.Pertemuan ini dihadiri oleh:I. Pihak Sekolah / Wali KelasNama: [Nama Guru / BK]NIP/NUPTK: [Nomor Identitas]Jabatan: [Wali Kelas / Guru BK / Kepala Sekolah]II. Pihak Orang Tua / Wali SiswaNama: [Nama Lengkap Orang Tua]Hubungan dengan Siswa: [Contoh: Ayah / Ibu / Wali]Pekerjaan: [Pekerjaan Orang Tua]Alamat: [Alamat Rumah Orang Tua]Mengenai siswa bersangkutan:Nama Siswa: [Nama Lengkap Siswa]Kelas: [Kelas Siswa]NIS / NISN: [Nomor Induk Siswa]Adapun hasil keputusan dan kesepakatan dalam pertemuan ini adalah sebagai berikut:Bahwa siswa tersebut di atas telah melakukan [Sebutkan jenis pelanggaran / permasalahan secara jelas, misalnya: pelanggaran tata tertib berupa membolos sebanyak 5 kali / penurunan nilai akademik].Pihak sekolah dan orang tua telah melakukan dialog dan pembinaan kepada siswa yang bersangkutan.Pihak orang tua/wali siswa memahami permasalahan tersebut dan akan meningkatkan pengawasan di luar jam sekolah.Pihak orang tua/wali siswa bersedia mematuhi kesepakatan berupa: [Sebutkan sanksi atau surat peringatan jika ada, misalnya: Siswa akan diberikan skorsing selama 3 hari / Siswa wajib mengikuti bimbingan khusus].Demikian Berita Acara ini dibuat dengan sebenarnya dan dalam keadaan sadar, tanpa ada unsur paksaan dari pihak mana pun. Berita Acara ini menjadi bagian yang sah dari dokumen pembinaan siswa di sekolah.Dibuat di : [Nama Kota Sekolah]Pada tanggal : [Tanggal Pembuatan Berita Acara]Pihak Orang Tua / Wali Siswa,                                      Pihak Sekolah,( [Nama Terang Orang Tua] )                                      ( [Nama Terang Guru / Wali Kelas] )Mengetahui,Kepala Sekolah( [Nama Kepala Sekolah dan Gelar] )NIP. [Nomor Induk Pegawai]', 'proses', '2026-06-21 09:52:40', 'Ira'),
+(19, 18, '2026-06-22', 'Home Visit', '1782037111_form pencatatan.png', 'Berikut adalah format standar Berita Acara Pemanggilan dan Pembinaan Orang Tua Siswa (konteks sekolah) yang paling umum digunakan. Anda bisa menyesuaikan bagian di dalam tanda kurung siku [...] sesuai dengan situasi spesifik Anda.', 'proses', '2026-06-21 10:18:31', 'Jalan'),
+(20, 36, '2026-06-23', 'Home Visit', '1782047430_form pencatatan.png', 'nakal banget ', 'proses', '2026-06-21 13:10:30', 'Iman');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `laporan_konseling`
+--
+
+CREATE TABLE `laporan_konseling` (
+  `id_laporan` int(11) NOT NULL,
+  `id_pelanggaran_siswa` int(11) NOT NULL,
+  `catatan_konseling` text NOT NULL,
+  `tanggal_tindak_lanjut` date DEFAULT NULL,
+  `tanggal_konseling` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `laporan_konseling`
+--
+
+INSERT INTO `laporan_konseling` (`id_laporan`, `id_pelanggaran_siswa`, `catatan_konseling`, `tanggal_tindak_lanjut`, `tanggal_konseling`) VALUES
+(2, 149, 'Siswa berjanji tidak akan mengulangi hal serupa', '2026-06-20', '2026-06-20 10:51:45'),
+(3, 147, 'Siswa menyepakati tidak akan mengulangi kesalahan', '2026-06-20', '2026-06-20 11:49:54'),
+(4, 146, 'Siswa berjanji tidak akan mengulangi kesalahan yang serupa', '2026-06-20', '2026-06-20 12:30:55'),
+(5, 150, 'Siswa berjanji ....', '2026-06-22', '2026-06-21 20:09:24');
 
 -- --------------------------------------------------------
 
@@ -219,7 +272,11 @@ INSERT INTO `notifikasi` (`id_notifikasi`, `id_user`, `role`, `judul`, `pesan`, 
 (19, 19, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-16 10:09:12'),
 (20, 19, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-16 10:14:14'),
 (21, 15, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-16 11:15:49'),
-(22, 19, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-16 22:48:50');
+(22, 19, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-16 22:48:50'),
+(23, 30, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-20 06:19:47'),
+(24, 36, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-21 20:05:52'),
+(25, 36, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-21 20:06:32'),
+(26, 36, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-21 20:07:51');
 
 -- --------------------------------------------------------
 
@@ -290,10 +347,13 @@ INSERT INTO `pelanggaran_siswa` (`id`, `id_siswa`, `id_pelanggaran`, `tanggal`, 
 (140, 24, 11, '2026-02-06', 'Terlambat menyerahkan tugas', 5),
 (141, 24, 52, '2026-02-20', 'Berada di kantin saat jam pelajaran', 10),
 (142, 25, 42, '2026-02-10', 'Menerobos pagar sekolah', 25),
-(143, 25, 48, '2026-02-24', 'Meninggalkan kelas tanpa izin', 20),
 (146, 21, 11, '2026-03-12', 'Terlambat menyerahkan tugas mata pelajaran', 5),
 (147, 21, 11, '2026-06-15', 'Terlambat sekolah', 5),
-(148, 19, 43, '2026-06-16', '-', 25);
+(148, 19, 43, '2026-06-16', '-', 25),
+(149, 30, 3, '2026-06-20', 'nakal', 15),
+(150, 36, 37, '2026-06-21', 'Siswa berkelahi', 50),
+(151, 36, 22, '2026-06-21', 'memakai soflent', 2),
+(152, 36, 22, '2026-06-21', 'memakai kacamta bavkkpinkk', 2);
 
 -- --------------------------------------------------------
 
@@ -334,7 +394,10 @@ INSERT INTO `pengajuan_remisi` (`id_remisi`, `id_siswa`, `jenis_prestasi`, `nama
 (67, 7, '15', 'Juara', 15, 'WhatsApp Image 2026-06-14 at 4.47.38 PM.jpeg', '2026-06-15 09:53:17', 'Menunggu', '', 0),
 (68, 7, '25', 'ujicoba', 25, 'WhatsApp Image 2026-06-14 at 4.47.38 PM.jpeg', '2026-06-15 13:21:15', 'Menunggu', '', 0),
 (77, 19, '15', 'Juara  2 kelas', 15, 'Sertifikat Project Basic Web_Page_27.jpg', '2026-06-16 22:49:34', 'Disetujui', '', 4),
-(79, 21, '15', 'Juara 3 Kelas', 15, 'Sertifikat Materi HTML_Page_22.jpg', '2026-06-16 22:55:35', 'Disetujui', 'X TKJ', 3);
+(79, 21, '15', 'Juara 3 Kelas', 15, 'Sertifikat Materi HTML_Page_22.jpg', '2026-06-16 22:55:35', 'Disetujui', 'X TKJ', 3),
+(80, 0, '50', 'juara di hati', 50, 'penjelasan menu komunikasi.docx', '2026-06-21 20:14:14', 'Menunggu', NULL, 0),
+(81, 36, '50', 'juara di hati', 50, 'penjelasan menu komunikasi.docx', '2026-06-21 20:15:47', 'Disetujui', '', 27),
+(82, 36, '25', 'juara di hati', 25, 'penjelasan menu komunikasi.docx', '2026-06-21 20:17:03', 'Disetujui', '', 7);
 
 -- --------------------------------------------------------
 
@@ -367,8 +430,10 @@ INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VA
 (29, 22, 1, '2026-06-16 15:09:54'),
 (30, 23, 35, '2026-06-16 16:04:28'),
 (31, 24, 20, '2026-06-16 15:09:54'),
-(32, 25, 85, '2026-06-16 16:04:09'),
-(33, 19, 26, '2026-06-16 16:06:38');
+(32, 25, 65, '2026-06-20 12:55:58'),
+(33, 19, 26, '2026-06-16 16:06:38'),
+(34, 30, 15, '2026-06-19 23:19:47'),
+(35, 36, 20, '2026-06-21 13:17:09');
 
 -- --------------------------------------------------------
 
@@ -450,14 +515,20 @@ INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `id_sisw
 (37, 'Surya', '8246719530', '8246719530', 'siswa', 29, 'XI TKJ'),
 (38, 'Sandi', '9572136840', '9572136840', 'siswa', 30, 'XI TKJ'),
 (39, 'Fadina', '4718293650', '4718293650', 'siswa', 31, 'XII TKJ'),
-(40, 'Elsa', '6183549270', '6183549270', 'siswa', 32, 'XII TKJ'),
 (41, 'Rizky Pratama', '7529614380', '7529614380', 'siswa', 33, 'XII TKJ'),
 (42, 'Putri Ayunda', '8392175640', '8392175640', 'siswa', 34, 'XII TKJ'),
-(43, 'Dimas Saputra', '9645827310', '9645827310', 'siswa', 35, 'XII TKJ');
+(43, 'Dimas Saputra', '9645827310', '9645827310', 'siswa', 35, 'XII TKJ'),
+(44, 'Zara', '25', '25', 'siswa', 36, NULL);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `catatan_semester`
+--
+ALTER TABLE `catatan_semester`
+  ADD PRIMARY KEY (`id_catatan`);
 
 --
 -- Indexes for table `data_guru`
@@ -482,6 +553,13 @@ ALTER TABLE `jenis_pelanggaran`
 --
 ALTER TABLE `komunikasi_ortu`
   ADD PRIMARY KEY (`id_komunikasi`);
+
+--
+-- Indexes for table `laporan_konseling`
+--
+ALTER TABLE `laporan_konseling`
+  ADD PRIMARY KEY (`id_laporan`),
+  ADD KEY `id_pelanggaran_siswa` (`id_pelanggaran_siswa`);
 
 --
 -- Indexes for table `notifikasi`
@@ -526,6 +604,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `catatan_semester`
+--
+ALTER TABLE `catatan_semester`
+  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `data_guru`
 --
 ALTER TABLE `data_guru`
@@ -535,7 +619,7 @@ ALTER TABLE `data_guru`
 -- AUTO_INCREMENT for table `data_siswa`
 --
 ALTER TABLE `data_siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `jenis_pelanggaran`
@@ -547,31 +631,37 @@ ALTER TABLE `jenis_pelanggaran`
 -- AUTO_INCREMENT for table `komunikasi_ortu`
 --
 ALTER TABLE `komunikasi_ortu`
-  MODIFY `id_komunikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_komunikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `laporan_konseling`
+--
+ALTER TABLE `laporan_konseling`
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notifikasi`
 --
 ALTER TABLE `notifikasi`
-  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `pelanggaran_siswa`
 --
 ALTER TABLE `pelanggaran_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_remisi`
 --
 ALTER TABLE `pengajuan_remisi`
-  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `rekap_poin`
 --
 ALTER TABLE `rekap_poin`
-  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `remisi_otomatis`
@@ -583,7 +673,17 @@ ALTER TABLE `remisi_otomatis`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `laporan_konseling`
+--
+ALTER TABLE `laporan_konseling`
+  ADD CONSTRAINT `laporan_konseling_ibfk_1` FOREIGN KEY (`id_pelanggaran_siswa`) REFERENCES `pelanggaran_siswa` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

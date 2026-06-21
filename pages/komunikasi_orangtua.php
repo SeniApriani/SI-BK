@@ -386,6 +386,39 @@ table tbody tr:hover{
 
 }
 
+/* Detail Riwayat Tindak Lanjut */
+.btn-detail-riwayat{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 12px;
+    background:#dcfce7;
+    color:#16a34a;
+    text-decoration:none;
+    border-radius:8px;
+    font-size:13px;
+}
+
+.btn-detail-riwayat:hover{
+    background:#dcfce7;
+}
+
+.btn-proses{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 12px;
+    background:#16a34a;
+    color:#fff;
+    text-decoration:none;
+    border-radius:8px;
+    font-size:13px;
+}
+
+.btn-proses:hover{
+    background:#15803d;
+}
+
 </style>
 </head>
 <body>
@@ -466,6 +499,7 @@ table tbody tr:hover{
                         <th>Nama Siswa</th>
                         <th>Kelas</th>
                         <th>Total Poin</th>
+                        <th>Detail Riwayat</th>
                        <th>Tindak Lanjut</th>
                     </tr>
 
@@ -478,7 +512,11 @@ table tbody tr:hover{
     <td><?= $row['nama_siswa']; ?></td>
     <td><?= $row['kelas']; ?></td>
     <td><?= $row['total_poin']; ?></td>
-    
+    <td>
+    <a href="detail_riwayat_tindaklanjut.php?id=<?= $row['id_siswa']; ?>" class="btn-detail-riwayat">
+        <i class="fas fa-eye"></i> Lihat
+    </a>
+</td>
 
     
    <td>
@@ -582,19 +620,18 @@ table tbody tr:hover{
 
         </div>
 
-    </div>
+    </div>   
 
-    <div class="bottom-action">
+</div>
+<div class="bottom-action">
 
-        <a href="dashboard_wakasek.php" class="btn-back">
+        <a href="dashboard_walikelas.php" class="btn-back">
 
             <i class="fas fa-chevron-left"></i>
 
         </a>
 
     </div>
-
-</div>
 
 <script>
 
