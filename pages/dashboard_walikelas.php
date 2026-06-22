@@ -1,7 +1,76 @@
 
 <?php
 session_start();
+include '../config/koneksi.php';
+
 $nama = $_SESSION['nama'];
+
+
+/* =========================================
+   BULAN & TAHUN BERJALAN
+========================================= */
+$bulan = date('m');
+$tahun = date('Y');
+
+/* =========================================
+   QUERY STATISTIK PELANGGARAN
+   Menghitung jumlah pelanggaran per kelas
+   pada bulan yang sedang berjalan
+========================================= */
+$queryStatistik = mysqli_query($koneksi, "
+    SELECT
+        s.kelas,
+        COUNT(*) AS total_pelanggaran
+    FROM pelanggaran_siswa p
+    JOIN data_siswa s
+        ON p.id_siswa = s.id_siswa
+   WHERE MONTH(p.tanggal) = '$bulan'
+AND YEAR(p.tanggal) = '$tahun'
+    GROUP BY s.kelas
+");
+
+
+/* =========================================
+   CEK ERROR QUERY
+========================================= */
+if (!$queryStatistik) {
+    die(mysqli_error($koneksi));
+}
+
+
+/* =========================================
+   SIMPAN HASIL QUERY KE ARRAY
+   Untuk digunakan pada grafik/dashboard
+========================================= */
+$dataStatistik = [];
+
+while ($row = mysqli_fetch_assoc($queryStatistik)) {
+    $dataStatistik[] = $row;
+}
+
+/* =========================================
+   TOTAL PELANGGARAN BULAN & TAHUN BERJALAN
+========================================= */
+$queryTotalPelanggaran = mysqli_query($koneksi, "
+    SELECT COUNT(*) AS total
+    FROM pelanggaran_siswa
+    WHERE MONTH(tanggal) = '$bulan'
+    AND YEAR(tanggal) = '$tahun'
+");
+
+$totalPelanggaran = mysqli_fetch_assoc($queryTotalPelanggaran);
+
+/* =========================================
+   JUMLAH PENGAJUAN REMISI MENUNGGU
+   Untuk badge notifikasi Wakasek
+========================================= */
+$queryRemisi = mysqli_query($koneksi, "
+    SELECT COUNT(*) AS total
+    FROM pengajuan_remisi
+    WHERE status = 'Menunggu'
+");
+
+$totalRemisi = mysqli_fetch_assoc($queryRemisi);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -17,7 +86,7 @@ $nama = $_SESSION['nama'];
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="stylesheet" href="../assets/css/1_style.css">
+<link rel="stylesheet" href="../assets/css/3_style.css">
 
 </head>
 
@@ -243,7 +312,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     </div>
 
-    <div class="remisi-notification">
+    <!-- <div class="remisi-notification">
 
         <div class="notif-icon">
 
@@ -255,11 +324,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
         <p>Pengajuan Remisi</p>
 
-    </div>
+    </div> -->
 
 </section>
 
-        <!-- DASHBOARD CARD -->
+          <!-- DASHBOARD CARD -->
 
         <section class="dashboard-grid">
 
@@ -279,40 +348,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 </div>
 
-                <div class="chart-container">
+             <div class="chart-container">
 
-                    <div class="bar-item">
+<?php foreach($dataStatistik as $data): ?>
 
-                        <span>22</span>
+    <div class="bar-item">
+        <span><?= $data['total_pelanggaran']; ?></span>
 
-                        <div class="bar bar-x"></div>
+        <div
+            class="bar"
+            style="height: <?= $data['total_pelanggaran'] * 20; ?>px;">
+        </div>
 
-                        <small>X</small>
+        <small><?= $data['kelas']; ?></small>
+    </div>
 
-                    </div>
+<?php endforeach; ?>
 
-                    <div class="bar-item">
-
-                        <span>16</span>
-
-                        <div class="bar bar-xi"></div>
-
-                        <small>XI</small>
-
-                    </div>
-
-                    <div class="bar-item">
-
-                        <span>8</span>
-
-                        <div class="bar bar-xii"></div>
-
-                        <small>XII</small>
-
-                    </div>
-
-                </div>
-
+</div>
                 <div class="chart-footer">
 
                     Berdasarkan Tingkat Kelas
@@ -342,8 +395,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     <div class="donut-chart">
 
                         <div class="donut-content">
-
-                            <h2>46</h2>
+<h2><?= $totalPelanggaran['total']; ?></h2>
 
                             
 
@@ -360,8 +412,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     <div>
 
                         <h4>Selasa, 03 Juni 2026</h4>
-
-                        <span>Tanggal Berjalan</span>
 
                     </div>
 
@@ -380,6 +430,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     </main>
 
 </div>
+
 
 <script>
 

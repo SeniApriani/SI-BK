@@ -254,6 +254,11 @@ max-width:300px;
 }
 
 
+/* placeholder */
+.placeholder-text{
+    color:#bdbdbd;
+    font-style:normal;
+}
 </style>
 </head>
 <body>
@@ -340,7 +345,7 @@ echo "...";
 
 }else{
 
-echo "<i>Belum ada catatan</i>";
+echo "<span class='placeholder-text'>Masukkan catatan wali kelas di sini...</span>";
 
 }
 ?>

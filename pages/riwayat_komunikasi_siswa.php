@@ -51,61 +51,7 @@ body{
     margin:auto;
 }
 
-/* TAB */
 
-.tab-card{
-    background:#fff;
-    border-radius:18px;
-    margin-bottom:25px;
-    box-shadow:0 4px 15px rgba(0,0,0,.05);
-    overflow:hidden;
-}
-
-.tab-menu{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-}
-
-.tab{
-    position:relative;
-    text-decoration:none;
-    color:#6b7280;
-    font-size:15px;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    height:72px;
-    transition:.3s;
-}
-
-.tab:hover{
-    color:#16a34a;
-}
-
-.tab::after{
-    content:'';
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:0;
-    height:4px;
-    background:#16a34a;
-    transition:.3s;
-}
-
-.tab:hover::after{
-    width:100%;
-}
-
-.tab.active{
-    color:#16a34a;
-}
-
-.tab.active::after{
-    width:100%;
-}
 
 /* CARD */
 
@@ -222,7 +168,6 @@ table tbody tr:hover{
     background:#dbeafe;
 }
 
-```html id="w4pz7n"
 
 /* PAGINATION */
 
@@ -388,32 +333,7 @@ table tbody tr:hover{
 
 <div class="container">
 
-    <!-- TAB -->
-
-    <div class="tab-card">
-
-        <div class="tab-menu">
-<!-- 
-            <a href="komunikasi_orangtua.php" class="tab">
-
-                <i class="fas fa-user-clock"></i>
-
-                Daftar Tindak Lanjut
-
-            </a> -->
-
-            <a href="riwayat_komunikasi.php" class="tab active">
-
-                <i class="fas fa-history"></i>
-
-                Riwayat Komunikasi
-
-            </a>
-
-        </div>
-
-    </div>
-
+  
     <!-- HEADER -->
 
     <div class="card">

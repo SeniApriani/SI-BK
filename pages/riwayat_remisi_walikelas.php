@@ -123,11 +123,80 @@ a{
     border-radius:8px;
 }
 
+/* =========================
+   TAB MENU (WAJIB TAMBAH)
+========================= */
+
+.tab-card{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    margin-bottom:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.tab-menu{
+    display:flex;
+    width:100%;
+}
+
+.tab{
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    color:#6b7280;
+    font-size:15px;
+    font-weight:600;
+
+    padding:18px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    border-right:1px solid #e5e7eb;
+    transition:.25s;
+}
+
+.tab:last-child{
+    border-right:none;
+}
+
+.tab:hover{
+    background:#f0fdf4;
+    color:#16a34a;
+}
+
+.tab.active{
+    background:#16a34a;
+    color:#fff;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- TAB MENU -->
+<div class="tab-card">
+    <div class="tab-menu">
+
+        <a href="penilaian_poin_pelanggaran.php" class="tab">
+            <i class="fas fa-file-signature"></i>
+            Pengajuan Remisi
+        </a>
+
+        <a href="riwayat_remisi_walikelas.php" class="tab active">
+            <i class="fas fa-history"></i>
+            Riwayat Remisi Siswa
+        </a>
+
+        <a href="#" class="tab">
+            <i class="fas fa-chart-bar"></i>
+            Rekap Poin Pelanggaran 
+        </a>
+
+    </div>
+</div>
 
 <!-- HEADER -->
 <div class="card">

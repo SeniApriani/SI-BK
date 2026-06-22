@@ -176,30 +176,37 @@ body{
 
 .tab-card{
     background:#fff;
-    border-radius:18px;
-    padding:0 30px;
+    border-radius:16px;
+    overflow:hidden;
     margin-bottom:25px;
     box-shadow:0 4px 15px rgba(0,0,0,.05);
 }
 
 .tab-menu{
-    display:flex;
-    align-items:center;
-    gap:45px;
-    min-height:72px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
 }
 
 .tab{
-    position:relative;
     text-decoration:none;
-    color:#6b7280;
+    color:#4b5563;
     font-size:15px;
     font-weight:600;
+
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:10px;
-    height:72px;
+
+    padding:22px 15px;
+
+    border-right:1px solid #e5e7eb;
+
     transition:.3s;
+}
+
+.tab:last-child{
+    border-right:none;
 }
 
 .tab i{
@@ -207,31 +214,32 @@ body{
 }
 
 .tab:hover{
+    background:#f0fdf4;
     color:#16a34a;
-}
-
-.tab::after{
-    content:'';
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:0;
-    height:4px;
-    background:#16a34a;
-    border-radius:20px;
-    transition:.3s;
-}
-
-.tab:hover::after{
-    width:100%;
 }
 
 .tab.active{
-    color:#16a34a;
+    background:#16a34a;
+    color:#fff;
 }
 
-.tab.active::after{
-    width:100%;
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .tab-menu{
+        grid-template-columns:1fr;
+    }
+
+    .tab{
+        border-right:none;
+        border-bottom:1px solid #e5e7eb;
+    }
+
+    .tab:last-child{
+        border-bottom:none;
+    }
+
 }
 
 /* =========================
@@ -483,6 +491,24 @@ tbody tr:hover{
     color:#fff;
 }
 
+.btn-view{
+    text-decoration:none;
+    background:#eff6ff;
+    color:#2563eb;
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:500;
+    transition:.3s;
+}
+
+.btn-view:hover{
+    background:#dbeafe;
+}
+.btn-view{
+    position:relative;
+    left:27px;
+}
 </style>
 
 </head>
@@ -567,7 +593,7 @@ Daftar pengajuan remisi yang menunggu persetujuan Wakasek Kesiswaan.
 
                 <td>
 <?php if(!empty($r['bukti'])) { ?>
-    <a href="../upload/bukti_remisi/<?= $r['bukti']; ?>" target="_blank">
+    <a href="../upload/bukti_remisi/<?= $r['bukti']; ?>" class="btn-view" target="_blank">
         Lihat Bukti
     </a>
 <?php } else { ?>
