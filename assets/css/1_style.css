@@ -435,7 +435,7 @@ BAR CHART
     border-radius:10px 10px 0 0;
 }
 
-.bar-x{
+/* .bar-x{
     height:120px;
 }
 
@@ -445,7 +445,7 @@ BAR CHART
 
 .bar-xii{
     height:50px;
-}
+} */
 
 .bar-item small{
     display:block;

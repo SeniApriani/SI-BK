@@ -12,12 +12,20 @@ FROM rekap_poin
 WHERE id_siswa='$id_siswa'
 "))['total'];
 
-// AKTIVITAS HARI INI (JUMLAH KEJADIAN)
-$aktivitas_hari_ini = mysqli_fetch_assoc(mysqli_query($koneksi,"
+/* =========================================
+   AKTIVITAS PELANGGARAN BULAN BERJALAN
+   Menghitung jumlah pelanggaran siswa
+   pada bulan dan tahun saat ini
+========================================= */
+$bulan = date('m');
+$tahun = date('Y');
+
+$aktivitas_bulan_ini = mysqli_fetch_assoc(mysqli_query($koneksi,"
 SELECT COUNT(*) AS jml
 FROM pelanggaran_siswa
 WHERE id_siswa='$id_siswa'
-AND DATE(tanggal)=CURDATE()
+AND MONTH(tanggal)='$bulan'
+AND YEAR(tanggal)='$tahun'
 "))['jml'];
 
 // NOTIF)
@@ -185,7 +193,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 
            <div class="remisi-notification">
-    <a href="riwayat_pelanggaran_siswa.php" class="notif-icon">
+    <a href="riwayat_pelanggaran.php" class="notif-icon">
         <i class="fas fa-bell"></i>
 
         <?php if($notif_count > 0){ ?>
@@ -248,13 +256,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             <div class="header-icon">
                 <i class="fas fa-triangle-exclamation"></i>
             </div>
-           <h3>Aktivitas Pelanggaran</h3>
+          <h3>Pelanggaran Bulan Ini</h3>
         </div>
 
         <div class="donut-wrapper">
             <div class="donut-chart">
                 <div class="donut-content">
-                    <h2><?= $aktivitas_hari_ini; ?></h2>
+                   <h2><?= $aktivitas_bulan_ini; ?></h2>
                 </div>
             </div>
         </div>
@@ -262,7 +270,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <div class="date-box">
             <i class="fas fa-calendar-days"></i>
             <div>
-                <h4><?= date('d F Y'); ?></h4>
+               <h4><?= date('F Y'); ?></h4>
                 
             </div>
         </div>

@@ -392,6 +392,49 @@ html
 
 }
 
+
+/* PANDUAN REMISI */
+
+.guide{
+    padding:90px 8%;
+    background:#f8fafc;
+}
+
+.guide-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.guide-card{
+    background:#fff;
+    padding:25px;
+    border-radius:24px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.05);
+    transition:.3s;
+}
+
+.guide-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(22,163,74,.12);
+}
+
+.guide-card i{
+    font-size:40px;
+    color:#16a34a;
+    margin-bottom:15px;
+}
+
+.guide-card h3{
+    color:#166534;
+    margin-bottom:10px;
+}
+
+.guide-card p{
+    color:#6b7280;
+    line-height:1.8;
+}
 </style>
 </head>
 <body>
@@ -402,7 +445,7 @@ html
 
         <img src="assets/img/g_logo_pui.png">
 
-        <span>SI-BK</span>
+        <span>SIMPEL</span>
 
     </div>
 
@@ -435,14 +478,14 @@ html
                 pelanggaran siswa secara digital dan terdokumentasi.
 
             </p>
-
+<!-- 
             <a href="pages/login.php" class="hero-btn">
 
                 <i class="fas fa-right-to-bracket"></i>
 
                 Login Sistem
 
-            </a>
+            </a> -->
 
         </div>
 
@@ -520,14 +563,73 @@ html
 
             <i class="fas fa-file-signature"></i>
 
-            <h3>Surat Peringatan</h3>
+              <h3>Cetak laporan Rekap Otomatis</h3>
+
+            <p>
+
+                Pembuatan laporan pelanggaran secara otomatis.
+
+            </p>
+
+            <!-- <h3>Surat Peringatan</h3>
 
             <p>
 
                 Pembuatan surat peringatan secara otomatis.
 
-            </p>
+            </p> -->
 
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PANDUAN REMISI -->
+
+<section class="guide">
+
+    <div class="section-title">
+
+        <h2>Panduan Pengajuan Remisi</h2>
+
+        <p>
+            Ikuti langkah-langkah berikut untuk mengajukan remisi poin pelanggaran.
+        </p>
+
+    </div>
+
+    <div class="guide-grid">
+
+        <div class="guide-card">
+            <i class="fas fa-right-to-bracket"></i>
+            <h3>Login</h3>
+            <p>Masuk ke sistem menggunakan akun siswa.</p>
+        </div>
+
+        <div class="guide-card">
+            <i class="fas fa-file-signature"></i>
+            <h3>Ajukan Remisi</h3>
+            <p>Pilih menu pengajuan remisi dan isi formulir pengajuan.</p>
+        </div>
+
+        <div class="guide-card">
+            <i class="fas fa-upload"></i>
+            <h3>Unggah Bukti</h3>
+            <p>Lampirkan sertifikat atau dokumen pendukung.</p>
+        </div>
+
+        <div class="guide-card">
+            <i class="fas fa-check-circle"></i>
+            <h3>Verifikasi</h3>
+            <p>Tunggu proses peninjauan oleh Wakasek Kesiswaan.</p>
+        </div>
+
+        <div class="guide-card">
+            <i class="fas fa-eye"></i>
+            <h3>Pantau Status</h3>
+            <p>Lihat status pengajuan secara berkala melalui sistem.</p>
         </div>
 
     </div>
@@ -560,8 +662,7 @@ html
 
             <p>
 
-                info@smkpui.ac.id
-
+              smkpui.jtn@gmail.com
             </p>
 
         </div>
@@ -574,7 +675,7 @@ html
 
             <p>
 
-                (0265) 123456
+               081320720837
 
             </p>
 
@@ -588,9 +689,7 @@ html
 
             <p>
 
-                Jatinangor, Kabupaten Sumedang,
-                Jawa Barat
-
+            Jl.Kiaraberes, Dusun Kiaraberes, Kec.Jatinangor, Kab.Sumedang 
             </p>
 
         </div>
@@ -820,7 +919,7 @@ html
 
         <img src="assets/img/g_logo_pui.png">
 
-        <h3>SI-BK</h3>
+        <h3>SIMPEL</h3>
 
     </div>
 
