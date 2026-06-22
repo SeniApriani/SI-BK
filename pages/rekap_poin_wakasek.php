@@ -31,33 +31,35 @@ $kelas = $_GET['kelas'] ?? '';
 if($kelas != ''){
 
     $rekap = mysqli_query($koneksi,"
-    SELECT 
-        ds.id_siswa,
-        ds.nisn,
-        ds.nama_siswa,
-        ds.kelas,
-        rp.total_poin,
-        rp.updated_at
-    FROM rekap_poin rp
-    JOIN data_siswa ds ON rp.id_siswa = ds.id_siswa
-    WHERE ds.kelas='$kelas'
-    ORDER BY ds.nama_siswa ASC
-    ");
+SELECT 
+    ds.id_siswa,
+    ds.nisn,
+    ds.nama_siswa,
+    ds.kelas,
+    COALESCE(rp.total_poin,0) AS total_poin,
+    rp.updated_at
+FROM data_siswa ds
+LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
+WHERE ds.kelas='$kelas'
+ORDER BY ds.nama_siswa ASC
+");
+
 
 }else{
 
+    
     $rekap = mysqli_query($koneksi,"
-    SELECT 
-        ds.id_siswa,
-        ds.nisn,
-        ds.nama_siswa,
-        ds.kelas,
-        rp.total_poin,
-        rp.updated_at
-    FROM rekap_poin rp
-    JOIN data_siswa ds ON rp.id_siswa = ds.id_siswa
-    ORDER BY ds.nama_siswa ASC
-    ");
+SELECT 
+    ds.id_siswa,
+    ds.nisn,
+    ds.nama_siswa,
+    ds.kelas,
+    COALESCE(rp.total_poin,0) AS total_poin,
+    rp.updated_at
+FROM data_siswa ds
+LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
+ORDER BY ds.nama_siswa ASC
+");
 
 }
 $no = 1;
