@@ -1,6 +1,29 @@
 <?php
 include "../config/koneksi.php";
 
+// BULAN
+
+$bulan = [
+    1=>'Januari',
+    2=>'Februari',
+    3=>'Maret',
+    4=>'April',
+    5=>'Mei',
+    6=>'Juni',
+    7=>'Juli',
+    8=>'Agustus',
+    9=>'September',
+    10=>'Oktober',
+    11=>'November',
+    12=>'Desember'
+];
+
+$tanggal_indonesia =
+date('d').' '.
+$bulan[date('n')].' '.
+date('Y');
+
+
 // PREDIKAT
 function getPredikat($poin) {
     if ($poin <= 25) return ['A','Sangat Baik'];
@@ -59,45 +82,62 @@ foreach($data as $d){
 
 <style>
 
+@page{
+    size:A4 portrait;
+    margin:15mm;
+}
+
 body{
-    font-family:Arial, sans-serif;
-    margin:25px;
-    color:#000;
+    font-family:"Times New Roman", serif;
+    background:#e5e5e5;
+    margin:0;
+    padding:20px;
+}
+
+.laporan{
+    width:210mm;
+    min-height:297mm;
+    background:#fff;
+    margin:auto;
+    padding:15mm;
+    box-sizing:border-box;
+    box-shadow:0 0 10px rgba(0,0,0,.15);
 }
 
 .kop{
     width:100%;
-    margin-bottom:5px;
-}
-
-.garis1{
-    border:2px solid #000;
-    margin:0;
-}
-
-.garis2{
-    border:1px solid #000;
-    margin-top:2px;
+    display:block;
+    margin-bottom:20px;
 }
 
 .judul{
     text-align:center;
-    margin-top:20px;
-    margin-bottom:20px;
+    margin-bottom:25px;
 }
 
-.judul h2{
+.judul h3{
     margin:0;
+    font-size:20px;
 }
 
 .info{
-    margin-bottom:20px;
-    line-height:28px;
+    margin-bottom:25px;
+    line-height:1.8;
+    font-size:15px;
+}
+
+.kelas-section{
+    margin-bottom:40px;
+}
+
+.kelas-section h3{
+    margin-bottom:12px;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
+    font-size:14px;
 }
 
 th{
@@ -110,77 +150,17 @@ th,td{
     text-align:center;
 }
 
-.ttd{
-    width:300px;
-    float:right;
-    text-align:center;
-    margin-top:50px;
-}
-
-@media print{
-
-    @page{
-        size:A4 portrait;
-        margin:15mm;
-    }
-
-}
-
-body{
-    font-family: "Times New Roman", serif;
-    background:#f5f5f5;
-    margin:0;
-    padding:20px;
-}
-
-.laporan{
-    width:210mm;
-    min-height:297mm;
-    background:#fff;
-    margin:auto;
-    padding:15mm;
-    box-shadow:0 0 10px rgba(0,0,0,.15);
-}
-
-.kop{
-    width:100%;
-    height:auto;
-}
-
-.judul{
-    text-align:center;
-    font-size:20px;
-    font-weight:bold;
-    margin:20px 0;
-}
-
-.info{
-    font-size:14px;
-    line-height:1.8;
-    margin-bottom:20px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:13px;
-}
-
-th,td{
-    border:1px solid #000;
-    padding:7px;
-}
-
-th{
-    background:#d9ead3;
+td:nth-child(3),
+td:nth-child(7){
+    text-align:left;
 }
 
 .ttd{
-    width:250px;
+    width:280px;
+    margin-top:60px;
     margin-left:auto;
-    margin-top:40px;
     text-align:center;
-    font-size:14px;
+    line-height:1.8;
 }
 
 @media print{
@@ -194,8 +174,12 @@ th{
         width:100%;
         min-height:auto;
         margin:0;
-        box-shadow:none;
         padding:0;
+        box-shadow:none;
+    }
+
+    .ttd{
+        page-break-inside:avoid;
     }
 
 }
@@ -209,87 +193,97 @@ th{
 
 <img src="../assets/img/kop_surat.jpeg" class="kop">
 
-<hr class="garis1">
-<hr class="garis2">
+
 
 <div class="judul">
-    <h2>REKAP POIN PELANGGARAN SISWA</h2>
+    <h3>REKAP POIN PELANGGARAN SISWA</h3>
 </div>
+
+<?php
+
+$bulan = date('n');
+
+if($bulan >= 7){
+    $semester = "Ganjil";
+    $tahun_ajaran = date('Y')."/".(date('Y')+1);
+}else{
+    $semester = "Genap";
+    $tahun_ajaran = (date('Y')-1)."/".date('Y');
+}
+
+?>
 
 <div class="info">
 
-    <strong>Periode Berjalan</strong>
-    : Tahun <?= date('Y'); ?>
-
-    <br>
-
-    <strong>Kelas</strong>
-    : <?= ($kelas != '') ? $kelas : 'Semua Kelas'; ?>
-
-    <br>
-
-    <strong>Tanggal Cetak</strong>
-    : <?= date('d F Y'); ?>
+    <strong>Periode</strong>
+    : Semester <?= $semester; ?> Tahun Ajaran <?= $tahun_ajaran; ?>
 
 </div>
 
-<table>
-<tr>
-    <th>No</th>
-    <th>NISN</th>
-    <th>Nama Siswa</th>
-    <th>Kelas</th>
-    <th>Total Poin</th>
-    <th>Predikat</th>
-    <th>Kategori</th>
-    <th>Catatan Wali Kelas</th>
-</tr>
-
-<?php $no = 1; ?>
-
 <?php foreach($groupKelas as $namaKelas => $rows){ ?>
 
-<tr>
-    <td colspan="8" style="background:#eee;font-weight:bold;text-align:left;">
+<div class="kelas-section">
+
+    <h3 style="margin-bottom:10px;">
         KELAS <?= $namaKelas; ?>
-    </td>
-</tr>
+    </h3>
 
-<?php foreach($rows as $r){ 
-    $predikat = getPredikat($r['total_poin']);
-?>
+    <table>
 
-<tr>
-    <td><?= $no++; ?></td>
-    <td><?= $r['nisn']; ?></td>
-    <td style="text-align:left;"><?= $r['nama_siswa']; ?></td>
-    <td><?= $r['kelas']; ?></td>
-    <td><?= $r['total_poin']; ?></td>
-    <td><?= $predikat[0]; ?></td>
-    <td><?= $predikat[1]; ?></td>
-    <td><?= $r['catatan_walikelas'] ?? '-'; ?></td>
-</tr>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NISN</th>
+                <th>Nama Siswa</th>
+                <th>Total Poin</th>
+                <th>Predikat</th>
+                <th>Kategori</th>
+                <th>Catatan Wali Kelas</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php $no = 1; ?>
+
+        <?php foreach($rows as $r){ ?>
+
+        <?php
+        $predikat = getPredikat($r['total_poin']);
+        ?>
+
+        <tr>
+            <td><?= $no++; ?></td>
+            <td><?= $r['nisn']; ?></td>
+            <td style="text-align:left;">
+                <?= $r['nama_siswa']; ?>
+            </td>
+            <td><?= $r['total_poin']; ?></td>
+            <td><?= $predikat[0]; ?></td>
+            <td><?= $predikat[1]; ?></td>
+            <td><?= $r['catatan_walikelas'] ?: '-'; ?></td>
+        </tr>
+
+        <?php } ?>
+
+        </tbody>
+
+    </table>
+
+</div>
 
 <?php } ?>
-
-<?php } ?>
-
-</table>
-
 <div class="ttd">
 
-    Jatinangor,
-    <?= date('d F Y'); ?>
+   Jatinangor, <?= $tanggal_indonesia; ?>
 
-    <br><br>
+    <br>
 
     Wakasek Kesiswaan
 
-    <br><br><br><br><br>
+    <br><br><br>
 
-    <b>
-    ______________________
-    </b>
+    <b>(................................)</b>
 
 </div>
 
