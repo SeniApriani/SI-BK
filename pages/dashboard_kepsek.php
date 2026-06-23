@@ -1,11 +1,78 @@
 
 <?php
 session_start();
+include '../config/koneksi.php';
 
 if($_SESSION['role'] != 'kepala_sekolah'){
     header("Location: login.php");
     exit;
 }
+
+/* =========================================
+   BULAN & TAHUN BERJALAN
+========================================= */
+$bulan = date('m');
+$tahun = date('Y');
+
+/* =========================================
+   QUERY STATISTIK PELANGGARAN
+   Menghitung jumlah pelanggaran per kelas
+   pada bulan yang sedang berjalan
+========================================= */
+$queryStatistik = mysqli_query($koneksi, "
+    SELECT
+        s.kelas,
+        COUNT(*) AS total_pelanggaran
+    FROM pelanggaran_siswa p
+    JOIN data_siswa s
+        ON p.id_siswa = s.id_siswa
+   WHERE MONTH(p.tanggal) = '$bulan'
+AND YEAR(p.tanggal) = '$tahun'
+    GROUP BY s.kelas
+");
+
+
+/* =========================================
+   CEK ERROR QUERY
+========================================= */
+if (!$queryStatistik) {
+    die(mysqli_error($koneksi));
+}
+
+
+/* =========================================
+   SIMPAN HASIL QUERY KE ARRAY
+   Untuk digunakan pada grafik/dashboard
+========================================= */
+$dataStatistik = [];
+
+while ($row = mysqli_fetch_assoc($queryStatistik)) {
+    $dataStatistik[] = $row;
+}
+
+/* =========================================
+   TOTAL PELANGGARAN BULAN & TAHUN BERJALAN
+========================================= */
+$queryTotalPelanggaran = mysqli_query($koneksi, "
+    SELECT COUNT(*) AS total
+    FROM pelanggaran_siswa
+    WHERE MONTH(tanggal) = '$bulan'
+    AND YEAR(tanggal) = '$tahun'
+");
+
+$totalPelanggaran = mysqli_fetch_assoc($queryTotalPelanggaran);
+
+/* =========================================
+   JUMLAH PENGAJUAN REMISI MENUNGGU
+   Untuk badge notifikasi Wakasek
+========================================= */
+$queryRemisi = mysqli_query($koneksi, "
+    SELECT COUNT(*) AS total
+    FROM pengajuan_remisi
+    WHERE status = 'Menunggu'
+");
+
+$totalRemisi = mysqli_fetch_assoc($queryRemisi);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -52,7 +119,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
         </div>
 
-        <div class="sidebar-menu">
+ <div class="sidebar-menu">
 
             <a href="#" class="menu-link current">
 
@@ -62,130 +129,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
-            <!-- DATA MASTER -->
-            <div class="menu-group">
+            <a href="#"
+            class="menu-link">
 
-                <button class="menu-toggle">
+                <i class="fas fa-triangle-exclamation"></i>
 
-                    <div>
+                <span>Data Pelanggaran Siswa</span>
 
-                        <i class="fas fa-database"></i>
+            </a>
 
-                        <span>Data Master</span>
+            <a href="#"
+            class="menu-link">
 
-                    </div>
+                <i class="fas fa-phone"></i>
 
-                    <i class="fas fa-chevron-down arrow"></i>
+                <span>Monitoring Poin Siswa</span>
 
-                </button>
-
-                <div class="submenu">
-
-                    <a href="data_siswa.php">
-
-                        <i class="fas fa-user-graduate"></i>
-
-                        Data Siswa
-
-                    </a>
-
-                    <a href="data_guru.php">
-
-    <i class="fas fa-chalkboard-teacher"></i>
-
-    Data Guru
-
-</a>
-
-                    <a href="jenis_pelanggaran.php">
-
-                        <i class="fas fa-list"></i>
-
-                        Data Jenis Pelanggaran
-
-                    </a>
-
-                </div>
-
-            </div>
-
-            <!-- PELANGGARAN -->
-            <div class="menu-group">
-
-                <button class="menu-toggle">
-
-                    <div>
-
-                        <i class="fas fa-triangle-exclamation"></i>
-
-                        <span>Pelanggaran Siswa</span>
-
-                    </div>
-
-                    <i class="fas fa-chevron-down arrow"></i>
-
-                </button>
-
-                <div class="submenu">
-
-                    <a href="data_pelanggaran_siswa.php">
-
-                        <i class="fas fa-file-circle-exclamation"></i>
-
-                        Data Pelanggaran Siswa
-
-                    </a>
-
-                    <a href="pengajuan_remisi_wakasek.php">
-
-                        <i class="fas fa-star"></i>
-
-                        Penilaian Poin Pelanggaran
-
-                    </a>
-
-                </div>
-
-            </div>
-
-            <!-- TINDAK LANJUT -->
-            <div class="menu-group">
-
-                <button class="menu-toggle">
-
-                    <div>
-
-                        <i class="fas fa-comments"></i>
-
-                        <span>Tindak Lanjut</span>
-
-                    </div>
-
-                    <i class="fas fa-chevron-down arrow"></i>
-
-                </button>
-
-                <div class="submenu">
-
-                    <a href="komunikasi_orangtua.php">
-
-                        <i class="fas fa-phone"></i>
-
-                        Komunikasi Orang Tua
-
-                    </a>
-
-                    <a href="surat_peringatan.php">
-
-                        <i class="fas fa-envelope-open-text"></i>
-
-                        Surat Peringatan
-
-                    </a>
-
-                </div>
-
-            </div>
+            </a>
 
         </div>
 
@@ -196,6 +156,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             <span>Logout</span>
 
         </a>
+
 
     </aside>
 
@@ -245,24 +206,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         </div>
 
     </div>
-
-    <div class="remisi-notification">
-
-        <div class="notif-icon">
-
-            <i class="fas fa-bell"></i>
-
-            <span class="notif-badge">3</span>
-
-        </div>
-
-        <p>Pengajuan Remisi</p>
-
-    </div>
-
 </section>
 
-        <!-- DASHBOARD CARD -->
+         <!-- DASHBOARD CARD -->
 
         <section class="dashboard-grid">
 
@@ -282,40 +228,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 </div>
 
-                <div class="chart-container">
+             <div class="chart-container">
 
-                    <div class="bar-item">
+<?php foreach($dataStatistik as $data): ?>
 
-                        <span>22</span>
+    <div class="bar-item">
+        <span><?= $data['total_pelanggaran']; ?></span>
 
-                        <div class="bar bar-x"></div>
+        <div
+            class="bar"
+            style="height: <?= $data['total_pelanggaran'] * 20; ?>px;">
+        </div>
 
-                        <small>X</small>
+        <small><?= $data['kelas']; ?></small>
+    </div>
 
-                    </div>
+<?php endforeach; ?>
 
-                    <div class="bar-item">
-
-                        <span>16</span>
-
-                        <div class="bar bar-xi"></div>
-
-                        <small>XI</small>
-
-                    </div>
-
-                    <div class="bar-item">
-
-                        <span>8</span>
-
-                        <div class="bar bar-xii"></div>
-
-                        <small>XII</small>
-
-                    </div>
-
-                </div>
-
+</div>
                 <div class="chart-footer">
 
                     Berdasarkan Tingkat Kelas
@@ -345,8 +275,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     <div class="donut-chart">
 
                         <div class="donut-content">
-
-                            <h2>46</h2>
+<h2><?= $totalPelanggaran['total']; ?></h2>
 
                             
 
@@ -363,8 +292,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     <div>
 
                         <h4>Selasa, 03 Juni 2026</h4>
-
-                        <span>Tanggal Berjalan</span>
 
                     </div>
 
@@ -383,6 +310,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     </main>
 
 </div>
+
 
 <script>
 
@@ -409,4 +337,4 @@ document.querySelectorAll(".menu-toggle").forEach(menu => {
 
 </body>
 </html>
-```
+

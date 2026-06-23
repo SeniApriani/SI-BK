@@ -163,6 +163,8 @@ background:rgba(0,0,0,.5);
 z-index:9999;
 }
 
+
+
 .modal-content{
 background:#fff;
 width:90%;
@@ -183,12 +185,13 @@ font-weight:bold;
 }
 
 #catatan{
-width:100%;
-min-height:180px;
-padding:10px;
-border:1px solid #ddd;
-border-radius:10px;
-font-family:Poppins;
+    width:100%;
+    min-height:140px;
+    height:140px;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    resize:none;
 }
 
 .preview{
@@ -258,6 +261,97 @@ max-width:300px;
 .placeholder-text{
     color:#bdbdbd;
     font-style:normal;
+}
+
+
+/* modal kolom aksi */
+.info-card{
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    border-radius:14px;
+    padding:15px 20px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+
+    margin-bottom:20px;
+}
+
+.info-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.info-box i{
+    width:40px;
+    height:40px;
+    background:#dcfce7;
+    color:#15803d;
+    border-radius:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.info-box small{
+    display:block;
+    color:#6b7280;
+    font-size:11px;
+}
+
+.info-box b{
+    color:#374151;
+    font-size:15px;
+}
+
+.catatan-card{
+    background:#fff;
+    border:none;
+    padding:0;
+    margin-top:20px;
+    margin-bottom:20px;
+}
+
+.catatan-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#15803d;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+    
+#catatan{
+   width:95%;
+    margin:auto;
+    display:block;
+}
+    min-height:130px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:12px;
+    font-family:Poppins,sans-serif;
+    font-size:14px;
+    resize:none;
+    transition:.3s;
+}
+
+#catatan:focus{
+    outline:none;
+    border-color:#16a34a;
+    box-shadow:0 0 0 4px rgba(22,163,74,.08);
+}
+
+/* submit */
+.btn-area{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:15px;
 }
 </style>
 </head>
@@ -359,6 +453,7 @@ type="button"
 class="btn-icon editBtn"
 
 data-id="<?= $r['id_siswa']; ?>"
+data-nisn="<?= htmlspecialchars($r['nisn']); ?>"
 data-nama="<?= htmlspecialchars($r['nama_siswa']); ?>"
 data-kelas="<?= htmlspecialchars($r['kelas']); ?>"
 data-poin="<?= $r['total_poin']; ?>"
@@ -387,7 +482,10 @@ data-catatan="<?= htmlspecialchars($r['catatan_walikelas']); ?>">
 
 <span class="close">&times;</span>
 
-<h3>Catatan Semester Wali Kelas</h3>
+<h3 class="modal-title">
+    <i class="fas fa-user-graduate"></i>
+    Catatan Semester Wali Kelas
+</h3>
 
 <br>
 
@@ -398,42 +496,67 @@ type="hidden"
 name="id_siswa"
 id="id_siswa">
 
-<p>
-<b>Nama :</b>
-<span id="nama"></span>
-</p>
 
-<br>
 
-<p>
-<b>Kelas :</b>
-<span id="kelas"></span>
-</p>
+<div class="info-card">
 
-<br>
+    <div class="info-box">
+        <i class="fas fa-user"></i>
+        <div>
+            <small>Nama Siswa</small>
+            <b id="nama"></b>
+        </div>
+    </div>
 
-<p>
-<b>Total Poin :</b>
-<span id="poin"></span>
-</p>
+    <div class="info-box">
+        <i class="fas fa-id-card"></i>
+        <div>
+            <small>NISN</small>
+            <b id="nisn"></b>
+        </div>
+    </div>
 
-<br>
+    <div class="info-box">
+        <i class="fas fa-users"></i>
+        <div>
+            <small>Kelas</small>
+            <b id="kelas"></b>
+        </div>
+    </div>
 
-<textarea
-name="catatan"
-id="catatan"
-required>
-</textarea>
+    <div class="info-box">
+        <i class="fas fa-star"></i>
+        <div>
+            <small>Total Poin</small>
+            <b id="poin"></b>
+        </div>
+    </div>
 
-<br><br>
+</div>
 
-<button
-type="submit"
-name="simpan"
-class="btn">
-Simpan Catatan
-</button>
 
+<div class="catatan-card">
+
+    <div class="catatan-title">
+        <i class="fas fa-note-sticky"></i>
+        Catatan Wali Kelas
+    </div>
+
+    <textarea
+        name="catatan"
+        id="catatan"
+        placeholder="Tuliskan catatan wali kelas untuk siswa ini..."
+        required></textarea>
+
+</div>
+
+
+<div class="btn-area">
+    <button type="submit" name="simpan" class="btn">
+        <i class="fas fa-save"></i>
+        Simpan Catatan
+    </button>
+</div>
 </form>
 
 </div>
@@ -464,6 +587,11 @@ document
 .getElementById('nama')
 .innerHTML =
 this.dataset.nama;
+
+document
+.getElementById('nisn')
+.innerHTML =
+this.dataset.nisn;
 
 document
 .getElementById('kelas')

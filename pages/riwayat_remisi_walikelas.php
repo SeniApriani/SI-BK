@@ -190,7 +190,7 @@ a{
             Riwayat Remisi Siswa
         </a>
 
-        <a href="#" class="tab">
+        <a href="rekap_poin_walikelas.php" class="tab">
             <i class="fas fa-chart-bar"></i>
             Rekap Poin Pelanggaran 
         </a>
@@ -201,7 +201,7 @@ a{
 <!-- HEADER -->
 <div class="card">
 
-    <h1>Riwayat Remisi Wali Kelas</h1>
+    <h1>Riwayat Remisi Siswa</h1>
     <p>Semua pengajuan remisi siswa</p>
 
     <!-- FILTER -->

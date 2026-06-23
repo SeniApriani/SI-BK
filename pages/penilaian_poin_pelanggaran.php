@@ -340,10 +340,10 @@ input[type=file]{
 
             <a href="riwayat_remisi_walikelas.php" class="tab">
                 <i class="fas fa-history"></i>
-                Riwayat Remisi
+                Riwayat Remisi Siswa
             </a>
 
-            <a href="rekap_poin.php" class="tab">
+            <a href="rekap_poin_walikelas.php" class="tab">
                 <i class="fas fa-chart-bar"></i>
                 Rekap Poin pelanggaran
             </a>

@@ -9,7 +9,7 @@ if(isset($_POST['simpan'])){
 
     $id_siswa = $_POST['id_siswa'];
     $id_pelanggaran = $_POST['id_pelanggaran'];
-    $tanggal = date('Y-m-d');
+    $tanggal = $_POST['tanggal'];
     $catatan = $_POST['catatan'];
 
     // 1. ambil poin dulu
@@ -312,6 +312,7 @@ body{
 .dropdown-siswa{
     position: relative;
     width: 100%;
+    margin-bottom:15px;
 }
 
 #searchSiswa{
@@ -347,6 +348,8 @@ body{
 .item-siswa:hover{
     background:#f3f4f6;
 }
+
+
 
 </style>
 
@@ -415,7 +418,20 @@ body{
     <input type="hidden" name="id_siswa" id="id_siswa">
 </div>
 
-            </div>
+<div class="form-group">
+
+    <label>
+        Tanggal Pelanggaran
+        <span class="required">*</span>
+    </label>
+
+    <input
+        type="date"
+        name="tanggal"
+        value="<?= date('Y-m-d'); ?>"
+        required>
+
+</div> </div>
 
             <div class="form-group">
 
