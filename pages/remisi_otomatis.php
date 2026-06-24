@@ -60,22 +60,46 @@ while($row = mysqli_fetch_assoc($siswa)){
 
     $total_poin = (int)$data_poin['total_poin'];
 
-    if($total_poin <= 0){
-        echo "Poin siswa ".$id_siswa." = 0<br>";
-        continue;
-    }
+/* ==========================================
+   HITUNG SALDO POIN POSITIF SISWA
+   Modal awal = 100
+========================================== */
+$saldo = 100 - $total_poin;
 
-    $potongan = round($total_poin * 0.06);
+/* ==========================================
+   JIKA SALDO SUDAH 100
+   TIDAK PERLU REMISI LAGI
+========================================== */
+if($saldo >= 100){
+    continue;
+}
 
-    if($potongan < 1){
-        $potongan = 1;
-    }
+/* ==========================================
+   REMISI OTOMATIS 6%
+   DIHITUNG DARI SALDO POSITIF
+========================================== */
+$potongan = round($saldo * 0.06);
 
-    $total_baru = $total_poin - $potongan;
+if($potongan < 1){
+    $potongan = 1;
+}
 
-    if($total_baru < 0){
-        $total_baru = 0;
-    }
+/* ==========================================
+   TAMBAHKAN REMISI KE SALDO
+========================================== */
+$saldo_baru = $saldo + $potongan;
+
+/* ==========================================
+   BATASI MAKSIMAL 100
+========================================== */
+if($saldo_baru > 100){
+    $saldo_baru = 100;
+}
+
+/* ==========================================
+   KONVERSI KEMBALI KE TOTAL PELANGGARAN
+========================================== */
+$total_baru = 100 - $saldo_baru;
 
     echo "Lolos remisi siswa: ".$id_siswa."<br>";
    

@@ -5,12 +5,36 @@ include "../config/koneksi.php";
 $id_siswa = $_SESSION['id_siswa'];
 $nama = $_SESSION['nama'] ?? 'Siswa';
 
-// TOTAL POIN
-$total = mysqli_fetch_assoc(mysqli_query($koneksi,"
-SELECT COALESCE(SUM(total_poin),0) AS total
-FROM rekap_poin
-WHERE id_siswa='$id_siswa'
-"))['total'];
+// TOTAL SALDO POIN
+$q = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT
+100 +
+COALESCE(SUM(poin),0) AS saldo
+FROM (
+
+    SELECT -ps.poin AS poin
+    FROM pelanggaran_siswa ps
+    WHERE ps.id_siswa='$id_siswa'
+
+    UNION ALL
+
+    SELECT pr.potongan_poin
+    FROM pengajuan_remisi pr
+    WHERE pr.id_siswa='$id_siswa'
+    AND pr.status='Disetujui'
+
+    UNION ALL
+
+    SELECT ro.potongan_poin
+    FROM remisi_otomatis ro
+    WHERE ro.id_siswa='$id_siswa'
+
+) x
+"));
+
+$total = $q['saldo'];
+
+$total = $q['saldo'];
 
 /* =========================================
    AKTIVITAS PELANGGARAN BULAN BERJALAN
@@ -221,7 +245,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 <i class="fas fa-star"></i>
             </div>
 
-            <h3>Total Poin Pelanggaran</h3>
+            <h3>Saldo Poin Pelanggaran</h3>
 
         </div>
 

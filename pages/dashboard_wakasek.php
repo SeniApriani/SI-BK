@@ -248,7 +248,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                         Komunikasi Orang Tua
 
-                    </a>
+                    <!-- </a>
 
                     <a href="surat_peringatan.php">
 
@@ -256,7 +256,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                         Surat Peringatan
 
-                    </a>
+                    </a> -->
 
                 </div>
 

@@ -21,7 +21,7 @@ SELECT
     ds.kelas,
     'Pelanggaran' AS aktivitas,
     jp.jenis_pelanggaran AS keterangan,
-    CONCAT('+', ps.poin) AS poin
+    CONCAT('-', ps.poin) AS poin
 FROM pelanggaran_siswa ps
 JOIN data_siswa ds ON ps.id_siswa = ds.id_siswa
 JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
@@ -37,7 +37,7 @@ SELECT
     ds.kelas,
     'Remisi Prestasi' AS aktivitas,
     pr.nama_prestasi AS keterangan,
-    CONCAT('-', pr.potongan_poin) AS poin
+    CONCAT('+', pr.potongan_poin) AS poin
 FROM pengajuan_remisi pr
 JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
 WHERE pr.status='Disetujui'
@@ -54,7 +54,7 @@ SELECT
     ds.kelas,
     'Remisi Otomatis' AS aktivitas,
     ro.keterangan,
-    CONCAT('-', ro.potongan_poin) AS poin
+   CONCAT('+', ro.potongan_poin) AS poin
 FROM remisi_otomatis ro
 JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
 WHERE ro.id_siswa='$id_siswa'
@@ -261,6 +261,31 @@ tbody tr:hover{
     color:#fff;
 }
 
+/* total saldo poin */
+.total-box{
+    margin-top:25px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.total{
+    background:#fff;
+    border:2px solid #16a34a;
+    border-radius:15px;
+    padding:20px 30px;
+    text-align:center;
+}
+
+.total h3{
+    color:#166534;
+    font-size:16px;
+}
+
+.total h1{
+    color:#16a34a;
+    font-size:40px;
+}
+
 </style>
 </head>
 <body>
@@ -270,7 +295,7 @@ tbody tr:hover{
 <div class="card">
 
 <div class="header">
-    <h1>Riwayat Poin Siswa</h1>
+    <h1>Riwayat Saldo Poin Pelanggaran Siswa</h1>
     <p>Monitoring aktivitas poin pelanggaran dan remisi siswa</p>
 </div>
 
@@ -305,87 +330,80 @@ tbody tr:hover{
 <th>Kelas</th>
 <th>Aktivitas</th>
 <th>Keterangan</th>
-<th>Poin (+/-)</th>
-<th>Total Poin</th>
+<th>Perubahan Poin</th>
+<th>Saldo Poin</th>
 </tr>
 </thead>
 
 <tbody>
 
-<!-- NANTI DIISI QUERY GABUNGAN -->
-
 <?php
 
 $no = 1;
-$total_berjalan = 0;
 
-while($r = mysqli_fetch_assoc($riwayat)){
-
-    $nilai = (int) filter_var($r['poin'], FILTER_SANITIZE_NUMBER_INT);
-
-    $total_berjalan += $nilai;
+/* MODAL AWAL */
+$total_berjalan = 100;
 
 ?>
 
+<!-- TAMPIL 1 KALI SAJA -->
+<tr>
+    <td><?= $no++; ?></td>
+    <td>-</td>
+    <td><?= $siswa['nama_siswa']; ?></td>
+    <td><?= $siswa['kelas']; ?></td>
+    <td>Modal Awal</td>
+    <td>Poin awal siswa</td>
+    <td>+100</td>
+    <td><b>100</b></td>
+</tr>
+
+<?php
+
+while($r = mysqli_fetch_assoc($riwayat)){
+
+    $nilai = (int)$r['poin'];
+
+    $total_berjalan += $nilai;
+
+    if($total_berjalan > 100){
+        $total_berjalan = 100;
+    }
+
+?>
 <tr>
 
-<td><?= $no++; ?></td>
+    <td><?= $no++; ?></td>
 
-<td><?= date('d-m-Y', strtotime($r['tanggal'])); ?></td>
+     <td><?= date('d/m/Y', strtotime($r['tanggal'])); ?></td>
+    <td><?= $r['nama_siswa']; ?></td>
 
-<td><?= $r['nama_siswa']; ?></td>
+    <td><?= $r['kelas']; ?></td>
 
-<td><?= $r['kelas']; ?></td>
+    <td><?= $r['aktivitas']; ?></td>
 
-<td><?= $r['aktivitas']; ?></td>
+    <td><?= $r['keterangan']; ?></td>
 
-<td><?= $r['keterangan']; ?></td>
+    <td><?= $r['poin']; ?></td>
 
-<td><?= $r['poin']; ?></td>
-
-<td>
-    <b><?= $total_berjalan; ?></b>
-</td>
+    <td><b><?= $total_berjalan; ?></b></td>
 
 </tr>
 
 <?php } ?>
-
 </tbody>
 
 </table>
 
-<!-- </div>
-
-<div class="keterangan">
-
-<h3>Keterangan Aktivitas</h3>
-
-<div class="legend">
-<span class="badge-pelanggaran">Pelanggaran</span>
-<span>Aktivitas yang menambah poin pelanggaran.</span>
-</div>
-
-<div class="legend">
-<span class="badge-remisi">Remisi Prestasi</span>
-<span>Pengurangan poin karena prestasi siswa.</span>
-</div>
-
-<div class="legend">
-<span class="badge-otomatis">Remisi Otomatis</span>
-<span>Pengurangan poin otomatis dari sistem.</span>
-</div>
-
-</div>
-
 <div class="total-box">
 
-<div class="total">
-<h3>Total Poin Saat Ini</h3>
-<h1>0</h1>
+    <div class="total">
+        <h3>Saldo Poin Akhir</h3>
+        <h1><?= $total_berjalan; ?></h1>
+    </div>
+
 </div>
 
-</div> -->
 
 <a href="rekap_poin_wakasek.php" class="btn-back">
 <i class="fas fa-chevron-left"></i>

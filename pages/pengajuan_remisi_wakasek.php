@@ -38,14 +38,39 @@ if(isset($_GET['action']) && isset($_GET['id'])){
             WHERE id_siswa='$id_siswa'
         "));
 
-        $total_poin = $data['total_poin'];
-        
+       $total_poin = $data['total_poin'];
 
-        // 4. hitung potongan remisi
-        // rumus: (total_poin * persen) / 100
-        $potongan = round(($total_poin * $persen_remisi) / 100);
+/* ==========================================
+   HITUNG SALDO POIN POSITIF SISWA
+   Modal awal poin siswa = 100
+========================================== */
+$saldo = 100 - $total_poin;
 
-        // simpan status + hasil potongan(terbaruuuu)
+/* ==========================================
+   REMISI DIHITUNG DARI SALDO POIN POSITIF
+========================================== */
+$potongan = round(($saldo * $persen_remisi) / 100);
+
+/* ==========================================
+   TAMBAHKAN REMISI KE SALDO POIN
+========================================== */
+$saldo_baru = $saldo + $potongan;
+
+/* ==========================================
+   BATASI MAKSIMAL 100
+========================================== */
+if($saldo_baru > 100){
+    $saldo_baru = 100;
+}
+
+/* ==========================================
+   UBAH KEMBALI KE TOTAL PELANGGARAN
+========================================== */
+$total_baru = 100 - $saldo_baru;
+
+/* ==========================================
+   SIMPAN STATUS DAN HASIL REMISI
+========================================== */
 mysqli_query($koneksi,"
     UPDATE pengajuan_remisi
     SET
@@ -53,9 +78,6 @@ mysqli_query($koneksi,"
         potongan_poin='$potongan'
     WHERE id_remisi='$id'
 ");
-
-        // 5. hasil akhir (tidak boleh minus)
-        $total_baru = max(0, $total_poin - $potongan);
 
         // 6. update ke rekap poin
         mysqli_query($koneksi,"

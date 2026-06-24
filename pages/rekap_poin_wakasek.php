@@ -409,6 +409,7 @@ table tbody tr:hover{
 
 <div class="page-header">
 <h1>Rekap Poin Pelanggaran Siswa</h1>
+<p>Akumulasi Poin Pelanggaran Siswa</p>
 </div>
 
 <div class="filter-box">
@@ -449,7 +450,7 @@ table tbody tr:hover{
 <th>NISN</th>
 <th>Nama Siswa</th>
 <th>Kelas</th>
-<th>Poin Akhir</th>
+<th>Akumulasi Poin Pelanggaran</th>
 </tr>
 </thead>
 
@@ -480,6 +481,7 @@ table tbody tr:hover{
 
 </tbody>
 </table>
+
 
 </div>
 

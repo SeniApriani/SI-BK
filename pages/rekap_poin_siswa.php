@@ -17,7 +17,7 @@ SELECT * FROM (
         ds.kelas,
         'Pelanggaran' AS aktivitas,
         jp.jenis_pelanggaran AS keterangan,
-        ps.poin AS poin
+        -ps.poin AS poin
     FROM pelanggaran_siswa ps
     JOIN data_siswa ds ON ps.id_siswa = ds.id_siswa
     JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
@@ -32,7 +32,7 @@ SELECT * FROM (
         ds.kelas,
         'Remisi Prestasi' AS aktivitas,
         pr.nama_prestasi AS keterangan,
-        -pr.potongan_poin AS poin
+        pr.potongan_poin AS poin
     FROM pengajuan_remisi pr
     JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
     WHERE pr.status='Disetujui'
@@ -47,7 +47,7 @@ SELECT * FROM (
         ds.kelas,
         'Remisi Otomatis' AS aktivitas,
         ro.keterangan AS keterangan,
-        -ro.potongan_poin AS poin
+        ro.potongan_poin AS poin
     FROM remisi_otomatis ro
     JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
     WHERE ro.id_siswa='$id_siswa'
@@ -61,7 +61,7 @@ $siswa = mysqli_fetch_assoc(mysqli_query($koneksi,"
 SELECT * FROM data_siswa WHERE id_siswa='$id_siswa'
 "));
 
-$total = 0;
+$total = 100;
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +69,7 @@ $total = 0;
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rekap Poin Siswa</title>
+<title>Riwayat Saldo Poin Pelanggaran Siswa</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -115,13 +115,7 @@ tr:hover{
     background:#f0fdf4;
 }
 
-.total-box{
-    margin-top:20px;
-    text-align:right;
-    font-size:20px;
-    font-weight:bold;
-    color:#16a34a;
-}
+
 
 .btn-back{
     display:inline-block;
@@ -132,6 +126,63 @@ tr:hover{
     border-radius:8px;
     text-decoration:none;
 }
+
+/* identitas siswa */
+
+
+.info-card{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:15px;
+    margin-bottom:20px;
+}
+
+.info-item{
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.info-item span{
+    display:block;
+    font-size:12px;
+    color:#6b7280;
+    margin-bottom:5px;
+}
+
+.info-item b{
+    color:#166534;
+    font-size:16px;
+}
+
+
+/* total saldo */
+.total-box{
+    margin-top:25px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.total{
+    background:#fff;
+    border:2px solid #16a34a;
+    border-radius:15px;
+    padding:10px 15px;
+    text-align:center;
+}
+
+.total h3{
+    color:#166534;
+    font-size:16px;
+}
+
+.total h1{
+    color:#16a34a;
+    font-size:20px;
+}
 </style>
 
 </head>
@@ -139,25 +190,58 @@ tr:hover{
 
 <div class="container">
 
-<h2>Rekap Poin Siswa</h2>
+<h2>Riwayat Saldo Poin Pelanggaran Siswa</h2>
 
-<p><b>Nama:</b> <?= $siswa['nama_siswa']; ?> | <b>Kelas:</b> <?= $siswa['kelas']; ?></p>
+<div class="info-card">
 
+    <div class="info-item">
+        <span>Nama Siswa</span>
+        <b><?= $siswa['nama_siswa']; ?></b>
+    </div>
+
+    <div class="info-item">
+        <span>NISN</span>
+        <b><?= $siswa['nisn']; ?></b>
+    </div>
+
+    <div class="info-item">
+        <span>Kelas</span>
+        <b><?= $siswa['kelas']; ?></b>
+    </div>
+
+</div>
 <table>
 <tr>
 <th>No</th>
 <th>Tanggal</th>
 <th>Aktivitas</th>
 <th>Keterangan</th>
-<th>Poin</th>
-<th>Total Berjalan</th>
+<th>Perubahan Poin</th>
+<th>Saldo Poin</th>
 </tr>
+
+<?php
+$no = 1;
+?>
+
+<tr>
+    <td><?= $no++; ?></td>
+    <td>-</td>
+    <td>Modal Awal</td>
+    <td>Poin awal siswa</td>
+    <td>+100</td>
+    <td>100</td>
+</tr>
+
 
 <?php 
 $no = 1;
 while($r = mysqli_fetch_assoc($riwayat)) { 
 
 $total += $r['poin'];
+if($total > 100){
+    $total = 100;
+}
 ?>
 
 <tr>
@@ -180,9 +264,13 @@ if($r['poin'] > 0){
 <?php } ?>
 
 </table>
-
 <div class="total-box">
-Total Poin Akhir: <?= $total; ?>
+
+    <div class="total">
+        <h3>Saldo Poin Akhir</h3>
+        <h1><?= $total; ?></h1>
+    </div>
+
 </div>
 
 <a href="dashboard_siswa.php" class="btn-back">
