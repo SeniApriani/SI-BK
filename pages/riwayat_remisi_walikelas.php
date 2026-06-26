@@ -2,9 +2,36 @@
 include "../config/koneksi.php";
 session_start();
 
+// role
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
+
+$where = "";
+
+if($role == 'wali_kelas'){
+    $where = "WHERE ds.kelas='$kelasLogin'";
+}
+
 /* FILTER */
 $nama  = $_GET['nama'] ?? '';
 $kelas = $_GET['kelas'] ?? '';
+
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
+
+$where = "WHERE 1=1";
+
+if($role == 'wali_kelas'){
+    $where .= " AND ds.kelas='$kelasLogin'";
+}
+
+if($nama != ''){
+    $where .= " AND ds.nama_siswa LIKE '%$nama%'";
+}
+
+if($kelas != ''){
+    $where .= " AND ds.kelas LIKE '%$kelas%'";
+}
 
 /* QUERY RIWAYAT REMISI SEMUA SISWA */
 
@@ -19,10 +46,12 @@ SELECT
     pr.status,
     pr.bukti
 FROM pengajuan_remisi pr
-JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
+JOIN data_siswa ds
+ON pr.id_siswa = ds.id_siswa
+$where
 ORDER BY pr.tanggal_pengajuan DESC
-
 ");
+
 ?>
 
 <!DOCTYPE html>

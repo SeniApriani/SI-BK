@@ -10,7 +10,6 @@ SELECT DISTINCT id_siswa
 FROM pelanggaran_siswa
 ");
 
-// echo "Remisi otomatis berjalan <br>";
 while($row = mysqli_fetch_assoc($siswa)){
 
     $id_siswa = $row['id_siswa'];
@@ -25,6 +24,7 @@ while($row = mysqli_fetch_assoc($siswa)){
         continue;
     }
 
+    // Selisih hari dari pelanggaran terakhir
     $selisih = floor(
         (strtotime(date('Y-m-d')) - strtotime($last['last_date']))
         / 86400
@@ -34,12 +34,15 @@ while($row = mysqli_fetch_assoc($siswa)){
         continue;
     }
 
+    // Tanggal remisi = 30 hari setelah pelanggaran terakhir
+    $tanggal_remisi = date('Y-m-d', strtotime($last['last_date'].' +30 days'));
+
+    // Cek apakah remisi untuk tanggal tersebut sudah pernah dibuat
     $cek = mysqli_num_rows(mysqli_query($koneksi,"
     SELECT *
     FROM remisi_otomatis
     WHERE id_siswa='$id_siswa'
-    AND MONTH(tanggal_remisi)=MONTH(CURDATE())
-    AND YEAR(tanggal_remisi)=YEAR(CURDATE())
+    AND tanggal_remisi='$tanggal_remisi'
     "));
 
     if($cek > 0){
@@ -54,64 +57,52 @@ while($row = mysqli_fetch_assoc($siswa)){
     "));
 
     if(!$data_poin){
-        echo "Rekap poin tidak ditemukan untuk siswa ".$id_siswa."<br>";
         continue;
     }
 
     $total_poin = (int)$data_poin['total_poin'];
 
-/* ==========================================
-   HITUNG SALDO POIN POSITIF SISWA
-   Modal awal = 100
-========================================== */
-$saldo = 100 - $total_poin;
+    /* ==========================================
+       HITUNG SALDO
+    ========================================== */
 
-/* ==========================================
-   JIKA SALDO SUDAH 100
-   TIDAK PERLU REMISI LAGI
-========================================== */
-if($saldo >= 100){
-    continue;
-}
+    $saldo = 100 - $total_poin;
 
-/* ==========================================
-   REMISI OTOMATIS 6%
-   DIHITUNG DARI SALDO POSITIF
-========================================== */
-$potongan = round($saldo * 0.06);
+    if($saldo >= 100){
+        continue;
+    }
 
-if($potongan < 1){
-    $potongan = 1;
-}
+    /* ==========================================
+       REMISI 6%
+    ========================================== */
 
-/* ==========================================
-   TAMBAHKAN REMISI KE SALDO
-========================================== */
-$saldo_baru = $saldo + $potongan;
+    $potongan = round($saldo * 0.06);
 
-/* ==========================================
-   BATASI MAKSIMAL 100
-========================================== */
-if($saldo_baru > 100){
-    $saldo_baru = 100;
-}
+    if($potongan < 1){
+        $potongan = 1;
+    }
 
-/* ==========================================
-   KONVERSI KEMBALI KE TOTAL PELANGGARAN
-========================================== */
-$total_baru = 100 - $saldo_baru;
+    $saldo_baru = $saldo + $potongan;
 
-    echo "Lolos remisi siswa: ".$id_siswa."<br>";
-   
+    if($saldo_baru > 100){
+        $saldo_baru = 100;
+    }
+
+    $total_baru = 100 - $saldo_baru;
+
+    /* ==========================================
+       SIMPAN REMISI
+    ========================================== */
+
     $simpan = mysqli_query($koneksi,"
     INSERT INTO remisi_otomatis
-(id_siswa, persen_remisi, potongan_poin, tanggal_remisi, keterangan)
-VALUES
-('$id_siswa','6','$potongan',CURDATE(),'Tidak melakukan pelanggaran 30 hari')
+    (id_siswa,persen_remisi,potongan_poin,tanggal_remisi,keterangan)
+    VALUES
+    ('$id_siswa','6','$potongan','$tanggal_remisi','Tidak melakukan pelanggaran 30 hari')
     ");
 
     if(!$simpan){
-        die("ERROR INSERT : ".mysqli_error($koneksi));
+        die(mysqli_error($koneksi));
     }
 
     mysqli_query($koneksi,"
@@ -120,6 +111,5 @@ VALUES
     WHERE id_siswa='$id_siswa'
     ");
 
-    echo "Berhasil simpan remisi siswa ".$id_siswa."<br>";
 }
 ?>

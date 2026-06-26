@@ -353,7 +353,7 @@ $total_berjalan = 100;
     <td><?= $siswa['nama_siswa']; ?></td>
     <td><?= $siswa['kelas']; ?></td>
     <td>Modal Awal</td>
-    <td>Poin awal siswa</td>
+    <td>Poin awal siswa (Poin Positif)</td>
     <td>+100</td>
     <td><b>100</b></td>
 </tr>

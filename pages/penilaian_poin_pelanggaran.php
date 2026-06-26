@@ -1,5 +1,10 @@
 <?php
+session_start();
 include "../config/koneksi.php";
+
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
+
 
 $simpan = false;
 
@@ -37,7 +42,24 @@ if(isset($_POST['simpan'])){
     }
 }
 
-$siswa = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+if($role == 'wali_kelas'){
+
+    $siswa = mysqli_query($koneksi,"
+        SELECT *
+        FROM data_siswa
+        WHERE kelas='$kelasLogin'
+        ORDER BY nama_siswa ASC
+    ");
+
+}else{
+
+    $siswa = mysqli_query($koneksi,"
+        SELECT *
+        FROM data_siswa
+        ORDER BY nama_siswa ASC
+    ");
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">

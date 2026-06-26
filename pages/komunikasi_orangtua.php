@@ -1,25 +1,30 @@
 
 <?php
+session_start();
 include "../config/koneksi.php";
-$query = mysqli_query($koneksi, "
+
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
+
+$where = "WHERE COALESCE(p.total_poin,0) >= 21";
+
+if($role == 'wali_kelas'){
+    $where .= " AND s.kelas='$kelasLogin'";
+}
+$query = mysqli_query($koneksi,"
 SELECT
     s.id_siswa,
     s.nama_siswa,
     s.kelas,
     COALESCE(p.total_poin,0) AS total_poin
-    
-
 FROM data_siswa s
-
 LEFT JOIN rekap_poin p
 ON p.id_siswa = s.id_siswa
-
-
-WHERE COALESCE(p.total_poin,0) >= 21
+$where
 ORDER BY total_poin DESC
-
 ") or die(mysqli_error($koneksi));
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -624,12 +629,11 @@ table tbody tr:hover{
 
 </div>
 <div class="bottom-action">
-
-        <a href="dashboard_walikelas.php" class="btn-back">
-
-            <i class="fas fa-chevron-left"></i>
-
-        </a>
+<?php if($role=='wakasek'){ ?>
+<a href="dashboard_wakasek.php" class="btn-back">
+<?php } else { ?>
+<a href="dashboard_walikelas.php" class="btn-back">
+<?php } ?>
 
     </div>
 

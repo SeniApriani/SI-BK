@@ -4,6 +4,7 @@ session_start();
 include '../config/koneksi.php';
 
 $nama = $_SESSION['nama'];
+$kelas = $_SESSION['kelas']; // kelas wali kelas yang login
 
 
 /* =========================================
@@ -26,6 +27,7 @@ $queryStatistik = mysqli_query($koneksi, "
         ON p.id_siswa = s.id_siswa
    WHERE MONTH(p.tanggal) = '$bulan'
 AND YEAR(p.tanggal) = '$tahun'
+AND s.kelas='$kelas'
     GROUP BY s.kelas
 ");
 
@@ -51,11 +53,14 @@ while ($row = mysqli_fetch_assoc($queryStatistik)) {
 /* =========================================
    TOTAL PELANGGARAN BULAN & TAHUN BERJALAN
 ========================================= */
-$queryTotalPelanggaran = mysqli_query($koneksi, "
-    SELECT COUNT(*) AS total
-    FROM pelanggaran_siswa
-    WHERE MONTH(tanggal) = '$bulan'
-    AND YEAR(tanggal) = '$tahun'
+$queryTotalPelanggaran = mysqli_query($koneksi,"
+SELECT COUNT(*) AS total
+FROM pelanggaran_siswa p
+JOIN data_siswa s
+ON p.id_siswa=s.id_siswa
+WHERE MONTH(p.tanggal)='$bulan'
+AND YEAR(p.tanggal)='$tahun'
+AND s.kelas='$kelas'
 ");
 
 $totalPelanggaran = mysqli_fetch_assoc($queryTotalPelanggaran);

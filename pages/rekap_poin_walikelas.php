@@ -1,7 +1,11 @@
 
 
 <?php
+session_start();
 include "../config/koneksi.php";
+
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
 
 // PREDIKAT PHP
 function predikat($poin){
@@ -28,28 +32,22 @@ $kelas = $_GET['kelas'] ?? '';
 // QUERY REKAP REALTIME
 
 
-if($kelas != ''){
+$where = "";
 
-    $rekap = mysqli_query($koneksi,"
-SELECT 
-    ds.id_siswa,
-    ds.nisn,
-    ds.nama_siswa,
-    ds.kelas,
-    COALESCE(rp.total_poin,0) AS total_poin,
-    rp.updated_at
-FROM data_siswa ds
-LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
-WHERE ds.kelas='$kelas'
-ORDER BY ds.nama_siswa ASC
-");
+if($role == "wali_kelas"){
 
+    $where = "WHERE ds.kelas='$kelasLogin'";
 
 }else{
 
-    
-    $rekap = mysqli_query($koneksi,"
-SELECT 
+    if($kelas != ""){
+        $where = "WHERE ds.kelas='$kelas'";
+    }
+
+}
+
+$rekap = mysqli_query($koneksi,"
+SELECT
     ds.id_siswa,
     ds.nisn,
     ds.nama_siswa,
@@ -57,12 +55,13 @@ SELECT
     COALESCE(rp.total_poin,0) AS total_poin,
     rp.updated_at
 FROM data_siswa ds
-LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
+LEFT JOIN rekap_poin rp
+ON rp.id_siswa=ds.id_siswa
+$where
 ORDER BY ds.nama_siswa ASC
 ");
 
-}
-$no = 1;
+$no=1;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -415,26 +414,25 @@ table tbody tr:hover{
 
 </select>
 
+<?php if($role=='wakasek'){ ?>
+
 <form method="GET">
-    <select name="kelas" onchange="this.form.submit()">
 
-        <option value="">Semua Kelas</option>
+<select name="kelas" onchange="this.form.submit()">
 
-        <option value="X TKJ"
-        <?= ($kelas=='X TKJ') ? 'selected' : ''; ?>>
-        X TKJ
-        </option>
+    <option value="">Semua Kelas</option>
 
-        <option value="XI TKJ"
-        <?= ($kelas=='XI TKJ') ? 'selected' : ''; ?>>
-        XI TKJ
-        </option>
+    <option value="X TKJ" <?= ($kelas=='X TKJ')?'selected':''; ?>>X TKJ</option>
 
-        <option value="XII TKJ"
-        <?= ($kelas=='XII TKJ') ? 'selected' : ''; ?>>
-        XII TKJ
-        </option>
+    <option value="XI TKJ" <?= ($kelas=='XI TKJ')?'selected':''; ?>>XI TKJ</option>
 
+    <option value="XII TKJ" <?= ($kelas=='XII TKJ')?'selected':''; ?>>XII TKJ</option>
+
+</select>
+
+</form>
+
+<?php } ?>
     </select>
 </form>
 </div>
@@ -485,7 +483,12 @@ table tbody tr:hover{
 
 <div class="table-footer">
 
+<?php if($role=='wakasek'){ ?>
 <a href="dashboard_wakasek.php" class="btn-back">
+<?php } else { ?>
+<a href="dashboard_walikelas.php" class="btn-back">
+<?php } ?>
+
 <i class="fas fa-chevron-left"></i>
 </a>
 
@@ -505,7 +508,7 @@ table tbody tr:hover{
 
 </div>
 
-<a href="cetak_rekap_poin_walikelas.php?kelas=<?= $kelas; ?>" class="btn-download">
+<a href="cetak_rekap_poin.php?kelas=<?= $kelas; ?>" class="btn-download">
     <i class="fas fa-download"></i>
     Unduh
 </a>

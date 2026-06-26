@@ -1,22 +1,26 @@
 <?php
 include __DIR__ . '/../config/koneksi.php';
+session_start();
+
+// ambil kelas wali kelas yang login
+$kelasLogin = $_SESSION['kelas'];
 
 $limit = 20;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 $bulan = $_GET['bulan'] ?? '';
-$kelas = $_GET['kelas'] ?? '';
+$nama = $_GET['nama'] ?? '';
 
-$where = "WHERE 1=1";
+$where = "WHERE s.kelas='$kelasLogin'";
 
 if ($bulan != '') {
     $where .= " AND MONTH(ps.tanggal) = '$bulan'";
 }
-
-if ($kelas != '') {
-    $where .= " AND s.kelas = '$kelas'";
+if ($nama != '') {
+    $where .= " AND s.nama_siswa = '$nama'";
 }
+
 
 /* ===================== DATA ===================== */
 $data = mysqli_query($koneksi, "
@@ -570,47 +574,50 @@ table tbody tr:hover{
 
         <div class="filter-section">
 
-          <form method="GET" class="filter-wrap">
+          
+            <form method="GET" class="filter-wrap" id="filterForm">
 
     <!-- BULAN -->
     <div class="select-box">
         <i class="fas fa-calendar"></i>
-        <select name="bulan">
-            <option value="">Semua Bulan</option>
-            <option value="1">Januari</option>
-            <option value="2">Februari</option>
-            <option value="3">Maret</option>
-            <option value="4">April</option>
-            <option value="5">Mei</option>
-            <option value="6">Juni</option>
-            <option value="7">Juli</option>
-            <option value="8">Agustus</option>
-            <option value="9">September</option>
-            <option value="10">Oktober</option>
-            <option value="11">November</option>
-            <option value="12">Desember</option>
+       <select name="bulan" onchange="document.getElementById('filterForm').submit()">
+           <option value="" <?= ($bulan=='')?'selected':''; ?>>Semua Bulan</option>
+<option value="1" <?= ($bulan=='1')?'selected':''; ?>>Januari</option>
+<option value="2" <?= ($bulan=='2')?'selected':''; ?>>Februari</option>
+<option value="3" <?= ($bulan=='3')?'selected':''; ?>>Maret</option>
+<option value="4" <?= ($bulan=='4')?'selected':''; ?>>April</option>
+<option value="5" <?= ($bulan=='5')?'selected':''; ?>>Mei</option>
+<option value="6" <?= ($bulan=='6')?'selected':''; ?>>Juni</option>
+<option value="7" <?= ($bulan=='7')?'selected':''; ?>>Juli</option>
+<option value="8" <?= ($bulan=='8')?'selected':''; ?>>Agustus</option>
+<option value="9" <?= ($bulan=='9')?'selected':''; ?>>September</option>
+<option value="10" <?= ($bulan=='10')?'selected':''; ?>>Oktober</option>
+<option value="11" <?= ($bulan=='11')?'selected':''; ?>>November</option>
+<option value="12" <?= ($bulan=='12')?'selected':''; ?>>Desember</option>
         </select>
     </div>
 
-    <!-- KELAS -->
+    <!-- NAMA -->
     <div class="select-box">
-        <i class="fas fa-users"></i>
-        <select name="kelas">
-            <option value="">Semua Kelas</option>
-            <option value="X TKJ">X TKJ</option>
-            <option value="XI TKJ">XI TKJ</option>
-            <option value="XII TKJ">XII TKJ</option>
-        </select>
-    </div>
+    <i class="fas fa-user"></i>
+    <select name="nama" onchange="document.getElementById('filterForm').submit()">
+        <option value="">Semua Siswa</option>
 
-    <button type="submit" class="btn-filter">
-        <i class="fas fa-search"></i>
-        Cari
-    </button>
+<?php
+$q = mysqli_query($koneksi,"SELECT nama_siswa FROM data_siswa
+WHERE kelas='$kelasLogin'
+ORDER BY nama_siswa ASC");
 
-</form>
+while($s=mysqli_fetch_assoc($q)){ ?>
+    <option value="<?= $s['nama_siswa']; ?>"
+        <?= ($nama==$s['nama_siswa'])?'selected':''; ?>>
+        <?= $s['nama_siswa']; ?>
+    </option>
+<?php } ?>
 
-        </div>
+        
+    </select>
+</div>
 
         <!-- TABLE -->
 
@@ -684,7 +691,7 @@ table tbody tr:hover{
       <div class="pagination">
 
 <?php if($page > 1){ ?>
-    <a class="page-btn" href="?page=<?= $page-1 ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>">‹</a>
+<a class="page-btn" href="?page=<?= $page-1 ?>&bulan=<?= $bulan ?>&nama=<?= urlencode($nama) ?>">‹</a>
 <?php } ?>
 
 <?php
@@ -692,16 +699,15 @@ $start = max(1, $page - 2);
 $end = min($total_pages, $page + 2);
 
 for ($i = $start; $i <= $end; $i++) { ?>
-    <a href="?page=<?= $i ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>"
+    <a href="?page=<?= $i ?>&bulan=<?= $bulan ?>&nama=<?= urlencode($nama) ?>"
        class="page-btn <?= ($i == $page) ? 'active' : '' ?>">
         <?= $i ?>
     </a>
 <?php } ?>
 
 <?php if($page < $total_pages){ ?>
-    <a class="page-btn" href="?page=<?= $page+1 ?>&bulan=<?= $bulan ?>&kelas=<?= $kelas ?>">›</a>
+<a class="page-btn" href="?page=<?= $page+1 ?>&bulan=<?= $bulan ?>&nama=<?= urlencode($nama) ?>">›</a>
 <?php } ?>
-
 </div>
 
     <!-- BOTTOM -->

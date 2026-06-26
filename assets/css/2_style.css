@@ -524,3 +524,17 @@ RESPONSIVE
     }
 
 }
+
+/* ===================================
+FOOTER
+=================================== */
+
+footer{
+    margin-top:18px;
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    position: relative;
+}
+
+

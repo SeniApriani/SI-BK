@@ -1,7 +1,18 @@
 <?php
+session_start();
 include __DIR__ . '/../config/koneksi.php';
 
-$siswa = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+// kelas wali kelas yang sedang login
+$kelas = $_SESSION['kelas'];
+
+// hanya siswa sesuai kelas wali kelas
+$siswa = mysqli_query($koneksi,"
+SELECT *
+FROM data_siswa
+WHERE kelas='$kelas'
+ORDER BY nama_siswa ASC
+");
+
 $kategori = mysqli_query($koneksi, "SELECT DISTINCT kategori FROM jenis_pelanggaran");
 $jenisData = mysqli_query($koneksi, "SELECT * FROM jenis_pelanggaran");
 
@@ -28,6 +39,7 @@ if(isset($_POST['simpan'])){
         VALUES
         ('$id_siswa', '$id_pelanggaran', '$tanggal', '$catatan', '$poin')
     ");
+
 
     $id_siswa = $_POST['id_siswa'];
 
@@ -71,9 +83,14 @@ if(mysqli_num_rows($cek) > 0){
     ");
 }
 
+
+
+
     header("Location: riwayat_pelanggaran_siswa.php");
     exit;
 }
+
+
 ?>
 
 <!DOCTYPE html>

@@ -1,5 +1,9 @@
 <?php
+session_start();
 include "../config/koneksi.php";
+
+$role = $_SESSION['role'];
+$kelasLogin = $_SESSION['kelas'];
 
 // BULAN
 
@@ -35,6 +39,19 @@ function getPredikat($poin) {
 
 $kelas = $_GET['kelas'] ?? '';
 
+$where = "WHERE 1=1";
+
+if($role == 'wali_kelas'){
+
+    $where .= " AND ds.kelas='$kelasLogin'";
+
+}else{
+
+    if($kelas != ''){
+        $where .= " AND ds.kelas='$kelas'";
+    }
+
+}
 // QUERY
 $sql = "
 SELECT 
@@ -50,28 +67,28 @@ LEFT JOIN catatan_semester cs
     ON ds.id_siswa = cs.id_siswa
     AND cs.semester='Ganjil'
     AND cs.tahun_ajaran='2025/2026'
-WHERE 1=1
+$where
 ";
-
-if($kelas != ''){
-    $sql .= " AND ds.kelas='$kelas' ";
-}
 
 $sql .= " ORDER BY ds.kelas, ds.nama_siswa";
 
 $rekap = mysqli_query($koneksi, $sql);
 
-// ambil data dulu
+// Ambil data
 $data = [];
+
 while($r = mysqli_fetch_assoc($rekap)){
     $data[] = $r;
 }
 
-// grouping kelas
+// Kelompokkan berdasarkan kelas
 $groupKelas = [];
+
 foreach($data as $d){
     $groupKelas[$d['kelas']][] = $d;
 }
+
+
 ?>
 
 <!DOCTYPE html>

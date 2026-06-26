@@ -190,7 +190,7 @@ tr:hover{
 
 <div class="container">
 
-<h2>Riwayat Saldo Poin Pelanggaran Siswa</h2>
+<h2>Riwayat Saldo Poin Pelanggaran</h2>
 
 <div class="info-card">
 
@@ -228,7 +228,7 @@ $no = 1;
     <td><?= $no++; ?></td>
     <td>-</td>
     <td>Modal Awal</td>
-    <td>Poin awal siswa</td>
+    <td>Poin awal siswa(Poin Positif)</td>
     <td>+100</td>
     <td>100</td>
 </tr>
@@ -246,7 +246,7 @@ if($total > 100){
 
 <tr>
 <td><?= $no++; ?></td>
-<td><?= date('d-m-Y', strtotime($r['tanggal'])); ?></td>
+<td><?= date('d/m/Y', strtotime($r['tanggal'])); ?></td>
 <td><?= $r['aktivitas']; ?></td>
 <td><?= $r['keterangan']; ?></td>
 <td>

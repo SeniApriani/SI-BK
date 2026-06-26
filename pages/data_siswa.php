@@ -1,7 +1,17 @@
 <?php
+session_start();
 include '../config/koneksi.php';
 
-$query = mysqli_query($koneksi, "SELECT * FROM data_siswa");
+// mengambil kelas wali kelas yang sedang login
+$kelas = $_SESSION['kelas'];
+
+// hanya menampilkan siswa sesuai kelas wali kelas
+$query = mysqli_query($koneksi,"
+SELECT *
+FROM data_siswa
+WHERE kelas='$kelas'
+ORDER BY nama_siswa ASC
+");
 ?>
 
 <!DOCTYPE html>

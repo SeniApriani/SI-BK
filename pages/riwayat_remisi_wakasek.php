@@ -2,7 +2,7 @@
 
 <?php
 include "../config/koneksi.php";
-// include "remisi_otomatis.php";
+ include "remisi_otomatis.php";
 
 /* =========================
    AMBIL LIST SISWA

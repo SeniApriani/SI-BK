@@ -1,9 +1,13 @@
 <?php
 session_start();
-include "../config/koneksi.php";
-$kelas = $_GET['kelas'] ?? '';
-
+$role = $_SESSION['role'];
 $kelas_login = $_SESSION['kelas'];
+
+
+include "../config/koneksi.php";
+
+
+
 
 $semester = "Ganjil";
 $tahun_ajaran = "2025/2026";
@@ -63,11 +67,20 @@ if(isset($_POST['simpan'])){
 }
 
 
-$where = "WHERE 1=1";
+$nama = $_GET['id_siswa'] ?? '';
 
-if($kelas != ''){
-    $where .= " AND ds.kelas='$kelas'";
+$where = "WHERE ds.kelas='$kelas_login'";
+
+if($nama != ''){
+    $where .= " AND ds.id_siswa='$nama'";
 }
+
+$listSiswa = mysqli_query($koneksi,"
+SELECT id_siswa, nama_siswa
+FROM data_siswa
+WHERE kelas='$kelas_login'
+ORDER BY nama_siswa ASC
+");
 
 $data = mysqli_query($koneksi,"
 SELECT
@@ -370,24 +383,25 @@ max-width:300px;
 <form method="GET">
 
 <div class="filter-box">
-<i class="fas fa-users"></i>
+<i class="fas fa-user"></i>
+
 <select
-name="kelas"
+name="id_siswa"
 onchange="this.form.submit()">
 
-<option value="">Semua Kelas</option>
+<option value="">Semua Siswa</option>
 
-<option value="X TKJ" <?= ($kelas=='X TKJ')?'selected':''; ?>>
-X TKJ
+<?php while($s=mysqli_fetch_assoc($listSiswa)){ ?>
+
+<option
+value="<?= $s['id_siswa']; ?>"
+<?= ($nama==$s['id_siswa'])?'selected':''; ?>>
+
+<?= $s['nama_siswa']; ?>
+
 </option>
 
-<option value="XI TKJ" <?= ($kelas=='XI TKJ')?'selected':''; ?>>
-XI TKJ
-</option>
-
-<option value="XII TKJ" <?= ($kelas=='XII TKJ')?'selected':''; ?>>
-XII TKJ
-</option>
+<?php } ?>
 
 </select>
 
