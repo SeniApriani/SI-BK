@@ -213,27 +213,29 @@ td:nth-child(7){
 
 
 <div class="judul">
-    <h3>REKAP POIN PELANGGARAN SISWA</h3>
+   <div class="judul">
+    <h3>REKAP POIN PELANGGARAN SISWA TAHUN <?= date('Y'); ?></h3>
+</div>
 </div>
 
 <?php
 
-$bulan = date('n');
+// $bulan = date('n');
 
-if($bulan >= 7){
-    $semester = "Ganjil";
-    $tahun_ajaran = date('Y')."/".(date('Y')+1);
-}else{
-    $semester = "Genap";
-    $tahun_ajaran = (date('Y')-1)."/".date('Y');
-}
+// if($bulan >= 7){
+//     $semester = "Ganjil";
+//     $tahun_ajaran = date('Y')."/".(date('Y')+1);
+// }else{
+//     $semester = "Genap";
+//     $tahun_ajaran = (date('Y')-1)."/".date('Y');
+// }
 
 ?>
 
 <div class="info">
 
-    <strong>Periode</strong>
-    : Semester <?= $semester; ?> Tahun Ajaran <?= $tahun_ajaran; ?>
+    <!-- <strong>Periode</strong>
+    : Semester <?= $semester; ?> Tahun Ajaran <?= $tahun_ajaran; ?> -->
 
 </div>
 
@@ -292,15 +294,27 @@ if($bulan >= 7){
 <?php } ?>
 <div class="ttd">
 
-   Jatinangor, <?= $tanggal_indonesia; ?>
+    Jatinangor, <?= $tanggal_indonesia; ?>
 
     <br>
 
-    Wakasek Kesiswaan
+    <?php if($role == 'wali_kelas'){ ?>
 
-    <br><br><br>
+        Wali Kelas
 
-    <b>(................................)</b>
+        <br><br><br>
+
+        <b>(<?= $_SESSION['nama']; ?>)</b>
+
+    <?php }else{ ?>
+
+        Wakasek Kesiswaan
+
+        <br><br><br>
+
+        <b>(<?= $_SESSION['nama']; ?>)</b>
+
+    <?php } ?>
 
 </div>
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2026 at 05:49 PM
+-- Generation Time: Jul 01, 2026 at 06:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -67,7 +67,8 @@ CREATE TABLE `data_guru` (
 
 INSERT INTO `data_guru` (`id_guru`, `nama_guru`, `nip`, `username`, `password`, `role`, `kelas_wali`) VALUES
 (5, 'Kiki Saepullah', '12345678', 'walikelas10', 'siBK2026', 'wali_kelas', 'X TKJ'),
-(6, 'Rita Ratnasari', '666666666', 'walikelas11', 'siBK2026', 'wali_kelas', 'XI TKJ');
+(6, 'Rita Ratnasari', '666666666', 'walikelas11', 'siBK2026', 'wali_kelas', 'XI TKJ'),
+(8, 'Liyana Septiani', '87654321', 'walikelas12', 'siBK2026', 'wali_kelas', 'XII TKJ');
 
 -- --------------------------------------------------------
 
@@ -92,7 +93,7 @@ INSERT INTO `data_siswa` (`id_siswa`, `nama_siswa`, `nisn`, `kelas`) VALUES
 (39, 'Nerliani', '0064718293', 'XII TKJ'),
 (40, 'Resti Ratnasari', '0085629371', 'X TKJ'),
 (41, 'Firmansyah', '0091847256', 'X TKJ'),
-(42, '0059273648', 'Dea Safitri', 'XI TKJ'),
+(42, 'Dea Safitri', '0059273648', 'XI TKJ'),
 (43, 'Feri Irawan', '0078361952', 'XI TKJ'),
 (44, 'Dani Tirtana', '0062958471', 'XII TKJ'),
 (45, 'Rama', '0084172639', 'XII TKJ');
@@ -258,7 +259,19 @@ INSERT INTO `notifikasi` (`id_notifikasi`, `id_user`, `role`, `judul`, `pesan`, 
 (50, 37, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-24 20:31:25'),
 (51, 37, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-24 20:33:43'),
 (52, 37, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-24 21:08:39'),
-(53, 37, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-24 21:10:10');
+(53, 37, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-24 21:10:10'),
+(54, 42, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 16:54:43'),
+(55, 41, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 20:17:05'),
+(56, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 21:26:01'),
+(57, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 21:33:54'),
+(58, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 21:43:44'),
+(59, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 22:00:46'),
+(60, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 22:03:24'),
+(61, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 22:08:18'),
+(62, 40, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-06-26 22:24:18'),
+(63, 41, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-01 17:15:17'),
+(64, 41, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-01 21:31:43'),
+(65, 41, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-01 21:32:44');
 
 -- --------------------------------------------------------
 
@@ -303,7 +316,9 @@ INSERT INTO `pelanggaran_siswa` (`id`, `id_siswa`, `id_pelanggaran`, `tanggal`, 
 (192, 39, 11, '2026-03-18', 'Siswa terlambat menyerahkan tugas mata pelajaran melebihi batas waktu yang telah ditentukan oleh guru sehingga menghambat proses penilaian.', 5),
 (193, 39, 22, '2026-04-22', 'Siswa kembali ditemukan menggunakan make-up yang berlebihan dan tidak sesuai dengan ketentuan yang berlaku di sekolah. Guru piket telah memberikan teguran serta mengingatkan siswa agar mematuhi aturan mengenai kerapian dan penampilan.', 2),
 (194, 39, 11, '2026-05-14', 'Siswa terlambat menyerahkan tugas yang diberikan guru karena kurang memperhatikan batas waktu pengumpulan yang telah ditetapkan.', 5),
-(195, 39, 2, '2026-06-10', 'Siswa tidak hadir mengikuti kegiatan belajar mengajar tanpa adanya surat izin atau pemberitahuan dari orang tua kepada pihak sekolah. Wali kelas melakukan pemantauan dan meminta klarifikasi terkait ketidakhadiran tersebut.', 7);
+(195, 39, 2, '2026-06-10', 'Siswa tidak hadir mengikuti kegiatan belajar mengajar tanpa adanya surat izin atau pemberitahuan dari orang tua kepada pihak sekolah. Wali kelas melakukan pemantauan dan meminta klarifikasi terkait ketidakhadiran tersebut.', 7),
+(196, 42, 41, '2026-06-26', 'i', 50),
+(207, 41, 7, '2026-07-01', 'Siswa terpantau mengecat rambut berwarna merah', 5);
 
 -- --------------------------------------------------------
 
@@ -329,7 +344,9 @@ CREATE TABLE `pengajuan_remisi` (
 --
 
 INSERT INTO `pengajuan_remisi` (`id_remisi`, `id_siswa`, `jenis_prestasi`, `nama_prestasi`, `poin_remisi`, `bukti`, `tanggal_pengajuan`, `status`, `kelas`, `potongan_poin`) VALUES
-(90, 37, '15', 'Peringkat 3 hafalan tahsin', 15, 'Sertifikat_Yuriska_Pratiwi.png', '2026-06-24 21:17:13', 'Disetujui', '', 10);
+(90, 37, '15', 'Peringkat 3 hafalan tahsin', 15, 'Sertifikat_Yuriska_Pratiwi.png', '2026-06-24 21:17:13', 'Disetujui', '', 10),
+(91, 38, '15', 'Juara  2 kelas', 15, 'dashboard.png', '2026-07-01 21:38:30', 'Menunggu', NULL, 0),
+(92, 40, '25', 'Juara 2 Lomba Menyanyi', 25, 'mockup_laporan_awal 1.png', '2026-07-01 21:39:39', 'Menunggu', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -351,7 +368,9 @@ CREATE TABLE `rekap_poin` (
 INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VALUES
 (38, 37, 21, '2026-06-24 14:17:25'),
 (39, 38, 52, '2026-06-24 14:41:53'),
-(40, 39, 28, '2026-06-24 14:48:18');
+(40, 39, 28, '2026-06-24 14:48:18'),
+(41, 42, 50, '2026-06-26 09:54:43'),
+(42, 41, 5, '2026-07-01 14:32:44');
 
 -- --------------------------------------------------------
 
@@ -406,10 +425,11 @@ INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `id_sisw
 (47, 'Nerliani', '0064718293', '0064718293', 'siswa', 39, NULL),
 (48, 'Resti Ratnasari', '0085629371', '0085629371', 'siswa', 40, NULL),
 (49, 'Firmansyah', '0091847256', '0091847256', 'siswa', 41, NULL),
-(50, '0059273648', 'Dea Safitri', 'Dea Safitri', 'siswa', 42, NULL),
+(50, 'Dea Safitri', '0059273648', '0059273648', 'siswa', 42, NULL),
 (51, 'Feri Irawan', '0078361952', '0078361952', 'siswa', 43, NULL),
 (52, 'Dani Tirtana', '0062958471', '0062958471', 'siswa', 44, NULL),
-(53, 'Rama', '0084172639', '0084172639', 'siswa', 45, NULL);
+(53, 'Rama', '0084172639', '0084172639', 'siswa', 45, NULL),
+(54, 'Liyana Septiani', 'walikelas12', 'siBK2026', 'wali_kelas', NULL, 'XII TKJ');
 
 --
 -- Indexes for dumped tables
@@ -504,7 +524,7 @@ ALTER TABLE `catatan_semester`
 -- AUTO_INCREMENT for table `data_guru`
 --
 ALTER TABLE `data_guru`
-  MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `data_siswa`
@@ -534,37 +554,37 @@ ALTER TABLE `laporan_konseling`
 -- AUTO_INCREMENT for table `notifikasi`
 --
 ALTER TABLE `notifikasi`
-  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `pelanggaran_siswa`
 --
 ALTER TABLE `pelanggaran_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_remisi`
 --
 ALTER TABLE `pengajuan_remisi`
-  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT for table `rekap_poin`
 --
 ALTER TABLE `rekap_poin`
-  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `remisi_otomatis`
 --
 ALTER TABLE `remisi_otomatis`
-  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- Constraints for dumped tables

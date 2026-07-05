@@ -366,8 +366,8 @@ GRID
 
 .dashboard-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:18px;
+    grid-template-columns:1fr;
+    gap:20px;
 }
 
 /* ===================================
@@ -410,126 +410,59 @@ BAR CHART
 =================================== */
 
 .chart-container{
-    height:180px;
-
+    width:100%;
+    height:260px;
     display:flex;
-    justify-content:space-evenly;
     align-items:flex-end;
+    justify-content:space-evenly;
+    gap:18px;
+    margin-top:25px;
+    overflow:hidden;
 }
 
 .bar-item{
-    text-align:center;
+    flex:1;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
 }
 
 .bar-item span{
-    display:block;
-    margin-bottom:6px;
-    font-size:14px;
+    font-size:13px;
     font-weight:600;
+    color:#374151;
+    margin-bottom:8px;
 }
-
 
 .bar{
     width:55px;
-    background:#16a34a;
+    max-width:55px;
+    min-width:30px;
     border-radius:10px 10px 0 0;
+    transition:.3s;
 }
 
-/* .bar-x{
-    height:120px;
+.bar:hover{
+    transform:translateY(-4px);
+    opacity:.9;
 }
-
-.bar-xi{
-    height:90px;
-}
-
-.bar-xii{
-    height:50px;
-} */
 
 .bar-item small{
-    display:block;
-    margin-top:6px;
-    font-size:11px;
+    margin-top:8px;
+    font-size:12px;
     font-weight:600;
+    color:#64748b;
 }
 
 .chart-footer{
-    margin-top:10px;
-    background:#ecfdf3;
-    color:#15803d;
-    padding:10px;
+    margin-top:18px;
     text-align:center;
-    border-radius:10px;
     font-size:13px;
-}
-
-/* ===================================
-DONUT
-=================================== */
-
-.donut-wrapper{
-    display:flex;
-    justify-content:center;
-    margin:10px 0 15px;
-}
-
-.donut-chart{
-    width:150px;
-    height:150px;
-    border-radius:50%;
-
-    border:14px solid #16a34a;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.donut-content{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    height:100%;
-}
-
-.donut-content h2{
-    font-size:48px;
-    font-weight:700;
-    color:#16a34a;
-    margin:0;
-    line-height:1;
-}
-
-.donut-content p{
-    font-size:11px;
-    line-height:1.4;
-}
-
-.date-box{
-    background:#ecfdf3;
-    padding:12px;
-    border-radius:12px;
-
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.date-box i{
-    font-size:22px;
-    color:#16a34a;
-}
-
-.date-box h4{
-    font-size:14px;
-    color:#15803d;
-}
-
-.date-box span{
-    font-size:12px;
     color:#64748b;
 }
+
 
 /* ===================================
 FOOTER
@@ -629,3 +562,33 @@ RESPONSIVE
     }
 }
 
+
+/* ===================================
+FILTER DASHBOARD
+=================================== */
+
+.filter-dashboard{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+    margin:20px 0;
+    flex-wrap:wrap;
+}
+
+.filter-dashboard select{
+    min-width:180px;
+    padding:10px 14px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#fff;
+    font-size:14px;
+    font-family:'Poppins',sans-serif;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.filter-dashboard select:focus{
+    outline:none;
+    border-color:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,.15);
+}

@@ -4,32 +4,7 @@
 include "../config/koneksi.php";
  include "remisi_otomatis.php";
 
-/* =========================
-   AMBIL LIST SISWA
-========================= */
-$siswa = mysqli_query($koneksi,"
-SELECT DISTINCT id_siswa, nama_siswa
-FROM data_siswa
-");
 
-/* =========================
-   SELECT SISWA
-========================= */
-$id_siswa = isset($_GET['id_siswa']) ? $_GET['id_siswa'] : '';
-$data_siswa = null;
-$total_poin = 0;
-
-if($id_siswa != ''){
-
-    $data_siswa = mysqli_fetch_assoc(mysqli_query($koneksi,"
-    SELECT *
-    FROM data_siswa
-    WHERE id_siswa='$id_siswa'
-    "));
-
-    // 🔥 PAKAI INI SAJA (TIDAK HITUNG ULANG LAGI)
-    $total_poin = $data_siswa['total_poin'];
-}
 
 /* =========================
    QUERY RIWAYAT REMISI
@@ -427,65 +402,14 @@ table tbody tr:hover{
 
     </div>
 
-    <!-- PILIH SISWA -->
-
     <div class="card">
 
         <div class="page-header">
 
             <h1>Riwayat Remisi</h1>
 
-            <p>Pilih siswa untuk melihat detail poin dan identitas siswa.</p>
 
-        </div>
-
-        <div class="form-group">
-
-            <label>Pilih Siswa</label>
-
-           <select id="siswaSelect">
-
-    <option value="">-- Pilih Siswa --</option>
-
-    <?php while($s = mysqli_fetch_assoc($siswa)){ ?>
-
-        <option value="<?= $s['id_siswa']; ?>">
-            <?= $s['nama_siswa']; ?>
-        </option>
-
-    <?php } ?>
-
-</select>
-        </div>
-
-        <!-- MUNCUL SETELAH PILIH SISWA -->
-
-        <div class="student-info <?= ($id_siswa != '') ? 'active' : ''; ?>" id="studentInfo">
-            <div class="info-grid">
-
-              <div class="info-item">
-    <small>Nama Siswa</small>
-    <strong>
-        <?= ($data_siswa) ? $data_siswa['nama_siswa'] : '-'; ?>
-    </strong>
-</div>
-
-                <div class="info-item">
-    <small>NISN</small>
-    <strong>
-        <?= ($data_siswa) ? $data_siswa['nisn'] : '-'; ?>
-    </strong>
-</div>
-                <div class="info-item total-point">
-    <small>Total Poin Saat Ini</small>
-    <strong><?= $total_poin; ?> Poin</strong>
-</div>
-            </div>
-
-        </div>
-
-    </div>
-
+   
     <!-- TABEL SELALU MUNCUL -->
 
     <div class="card">
@@ -615,24 +539,7 @@ while($r = mysqli_fetch_assoc($remisi)){
 
 </div>
 
-<script>
 
-const siswaSelect = document.getElementById('siswaSelect');
-const studentInfo = document.getElementById('studentInfo');
-
-siswaSelect.addEventListener('change', function(){
-
-    if(this.value != ''){
-
-        window.location =
-        'riwayat_remisi_wakasek.php?id_siswa=' + this.value;
-
-    }
-
-});
-
-
-</script>
 
 </body>
 </html>

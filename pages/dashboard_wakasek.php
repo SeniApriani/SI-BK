@@ -6,7 +6,6 @@
 session_start();
 include '../config/koneksi.php';
 
-
 /* =========================================
    CEK HAK AKSES
    Hanya role wakasek yang boleh membuka
@@ -17,15 +16,26 @@ if ($_SESSION['role'] != 'wakasek') {
 }
 
 /* =========================================
-   BULAN & TAHUN BERJALAN
+   FILTER SEMESTER & TAHUN
 ========================================= */
-$bulan = date('m');
-$tahun = date('Y');
+$semester = $_GET['semester'] ?? 'Genap';
+$tahun    = $_GET['tahun'] ?? date('Y');
+
+/* =========================================
+   MENENTUKAN RENTANG BULAN
+========================================= */
+if($semester == 'Ganjil'){
+    $bulan_awal  = 7;
+    $bulan_akhir = 12;
+}else{
+    $bulan_awal  = 1;
+    $bulan_akhir = 6;
+}
 
 /* =========================================
    QUERY STATISTIK PELANGGARAN
-   Menghitung jumlah pelanggaran per kelas
-   pada bulan yang sedang berjalan
+   Menghitung jumlah pelanggaran setiap kelas
+   berdasarkan semester & tahun
 ========================================= */
 $queryStatistik = mysqli_query($koneksi, "
     SELECT
@@ -34,11 +44,11 @@ $queryStatistik = mysqli_query($koneksi, "
     FROM pelanggaran_siswa p
     JOIN data_siswa s
         ON p.id_siswa = s.id_siswa
-   WHERE MONTH(p.tanggal) = '$bulan'
-AND YEAR(p.tanggal) = '$tahun'
+    WHERE MONTH(p.tanggal) BETWEEN '$bulan_awal' AND '$bulan_akhir'
+      AND YEAR(p.tanggal) = '$tahun'
     GROUP BY s.kelas
+    ORDER BY s.kelas
 ");
-
 
 /* =========================================
    CEK ERROR QUERY
@@ -47,10 +57,8 @@ if (!$queryStatistik) {
     die(mysqli_error($koneksi));
 }
 
-
 /* =========================================
    SIMPAN HASIL QUERY KE ARRAY
-   Untuk digunakan pada grafik/dashboard
 ========================================= */
 $dataStatistik = [];
 
@@ -59,20 +67,20 @@ while ($row = mysqli_fetch_assoc($queryStatistik)) {
 }
 
 /* =========================================
-   TOTAL PELANGGARAN BULAN & TAHUN BERJALAN
+   TOTAL PELANGGARAN
+   Berdasarkan semester & tahun
 ========================================= */
 $queryTotalPelanggaran = mysqli_query($koneksi, "
     SELECT COUNT(*) AS total
     FROM pelanggaran_siswa
-    WHERE MONTH(tanggal) = '$bulan'
-    AND YEAR(tanggal) = '$tahun'
+    WHERE MONTH(tanggal) BETWEEN '$bulan_awal' AND '$bulan_akhir'
+      AND YEAR(tanggal) = '$tahun'
 ");
 
 $totalPelanggaran = mysqli_fetch_assoc($queryTotalPelanggaran);
 
 /* =========================================
    JUMLAH PENGAJUAN REMISI MENUNGGU
-   Untuk badge notifikasi Wakasek
 ========================================= */
 $queryRemisi = mysqli_query($koneksi, "
     SELECT COUNT(*) AS total
@@ -203,14 +211,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <div class="submenu">
 
-                    <!-- <a href="data_pelanggaran_siswa.php">
+                    <a href="rp_siswa_2.php">
 
                         <i class="fas fa-file-circle-exclamation"></i>
 
                         Data Pelanggaran Siswa
 
-                    </a> -->
-
+                    </a> 
                     <a href="pengajuan_remisi_wakasek.php">
 
                         <i class="fas fa-star"></i>
@@ -242,7 +249,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <div class="submenu">
 
-                    <a href="komunikasi_orangtua.php">
+                    <a href="riwayat_tindak_lanjut_kepsek.php">
 
                         <i class="fas fa-phone"></i>
 
@@ -347,93 +354,112 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
         <section class="dashboard-grid">
 
-            <!-- STATISTIK -->
+           <!-- STATISTIK -->
+<div class="dashboard-card">
 
-            <div class="dashboard-card">
+    <div class="card-header">
 
-                <div class="card-header">
-
-                    <div class="header-icon">
-
-                        <i class="fas fa-chart-column"></i>
-
-                    </div>
-
-                    <h3>Statistik Pelanggaran</h3>
-
-                </div>
-
-             <div class="chart-container">
-
-<?php foreach($dataStatistik as $data): ?>
-
-    <div class="bar-item">
-        <span><?= $data['total_pelanggaran']; ?></span>
-
-        <div
-            class="bar"
-            style="height: <?= $data['total_pelanggaran'] * 20; ?>px;">
+        <div class="header-icon">
+            <i class="fas fa-chart-column"></i>
         </div>
 
-        <small><?= $data['kelas']; ?></small>
+        <h3>Statistik Pelanggaran</h3>
+
     </div>
 
-<?php endforeach; ?>
+    <!-- FILTER -->
+
+    <form method="GET" class="filter-dashboard">
+
+        <select name="semester" onchange="this.form.submit()">
+            <option value="Ganjil" <?= $semester=='Ganjil'?'selected':''; ?>>
+                Semester Ganjil
+            </option>
+
+            <option value="Genap" <?= $semester=='Genap'?'selected':''; ?>>
+                Semester Genap
+            </option>
+        </select>
+
+        <select name="tahun" onchange="this.form.submit()">
+
+            <?php
+            for($t=date('Y'); $t>=2024; $t--){
+            ?>
+
+            <option value="<?= $t; ?>" <?= $tahun==$t?'selected':''; ?>>
+                <?= $t; ?>
+            </option>
+
+            <?php } ?>
+
+        </select>
+
+    </form>
+
+    <?php
+    $warna = [
+        "#16a34a",
+        "#4ade80",
+        "#84cc16",
+        "#fbbf24",
+        "#fb923c",
+        "#ef4444",
+        "#3b82f6",
+        "#8b5cf6",
+        "#ec4899",
+        "#14b8a6",
+        "#f97316",
+        "#0ea5e9"
+    ];
+
+    $maxData = 1;
+
+    foreach($dataStatistik as $d){
+        if($d['total_pelanggaran'] > $maxData){
+            $maxData = $d['total_pelanggaran'];
+        }
+    }
+
+    $i = 0;
+    ?>
+
+    <div class="chart-container">
+
+        <?php foreach($dataStatistik as $data): ?>
+
+        <?php
+        $tinggi = max(5, ($data['total_pelanggaran'] / $maxData) * 180);
+        ?>
+
+        <div class="bar-item">
+
+            <span><?= $data['total_pelanggaran']; ?></span>
+
+            <div
+                class="bar"
+                style="
+                    height:<?= $tinggi; ?>px;
+                    background:<?= $warna[$i++ % count($warna)]; ?>;
+                ">
+            </div>
+
+            <small><?= $data['kelas']; ?></small>
+
+        </div>
+
+        <?php endforeach; ?>
+
+    </div>
+
+    <div class="chart-footer">
+        Statistik Pelanggaran Seluruh Kelas
+        Semester <?= $semester; ?>
+        Tahun <?= $tahun; ?>
+    </div>
 
 </div>
-                <div class="chart-footer">
-
-                    Berdasarkan Tingkat Kelas
-
-                </div>
-
-            </div>
-
-            <!-- TOTAL PELANGGARAN -->
-
-            <div class="dashboard-card">
-
-                <div class="card-header">
-
-                    <div class="header-icon">
-
-                        <i class="fas fa-triangle-exclamation"></i>
-
-                    </div>
-
-                    <h3>Jumlah Pelanggaran</h3>
-
-                </div>
-
-                <div class="donut-wrapper">
-
-                    <div class="donut-chart">
-
-                        <div class="donut-content">
-<h2><?= $totalPelanggaran['total']; ?></h2>
-
-                            
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="date-box">
-
-                    <i class="fas fa-calendar-days"></i>
-
-                    <div>
-
-                        <h4>Selasa, 03 Juni 2026</h4>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+           
         </section>
 
         <footer>

@@ -1,14 +1,20 @@
 
 <?php
 include "../config/koneksi.php";
+session_start();
 
-$data = mysqli_query($koneksi,"
-SELECT 
+// Ambil kelas wali kelas yang sedang login
+$kelas = $_SESSION['kelas'];
+
+// Ambil data riwayat komunikasi hanya untuk kelas wali kelas
+$data = mysqli_query($koneksi, "
+SELECT
     k.*,
     s.nama_siswa,
     s.kelas
 FROM komunikasi_ortu k
 JOIN data_siswa s ON k.id_siswa = s.id_siswa
+WHERE s.kelas = '$kelas'
 ORDER BY k.id_komunikasi DESC
 ");
 ?>
