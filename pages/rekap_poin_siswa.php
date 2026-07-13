@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "../config/koneksi.php";
+include "../pages/remisi_otomatis.php";
 
 $id_siswa = $_GET['id'];
 

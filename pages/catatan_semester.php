@@ -366,6 +366,21 @@ max-width:300px;
     justify-content:flex-end;
     margin-top:15px;
 }
+
+/* total poin */
+.badge{
+    background:#dcfce7;
+    color:#15803d;
+    padding:5px 10px;
+    border-radius:8px;
+    font-weight:600;
+    text-decoration:none;
+    display:inline-block;
+}
+
+.badge:hover{
+    background:#bbf7d0;
+}
 </style>
 </head>
 <body>
@@ -431,9 +446,9 @@ value="<?= $s['id_siswa']; ?>"
 <td><?= $r['kelas']; ?></td>
 
 <td>
-<span class="badge">
-<?= $r['total_poin']; ?>
-</span>
+    <a href="detail_rekap_poin.php?id=<?= $r['id_siswa']; ?>" class="badge">
+        <?= $r['total_poin']; ?>
+    </a>
 </td>
 
 <td class="preview">

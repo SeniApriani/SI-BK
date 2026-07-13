@@ -1,10 +1,14 @@
 <?php
+session_start();
 include '../config/koneksi.php';
+
+$kelas_wali = $_SESSION['kelas'];
+
 if(isset($_POST['simpan'])){
 
     $nama_siswa = $_POST['nama_siswa'];
     $nisn = $_POST['nisn'];
-    $kelas = $_POST['kelas'];
+    $kelas = $kelas_wali;
 
     // 1. simpan ke data_siswa
     mysqli_query($koneksi, "INSERT INTO data_siswa(nama_siswa, nisn, kelas)
@@ -219,21 +223,15 @@ body{
 
             <div class="form-group">
 
-                <label>Kelas</label>
+<label>Kelas</label>
 
-               
-                    <select name="kelas" required>
+<input 
+type="text"
+value="<?= $_SESSION['kelas']; ?>"
+readonly
+>
 
-                    <option value="">Pilih Kelas</option>
-
-                    <option>X TKJ </option>
-                    <option>XI TKJ </option>
-                    <option>XII TKJ </option>
-                    
-
-                </select>
-
-            </div>
+</div>
 
             <div class="form-action">
 

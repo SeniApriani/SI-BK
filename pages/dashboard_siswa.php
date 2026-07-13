@@ -57,7 +57,7 @@ $result = mysqli_query($koneksi,"
 SELECT COUNT(*) AS jml
 FROM notifikasi
 WHERE id_user='$id_siswa'
-
+AND status_baca=0
 ");
 
 if(!$result){

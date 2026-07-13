@@ -3,15 +3,32 @@ session_start();
 include '../config/koneksi.php';
 
 // mengambil kelas wali kelas yang sedang login
-$kelas = $_SESSION['kelas'];
 
-// hanya menampilkan siswa sesuai kelas wali kelas
-$query = mysqli_query($koneksi,"
-SELECT *
-FROM data_siswa
-WHERE kelas='$kelas'
-ORDER BY nama_siswa ASC
-");
+$role = $_SESSION['role'];
+$kelas = $_SESSION['kelas'] ?? '';
+
+
+// hanya menampilkan siswa sesuai kelas wali kelas dan wakasek 
+if($role == 'wakasek'){
+
+    // wakasek lihat semua kelas
+    $query = mysqli_query($koneksi,"
+    SELECT *
+    FROM data_siswa
+    ORDER BY nama_siswa ASC
+    ");
+
+}else{
+
+    // wali kelas hanya kelasnya
+    $query = mysqli_query($koneksi,"
+    SELECT *
+    FROM data_siswa
+    WHERE kelas='$kelas'
+    ORDER BY nama_siswa ASC
+    ");
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -333,37 +350,7 @@ table tbody tr:hover{
 
     </div>
 
-    <!-- FILTER -->
-
-    <div class="card">
-
-        <div class="filter-grid">
-
-            <input
-                type="text"
-                placeholder="Cari nama siswa..."
-            >
-
-            <select>
-
-                <option>Semua Kelas</option>
-                <option>X RPL 1</option>
-                <option>X RPL 2</option>
-                <option>XI RPL 1</option>
-                <option>XI RPL 2</option>
-                <option>XII RPL 1</option>
-
-            </select>
-
-            <button class="btn-search">
-
-                <i class="fas fa-search"></i>
-
-            </button>
-
-        </div>
-
-    </div>
+   
 
     <!-- DAFTAR SISWA -->
 
@@ -379,13 +366,17 @@ table tbody tr:hover{
 
             </div>
 
-            <a href="tambah_data_siswa.php" class="btn-add">
+          <?php if($_SESSION['role'] == 'wali_kelas'){ ?>
 
-                <i class="fas fa-user-plus"></i>
+<a href="tambah_data_siswa.php" class="btn-add">
 
-                Tambah Siswa
+    <i class="fas fa-user-plus"></i>
 
-            </a>
+    Tambah Siswa
+
+</a>
+
+<?php } ?>
 
         </div>
 
@@ -400,7 +391,9 @@ table tbody tr:hover{
                         <th>Nama Siswa</th>
                         <th>NISN</th>
                         <th>Kelas</th>
-                        <th>Detail</th>
+                       <?php if($_SESSION['role']=='wali_kelas'){ ?>
+<th>Detail</th>
+<?php } ?>
                     </tr>
 
                 </thead>
@@ -419,33 +412,35 @@ while($row = mysqli_fetch_assoc($query)){
     <td><?= $row['nisn']; ?></td>
     <td><?= $row['kelas']; ?></td>
 
-    <td>
+  <?php if($_SESSION['role']=='wali_kelas'){ ?>
 
-        <div class="dropdown">
+<td>
 
-            <button class="btn-detail">
-                <i class="fas fa-eye"></i>
-            </button>
+    <div class="dropdown">
 
-            <div class="dropdown-content">
+        <button class="btn-detail">
+            <i class="fas fa-eye"></i>
+        </button>
 
-                
-                    <a href="edit_data_siswa.php?id=<?= $row['id_siswa']; ?>">
-                    <i class="fas fa-pen"></i>
-                    Edit
-                </a>
-                    <a href="hapus_data_siswa.php?id=<?= $row['id_siswa']; ?>">
+        <div class="dropdown-content">
 
-                    <i class="fas fa-trash"></i>
-                    Hapus
-                </a>
+            <a href="edit_data_siswa.php?id=<?= $row['id_siswa']; ?>">
+                <i class="fas fa-pen"></i>
+                Edit
+            </a>
 
-            </div>
+            <a href="hapus_data_siswa.php?id=<?= $row['id_siswa']; ?>">
+                <i class="fas fa-trash"></i>
+                Hapus
+            </a>
 
         </div>
 
-    </td>
+    </div>
 
+</td>
+
+<?php } ?>
 </tr>
 
 <?php } ?>
@@ -480,11 +475,25 @@ while($row = mysqli_fetch_assoc($query)){
 
     <div class="bottom-action">
 
-        <a href="dashboard_walikelas.php" class="btn-back">
+        <?php
 
-            <i class="fas fa-chevron-left"></i>
+if($_SESSION['role']=='wali_kelas'){
+    $back = "dashboard_walikelas.php";
+}
+elseif($_SESSION['role']=='wakasek'){
+    $back = "dashboard_wakasek.php";
+}
+elseif($_SESSION['role']=='kepsek'){
+    $back = "dashboard_kepsek.php";
+}
 
-        </a>
+?>
+
+<a href="<?= $back; ?>" class="btn-back">
+
+    <i class="fas fa-chevron-left"></i>
+
+</a>
 
     </div>
 

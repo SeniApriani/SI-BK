@@ -1,0 +1,17 @@
+Selamat sore.. teman2 untuk ppt seminar bisa mengikuti struktur berikut:
+1. Judul dan Identitas penelitian
+2. Latar Belakang (Permasalahan Utama)
+3. Identifikasi Masalah
+4. Rumusan Masalah
+5. Batasan Masalah
+6. Penelitian Terdahulu untuk menunjukkan keterbaruan dari penelitian kita
+7. Teori Utama yang menunjang Penelitian
+8. Objek Penelitian
+9. Metode Penelitian
+10. Analisis Sistem Berjalan
+11. Use Case dan Evaluasi sistem berjalan
+12. Use Case dan Penjelasan Sistem yang diusulkan
+13. Class Diagram
+14. Hasil testing sistem
+15. Kesimpulan dan Saran
+16. Daftar Pustaka Utama

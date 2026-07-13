@@ -411,17 +411,17 @@ $warna = [
 ];
 
 $maxData = max($dataStatistik);
-if($maxData == 0) $maxData = 1;
+$minData = min($dataStatistik);
+
+if($maxData == $minData){
+    $maxData = $minData + 1;
+}
 
 $i = 0;
 
 foreach($dataStatistik as $bulan => $total):
 
-    $tinggi = 20 + ($total * 18);
-
-if ($tinggi > 180) {
-    $tinggi = 180;
-}
+    $tinggi = 40 + (($total - $minData) / ($maxData - $minData)) * 140;
 ?>
 
 <div class="bar-item">
