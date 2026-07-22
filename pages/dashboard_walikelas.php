@@ -187,6 +187,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     </a>
 
+                    <a href="data_orang_tua.php">
+
+                        <i class="fas fa-user-graduate"></i>
+
+                        Data Orang Tua
+
+                    </a>
+
                     <!-- <a href="jenis_pelanggaran.php">
 
                         <i class="fas fa-list"></i>
@@ -230,7 +238,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                         <i class="fas fa-star"></i>
 
-                        Penilaian Poin Pelanggaran
+                        Penilaian Pelanggaran
 
                     </a>
 
@@ -271,7 +279,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                         <i class="fas fa-phone"></i>
 
                         Komunikasi Orang Tua
+                        
+                           <a href="pemanggilan_siswa.php">
 
+                        <i class="fas fa-phone"></i>
+
+                       Riwayat Pemanggilan Siswa
                     
                 </div>
 
@@ -488,4 +501,3 @@ document.querySelectorAll(".menu-toggle").forEach(menu => {
 
 </body>
 </html>
-```

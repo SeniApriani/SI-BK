@@ -5,9 +5,15 @@ session_start();
 
 
 include "../config/koneksi.php";
-$nisn = $_SESSION['id_siswa'];
-$nama = $_SESSION['nama'] ?? 'Siswa';
+// ======================================================
+// MENGAMBIL DATA LOGIN
+// ======================================================
 
+$id_siswa = $_SESSION['id_siswa'];
+
+$nama = $_SESSION['nama'];
+
+$role = $_SESSION['role'];
 /* =========================
 PAGINATION SETUP
 ========================= */
@@ -18,7 +24,7 @@ $start = ($page - 1) * $limit;
 /* TOTAL DATA */
 $totalData = mysqli_num_rows(mysqli_query($koneksi,"
 SELECT * FROM pelanggaran_siswa
-WHERE id_siswa='$nisn'
+WHERE id_siswa='$id_siswa'
 "));
 
 $totalPage = ceil($totalData / $limit);
@@ -39,7 +45,7 @@ JOIN jenis_pelanggaran jp
 ON ps.id_pelanggaran = jp.id_pelanggaran
 LEFT JOIN laporan_konseling lk
 ON ps.id = lk.id_pelanggaran_siswa
-WHERE ps.id_siswa='$nisn'
+WHERE ps.id_siswa='$id_siswa'
 ORDER BY ps.tanggal DESC
 LIMIT $start,$limit
 ");
@@ -370,11 +376,25 @@ tr:hover{
         </div>
  <div class="bottom-action">
 
-        <a href="dashboard_siswa.php" class="btn-back">
+        <?php
 
-            <i class="fas fa-chevron-left"></i>
+if($role=='siswa'){
 
-        </a>
+    $back = "dashboard_siswa.php";
+
+}else{
+
+    $back = "dashboard_ortu.php";
+
+}
+
+?>
+
+<a href="<?= $back; ?>" class="btn-back">
+
+    <i class="fas fa-chevron-left"></i>
+
+</a>
 
     </div>
 

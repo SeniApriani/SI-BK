@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2026 at 01:40 PM
+-- Generation Time: Jul 16, 2026 at 05:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -76,6 +76,27 @@ INSERT INTO `data_guru` (`id_guru`, `nama_guru`, `nip`, `username`, `password`, 
 (5, 'Kiki Saepullah', '12345678', 'walikelas10', 'siBK2026', 'wali_kelas', 'X TKJ'),
 (6, 'Rita Ratnasari', '666666666', 'walikelas11', 'siBK2026', 'wali_kelas', 'XI TKJ'),
 (8, 'Liyana Septiani', '87654321', 'walikelas12', 'siBK2026', 'wali_kelas', 'XII TKJ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data_orang_tua`
+--
+
+CREATE TABLE `data_orang_tua` (
+  `id_orangtua` int(11) NOT NULL,
+  `id_siswa` int(11) NOT NULL,
+  `nama_orangtua` varchar(100) NOT NULL,
+  `hubungan` enum('Ayah','Ibu','Wali') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `data_orang_tua`
+--
+
+INSERT INTO `data_orang_tua` (`id_orangtua`, `id_siswa`, `nama_orangtua`, `hubungan`) VALUES
+(1, 88, 'Rahmawati', 'Ibu'),
+(2, 93, 'Yamin', 'Ibu');
 
 -- --------------------------------------------------------
 
@@ -260,7 +281,8 @@ INSERT INTO `komunikasi_ortu` (`id_komunikasi`, `id_siswa`, `tanggal`, `jenis_pe
 (26, 71, '2026-03-23', 'Home Visit', '1783220923_Berita_Acara_Komunikasi_23_Maret_2026.pdf', 'Pada tanggal 23 Maret 2026 telah dilakukan komunikasi dengan orang tua siswa terkait perkembangan perilaku dan kedisiplinan siswa di lingkungan sekolah. Orang tua memahami informasi yang disampaikan oleh pihak sekolah dan menyatakan kesediaannya untuk memberikan perhatian, bimbingan, serta pengawasan yang lebih intensif kepada siswa. Orang tua juga mendukung upaya pembinaan yang dilakukan sekolah demi meningkatkan kedisiplinan dan tanggung jawab siswa.', 'proses', '2026-07-05 03:08:43', 'Deden'),
 (27, 86, '2026-02-22', 'Sekolah', '1783221090_Berita_Acara_Komunikasi_22_Februari_2026.pdf', 'Pada tanggal 27 April 2026 telah dilakukan komunikasi dengan orang tua siswa terkait perkembangan perilaku dan kedisiplinan siswa di lingkungan sekolah. Orang tua memahami informasi yang disampaikan oleh pihak sekolah dan menyatakan kesediaannya untuk memberikan perhatian, bimbingan, serta pengawasan yang lebih intensif kepada siswa. Orang tua juga mendukung upaya pembinaan yang dilakukan sekolah demi meningkatkan kedisiplinan dan tanggung jawab siswa.', 'proses', '2026-07-05 03:11:30', 'Riska Purwasari'),
 (28, 94, '2026-05-19', 'Sekolah', '1783223421_Surat Pernyataan_19 Mei.pdf', 'Pada tanggal 19 Mei 2026 telah dilakukan komunikasi dengan orang tua siswa terkait perkembangan perilaku dan kedisiplinan siswa di lingkungan sekolah. Orang tua memahami informasi yang disampaikan oleh pihak sekolah dan menyatakan kesediaannya untuk memberikan perhatian, bimbingan, serta pengawasan yang lebih intensif kepada siswa. Orang tua juga mendukung upaya pembinaan yang dilakukan sekolah demi meningkatkan kedisiplinan dan tanggung jawab siswa.', 'proses', '2026-07-05 03:50:21', 'Wildansyah'),
-(29, 95, '2026-04-27', 'Sekolah', '1783223713_Surat Pernyataan.pdf', 'Pada tanggal 27 April 2026 telah dilakukan komunikasi dengan orang tua siswa terkait perkembangan perilaku dan kedisiplinan siswa di lingkungan sekolah. Orang tua memahami informasi yang disampaikan oleh pihak sekolah dan menyatakan kesediaannya untuk memberikan perhatian, bimbingan, serta pengawasan yang lebih intensif kepada siswa. Orang tua juga mendukung upaya pembinaan yang dilakukan sekolah demi meningkatkan kedisiplinan dan tanggung jawab siswa.', 'proses', '2026-07-05 03:55:13', 'Iman');
+(29, 95, '2026-04-27', 'Sekolah', '1783223713_Surat Pernyataan.pdf', 'Pada tanggal 27 April 2026 telah dilakukan komunikasi dengan orang tua siswa terkait perkembangan perilaku dan kedisiplinan siswa di lingkungan sekolah. Orang tua memahami informasi yang disampaikan oleh pihak sekolah dan menyatakan kesediaannya untuk memberikan perhatian, bimbingan, serta pengawasan yang lebih intensif kepada siswa. Orang tua juga mendukung upaya pembinaan yang dilakukan sekolah demi meningkatkan kedisiplinan dan tanggung jawab siswa.', 'proses', '2026-07-05 03:55:13', 'Iman'),
+(30, 93, '2026-07-13', 'Sekolah', '1783958655_Berita_Acara_Komunikasi_20_Maret_2026.pdf', 'Pada hari seninsudah dilakukan pertemuan bersamaorang tua membahasa kesepakatan tindak lanjut pelanggran siswa ', 'proses', '2026-07-13 16:04:15', 'Yamin');
 
 -- --------------------------------------------------------
 
@@ -1269,8 +1291,8 @@ INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VA
 (53, 91, 37, '2026-07-04 13:23:51'),
 (54, 92, 31, '2026-07-04 13:23:51'),
 (55, 93, 32, '2026-07-04 13:23:51'),
-(56, 94, 47, '2026-07-04 13:23:51'),
-(57, 95, 42, '2026-07-04 13:23:51'),
+(56, 94, 44, '2026-07-16 03:38:15'),
+(57, 95, 39, '2026-07-16 03:38:15'),
 (58, 96, 37, '2026-07-04 13:23:51'),
 (59, 97, 32, '2026-07-04 13:23:51'),
 (60, 98, 30, '2026-07-04 13:23:51'),
@@ -1310,7 +1332,7 @@ INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VA
 (94, 89, 47, '2026-07-08 15:20:13'),
 (95, 90, 40, '2026-07-08 15:20:13'),
 (121, 37, 19, '2026-07-09 06:36:28'),
-(122, 41, 34, '2026-07-11 14:47:30'),
+(122, 41, 30, '2026-07-16 03:38:15'),
 (123, 46, 24, '2026-07-05 02:34:40'),
 (124, 47, 39, '2026-07-05 02:34:40'),
 (125, 48, 37, '2026-07-05 02:34:40'),
@@ -1381,7 +1403,10 @@ INSERT INTO `remisi_otomatis` (`id_remisi_otomatis`, `id_siswa`, `persen_remisi`
 (82, 107, 6, '2026-07-10', 'Tidak melakukan pelanggaran 30 hari', 4),
 (83, 108, 6, '2026-07-10', 'Tidak melakukan pelanggaran 30 hari', 4),
 (84, 109, 6, '2026-07-10', 'Tidak melakukan pelanggaran 30 hari', 4),
-(85, 117, 6, '2026-07-11', 'Tidak melakukan pelanggaran 30 hari', 6);
+(85, 117, 6, '2026-07-11', 'Tidak melakukan pelanggaran 30 hari', 6),
+(86, 94, 6, '2026-07-16', 'Tidak melakukan pelanggaran 30 hari', 3),
+(87, 95, 6, '2026-07-15', 'Tidak melakukan pelanggaran 30 hari', 3),
+(88, 41, 6, '2026-07-16', 'Tidak melakukan pelanggaran 30 hari', 4);
 
 -- --------------------------------------------------------
 
@@ -1394,7 +1419,7 @@ CREATE TABLE `users` (
   `nama` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `role` enum('wali_kelas','wakasek','kepala_sekolah','siswa') NOT NULL,
+  `role` enum('wali_kelas','wakasek','kepala_sekolah','siswa','orang_tua') NOT NULL,
   `id_siswa` int(11) DEFAULT NULL,
   `kelas` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1480,8 +1505,8 @@ INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `id_sisw
 (118, 'Nisa Rahmawati', '0091847318', '0091847318', 'siswa', 108, 'XII TKJ'),
 (119, 'Dian Saputra', '0091847319', '0091847319', 'siswa', 109, 'XII TKJ'),
 (120, 'Revina Ayu', '0091887303', '0091887303', 'siswa', 111, NULL),
-(121, 'Amal', '111', '111', 'siswa', 112, NULL),
-(122, 'Amal', '111', '111', 'siswa', 113, NULL);
+(127, 'Rahmawati', 'ortu0091847298', '0091847298', 'orang_tua', 88, 'XI TKJ'),
+(128, 'Yamin', 'ortu0091847303', '0091847303', 'orang_tua', 93, 'XII TKJ');
 
 --
 -- Indexes for dumped tables
@@ -1498,6 +1523,12 @@ ALTER TABLE `catatan_semester`
 --
 ALTER TABLE `data_guru`
   ADD PRIMARY KEY (`id_guru`);
+
+--
+-- Indexes for table `data_orang_tua`
+--
+ALTER TABLE `data_orang_tua`
+  ADD PRIMARY KEY (`id_orangtua`);
 
 --
 -- Indexes for table `data_siswa`
@@ -1579,6 +1610,12 @@ ALTER TABLE `data_guru`
   MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `data_orang_tua`
+--
+ALTER TABLE `data_orang_tua`
+  MODIFY `id_orangtua` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `data_siswa`
 --
 ALTER TABLE `data_siswa`
@@ -1594,7 +1631,7 @@ ALTER TABLE `jenis_pelanggaran`
 -- AUTO_INCREMENT for table `komunikasi_ortu`
 --
 ALTER TABLE `komunikasi_ortu`
-  MODIFY `id_komunikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_komunikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `laporan_konseling`
@@ -1630,13 +1667,13 @@ ALTER TABLE `rekap_poin`
 -- AUTO_INCREMENT for table `remisi_otomatis`
 --
 ALTER TABLE `remisi_otomatis`
-  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- Constraints for dumped tables

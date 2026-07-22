@@ -5,6 +5,28 @@ session_start();
 
 // Ambil kelas wali kelas yang sedang login
 $kelas = $_SESSION['kelas'];
+$nama = $_GET['nama'] ?? '';
+
+$where = "WHERE s.kelas='$kelas'";
+
+if($nama!=''){
+    $where .= " AND s.nama_siswa='$nama'";
+}
+
+// dropdown
+$qNama=mysqli_query($koneksi,"
+SELECT nama_siswa
+FROM data_siswa
+WHERE kelas='$kelas'
+ORDER BY nama_siswa ASC
+");
+
+// pagination
+$batas = 20;
+
+$halaman = $_GET['hal'] ?? 1;
+
+$mulai = ($halaman-1)*$batas;
 
 // Ambil data riwayat komunikasi hanya untuk kelas wali kelas
 $data = mysqli_query($koneksi, "
@@ -14,9 +36,23 @@ SELECT
     s.kelas
 FROM komunikasi_ortu k
 JOIN data_siswa s ON k.id_siswa = s.id_siswa
-WHERE s.kelas = '$kelas'
+$where
 ORDER BY k.id_komunikasi DESC
+LIMIT $mulai,$batas
 ");
+
+
+// pagination lagi
+$total=mysqli_num_rows(mysqli_query($koneksi,"
+SELECT
+k.id_komunikasi
+FROM komunikasi_ortu k
+JOIN data_siswa s
+ON k.id_siswa=s.id_siswa
+$where
+"));
+
+$totalHalaman=ceil($total/$batas);
 ?>
 
 
@@ -132,24 +168,24 @@ body{
 /* FILTER */
 
 .filter-grid{
-    display:grid;
-    grid-template-columns:1fr 60px;
-    gap:12px;
+display:flex;
+gap:12px;
+align-items:center;
 }
 
-.filter-grid input{
-    height:45px;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    padding:0 15px;
-    font-family:'Poppins',sans-serif;
-    outline:none;
+.filter-grid select{
+width:230px;
+height:45px;
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:0 15px;
+font-family:Poppins;
 }
 
-.filter-grid input:focus{
-    border-color:#16a34a;
+.btn-search{
+width:50px;
+height:45px;
 }
-
 .btn-search{
     border:none;
     background:#16a34a;
@@ -230,35 +266,48 @@ table tbody tr:hover{
     width:100%;
     display:flex;
     justify-content:center;
-    margin-top:20px;
+    margin-top:25px;
 }
 
 .pagination{
     display:flex;
-    gap:8px;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
 }
 
 .page-btn{
-    width:40px;
-    height:40px;
-    border:none;
-    border-radius:10px;
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:500;
+    color:#374151;
     background:#fff;
     border:1px solid #d1d5db;
-    cursor:pointer;
+    border-radius:12px;
     transition:.3s;
+    cursor:pointer;
 }
 
 .page-btn:hover{
-    background:#16a34a;
-    color:#fff;
-    border-color:#16a34a;
+    background:#f3f4f6;
+    color:#15803d;
+    border-color:#15803d;
 }
 
 .page-btn.active{
     background:#16a34a;
     color:#fff;
     border-color:#16a34a;
+}
+
+.page-btn.disabled{
+    pointer-events:none;
+    opacity:.5;
 }
 
 /* BACK */
@@ -428,7 +477,7 @@ table tbody tr:hover{
 
                 <i class="fas fa-history"></i>
 
-                Riwayat Komunikasi
+                Riwayat Pembinaan
 
             </a>
 
@@ -456,39 +505,34 @@ table tbody tr:hover{
 
     <div class="card">
 
-        <div class="filter-grid">
+        <form method="GET" class="filter-grid">
 
-            <input
-                type="text"
-                placeholder="Cari nama siswa..."
-            >
+<select name="nama">
 
-            <button class="btn-search">
+<option value="">Semua Siswa</option>
 
-                <i class="fas fa-search"></i>
+<?php while($n=mysqli_fetch_assoc($qNama)){ ?>
 
-            </button>
+<option
+value="<?= $n['nama_siswa']; ?>"
+<?=($nama==$n['nama_siswa'])?'selected':'';?>>
 
-        </div>
+<?= $n['nama_siswa']; ?>
 
-    </div>
+</option>
 
-    <!-- TABLE -->
+<?php } ?>
 
-    <div class="card">
+</select>
 
-        <div class="table-header">
+<button type="submit" class="btn-search">
+<i class="fas fa-search"></i>
+</button>
 
-            <div class="table-title">
+</form>
 
-                <i class="fas fa-comments"></i>
 
-                Data Riwayat Komunikasi
-
-            </div>
-
-        </div>
-
+<br>
         <div class="table-responsive">
 
             <table>
@@ -520,7 +564,8 @@ table tbody tr:hover{
     <td><?= $row['tanggal']; ?></td>
     <td><?= $row['jenis_pertemuan']; ?></td>
 
-    <<td>
+    <td>
+
 <button
 type="button"
 class="btn-icon btn-view-hasil"
@@ -556,30 +601,30 @@ title="Berita Acara">
     <!-- PAGINATION -->
 
     <div class="pagination-wrapper">
+<div class="pagination">
 
-        <div class="pagination">
+<?php if($halaman>1){ ?>
+<a href="?hal=<?= $halaman-1 ?>&nama=<?= urlencode($nama) ?>" class="page-btn">
+<i class="fas fa-chevron-left"></i>
+</a>
+<?php } ?>
 
-            <button class="page-btn">
+<?php for($i=1;$i<=$totalHalaman;$i++){ ?>
+<a href="?hal=<?= $i ?>&nama=<?= urlencode($nama) ?>"
+class="page-btn <?=($halaman==$i)?'active':'';?>">
+<?= $i ?>
+</a>
+<?php } ?>
 
-                <i class="fas fa-chevron-left"></i>
+<?php if($halaman<$totalHalaman){ ?>
+<a href="?hal=<?= $halaman+1 ?>&nama=<?= urlencode($nama) ?>" class="page-btn">
+<i class="fas fa-chevron-right"></i>
+</a>
+<?php } ?>
 
-            </button>
+</div>
 
-            <button class="page-btn active">1</button>
-
-            <button class="page-btn">2</button>
-
-            <button class="page-btn">3</button>
-
-            <button class="page-btn">
-
-                <i class="fas fa-chevron-right"></i>
-
-            </button>
-
-        </div>
-
-    </div>
+</div>
 
     <!-- BACK -->
 

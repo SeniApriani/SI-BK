@@ -2,6 +2,9 @@
 <?php
 include "../config/koneksi.php";
 session_start();
+$id_siswa = $_SESSION['id_siswa'] ?? 0;
+$nama = $_SESSION['nama'];
+$role = $_SESSION['role'];
 include "../config/koneksi.php";
 
 $id_siswa = $_SESSION['id_siswa'] ?? 0;
@@ -340,7 +343,7 @@ table tbody tr:hover{
 
         <div class="page-header">
 
-            <h1>Riwayat Komunikasi</h1>
+            <h1>Riwayat Pembinaan</h1>
 
             <p>
                 Riwayat komunikasi antara pihak sekolah dengan orang tua / wali siswa.
@@ -458,11 +461,25 @@ Lihat Hasil Komunikasi
 
     <div class="bottom-action">
 
-        <a href="dashboard_siswa.php" class="btn-back">
+        <?php
 
-            <i class="fas fa-chevron-left"></i>
+if($role=='siswa'){
 
-        </a>
+    $back = "dashboard_siswa.php";
+
+}else{
+
+    $back = "dashboard_ortu.php";
+
+}
+
+?>
+
+<a href="<?= $back; ?>" class="btn-back">
+
+    <i class="fas fa-chevron-left"></i>
+
+</a>
 
     </div>
 

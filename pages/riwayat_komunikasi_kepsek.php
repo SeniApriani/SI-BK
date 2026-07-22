@@ -422,7 +422,7 @@ table tbody tr:hover{
 
                 <i class="fas fa-history"></i>
 
-                Riwayat Komunikasi
+                Riwayat Pembinaan
 
             </a>
 
@@ -436,7 +436,7 @@ table tbody tr:hover{
 
         <div class="page-header">
 
-            <h1>Riwayat Komunikasi</h1>
+            <h1>Riwayat Pembinaan</h1>
 
             <p>
                 Riwayat komunikasi antara pihak sekolah dengan orang tua / wali siswa.
@@ -477,7 +477,7 @@ table tbody tr:hover{
 
                 <i class="fas fa-comments"></i>
 
-                Data Riwayat Komunikasi
+                Data Riwayat Pembinaan 
 
             </div>
 

@@ -3,7 +3,21 @@ session_start();
 include "../config/koneksi.php";
 include "../pages/remisi_otomatis.php";
 
-$id_siswa = $_GET['id'];
+$role = $_SESSION['role'];
+
+// jika siswa atau orang tua, ambil id_siswa dari session
+if($role=='siswa' || $role=='ortu'){
+
+    $id_siswa = $_SESSION['id_siswa'];
+
+}else{
+
+    // wali kelas / wakasek / kepsek tetap dari URL
+    $id_siswa = $_GET['id'];
+
+}
+
+
 
 // ==========================
 // QUERY GABUNGAN RIWAYAT
@@ -274,8 +288,22 @@ if($r['poin'] > 0){
 
 </div>
 
-<a href="dashboard_siswa.php" class="btn-back">
-<i class="fas fa-arrow-left"></i> Kembali
+<?php
+
+if($role == 'siswa'){
+
+    $back = "dashboard_siswa.php";
+
+}else{
+
+    $back = "dashboard_ortu.php";
+
+}
+
+?>
+
+<a href="<?= $back; ?>" class="btn-back">
+    <i class="fas fa-arrow-left"></i> Kembali
 </a>
 
 </div>

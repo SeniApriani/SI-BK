@@ -14,7 +14,7 @@ if($role == 'wali_kelas'){
 
 /* FILTER */
 $nama  = $_GET['nama'] ?? '';
-$kelas = $_GET['kelas'] ?? '';
+
 
 $role = $_SESSION['role'];
 $kelasLogin = $_SESSION['kelas'];
@@ -29,9 +29,6 @@ if($nama != ''){
     $where .= " AND ds.nama_siswa LIKE '%$nama%'";
 }
 
-if($kelas != ''){
-    $where .= " AND ds.kelas LIKE '%$kelas%'";
-}
 
 /* QUERY RIWAYAT REMISI SEMUA SISWA */
 
@@ -59,6 +56,7 @@ ORDER BY pr.tanggal_pengajuan DESC
 <head>
 <meta charset="UTF-8">
 <title>Riwayat Remisi Wali Kelas</title>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -98,10 +96,13 @@ h1{
     margin-top:15px;
 }
 
-input{
+input,
+select{
     padding:10px;
     border:1px solid #ddd;
     border-radius:10px;
+    font-family:Poppins;
+    min-width:220px;
 }
 
 /* BUTTON */
@@ -200,8 +201,11 @@ a{
     background:#16a34a;
     color:#fff;
 }
+
 </style>
+
 </head>
+
 <body>
 
 <div class="container">
@@ -236,9 +240,33 @@ a{
     <!-- FILTER -->
     <form method="GET" class="filter">
 
-        <input type="text" name="nama" placeholder="Cari nama siswa">
+       <select name="nama" onchange="this.form.submit()">
 
-        <input type="text" name="kelas" placeholder="Kelas">
+    <option value="">Semua Siswa</option>
+
+    <?php
+    $qNama = mysqli_query($koneksi,"
+    SELECT nama_siswa
+    FROM data_siswa
+    WHERE kelas='$kelasLogin'
+    ORDER BY nama_siswa ASC
+    ");
+
+    while($s=mysqli_fetch_assoc($qNama)){
+    ?>
+
+    <option
+        value="<?= $s['nama_siswa']; ?>"
+        <?= ($nama==$s['nama_siswa'])?'selected':''; ?>>
+
+        <?= $s['nama_siswa']; ?>
+
+    </option>
+
+    <?php } ?>
+
+</select>
+    
 
         <button>Cari</button>
 
@@ -294,6 +322,19 @@ a{
 </div>
 
 </div>
+<!-- dropdown nama -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+    $('select[name="nama"]').select2({
+        width:'220px'
+    });
+
+});
+</script>
 </body>
 </html>

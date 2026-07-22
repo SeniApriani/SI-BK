@@ -3,14 +3,38 @@
 session_start();
 include "../config/koneksi.php";
 
-$role = $_SESSION['role'];
+
 $kelasLogin = $_SESSION['kelas'];
 
-$where = "WHERE COALESCE(p.total_poin,0) >= 21";
+$nama = $_GET['nama'] ?? '';
 
-if($role == 'wali_kelas'){
-    $where .= " AND s.kelas='$kelasLogin'";
+$where = "
+WHERE COALESCE(p.total_poin,0) >= 21
+AND s.kelas='$kelasLogin'
+";
+
+if($nama != ''){
+    $where .= " AND s.nama_siswa='$nama'";
 }
+
+
+/* ======================================================
+   DROPDOWN NAMA SISWA
+====================================================== */
+
+$qNama = mysqli_query($koneksi,"
+SELECT nama_siswa
+FROM data_siswa
+WHERE kelas='$kelasLogin'
+ORDER BY nama_siswa ASC
+");
+
+
+
+/* ======================================================
+   QUERY DATA
+====================================================== */
+
 $query = mysqli_query($koneksi,"
 SELECT
     s.id_siswa,
@@ -126,17 +150,25 @@ body{
 }
 
 .filter-grid{
-    display:grid;
-    grid-template-columns:1fr 60px;
-    gap:12px;
+display:flex;
+gap:12px;
+align-items:center;
+flex-wrap:wrap;
 }
 
-.filter-grid input{
-    height:45px;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    padding:0 15px;
-    font-family:'Poppins',sans-serif;
+.filter-grid select{
+width:220px;
+height:45px;
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:0 15px;
+font-family:Poppins;
+}
+
+.btn-search{
+width:50px;
+height:45px;
+border-radius:10px;
 }
 
 .btn-search{
@@ -441,7 +473,7 @@ table tbody tr:hover{
 
             <a href="riwayat_komunikasi.php" class="tab">
                 <i class="fas fa-history"></i>
-                Riwayat Komunikasi
+                Riwayat Pembinaan
             </a>
 
         </div>
@@ -450,230 +482,122 @@ table tbody tr:hover{
 
     <!-- FILTER -->
 
-    <div class="card">
+<div class="card">
 
-        <div class="page-header">
+    <div class="page-header">
 
-            <h1>Komunikasi Orang Tua</h1>
+        <h1>Komunikasi Orang Tua</h1>
 
-            <p>Daftar siswa yang harus ditindaklanjuti karena telah mencapai batas poin pelanggaran.</p>
-
-        </div>
-
-        <div class="filter-grid">
-
-            <input
-                type="text"
-                placeholder="Cari nama siswa..."
-            >
-
-            <button class="btn-search">
-
-                <i class="fas fa-search"></i>
-
-            </button>
-
-        </div>
+        <p>Daftar siswa yang harus ditindaklanjuti karena telah mencapai batas poin pelanggaran.</p>
 
     </div>
 
-    <!-- DAFTAR TINDAK LANJUT -->
+    <br>
 
-    <div class="card">
+    <form method="GET" class="filter-grid">
 
-        <div class="table-header">
+        <select name="nama">
 
-            <div class="table-title">
+            <option value="">Semua Siswa</option>
 
-                <i class="fas fa-users"></i>
+            <?php while($n=mysqli_fetch_assoc($qNama)){ ?>
 
-                Daftar Tindak Lanjut
+            <option
+            value="<?= $n['nama_siswa']; ?>"
+            <?= ($nama==$n['nama_siswa'])?'selected':''; ?>>
 
-            </div>
+                <?= $n['nama_siswa']; ?>
 
-        </div>
+            </option>
 
-        <div class="table-responsive">
+            <?php } ?>
 
-            <table>
+        </select>
 
-                <thead>
+        <button type="submit" class="btn-search">
+            <i class="fas fa-search"></i>
+        </button>
 
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Siswa</th>
-                        <th>Kelas</th>
-                        <th>Total Poin</th>
-                        <th>Detail Riwayat</th>
-                       <th>Tindak Lanjut</th>
-                    </tr>
-
-                </thead>
-
-               <tbody>
-<?php $no = 1; while($row = mysqli_fetch_assoc($query)) { ?>
-<tr>
-    <td><?= $no++; ?></td>
-    <td><?= $row['nama_siswa']; ?></td>
-    <td><?= $row['kelas']; ?></td>
-    <td><?= $row['total_poin']; ?></td>
-    <td>
-    <a href="detail_riwayat_tindaklanjut.php?id=<?= $row['id_siswa']; ?>" class="btn-detail-riwayat">
-        <i class="fas fa-eye"></i> Lihat
-    </a>
-</td>
-
-    
-   <td>
-    <a href="input_komunikasi_ortu.php?id=<?= $row['id_siswa']; ?>" class="btn-proses">
-        <i class="fas fa-comments"></i> Proses
-    </a>
-</td>
-</tr>
-<?php } ?>
-</tbody>
-            </table>
-
-        </div>
-
-    </div>
-
-    <!-- FORM INI MUNCUL SAAT KLIK PROSES -->
-
-    <div class="card form-card">
-
-        <div class="table-title" style="margin-bottom:20px;">
-
-            <i class="fas fa-comments"></i>
-
-            Input Hasil Komunikasi Orang Tua
-
-        <form>
-
-            <div class="form-grid">
-
-                <div class="form-group">
-
-                    <label>Nama Orang Tua / Wali</label>
-
-                    <input type="text">
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Tanggal Pertemuan</label>
-
-                    <input type="date">
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Jenis Pertemuan</label>
-
-                    <select>
-
-                        <option>Sekolah</option>
-                        <option>Home Visit</option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Upload Berita Acara</label>
-
-                    <input type="file">
-
-                </div>
-
-            </div>
-
-            <div class="form-action">
-
-                <button type="submit" class="btn-save">
-
-                    Simpan
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-    <div class="pagination-wrapper">
-
-        <div class="pagination">
-
-            <button class="page-btn">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-
-            <button class="page-btn active">1</button>
-
-            <button class="page-btn">2</button>
-
-            <button class="page-btn">3</button>
-
-            <button class="page-btn">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-
-        </div>
-
-    </div>   
+    </form>
 
 </div>
-<div class="bottom-action">
-<?php if($role=='wakasek'){ ?>
-<a href="dashboard_wakasek.php" class="btn-back">
-<?php } else { ?>
-<a href="dashboard_walikelas.php" class="btn-back">
-<?php } ?>
+
+   <!-- DAFTAR TINDAK LANJUT -->
+
+<div class="card">
+
+    <div class="table-header">
+
+        <div class="table-title">
+
+            <i class="fas fa-users"></i>
+            Daftar Tindak Lanjut
+
+        </div>
 
     </div>
 
-<script>
+    <div class="table-responsive">
 
-document.querySelectorAll('.btn-detail').forEach(button => {
+        <table>
 
-    button.addEventListener('click', function(e){
+            <thead>
 
-        e.preventDefault();
+                <tr>
+                    <th>No</th>
+                    <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Total Poin</th>
+                    <th>Detail Riwayat</th>
+                    <th>Tindak Lanjut</th>
+                </tr>
 
-        document.querySelectorAll('.dropdown').forEach(item => {
+            </thead>
 
-            if(item !== this.parentElement){
-                item.classList.remove('active');
-            }
+            <tbody>
 
-        });
+            <?php $no=1; while($row=mysqli_fetch_assoc($query)){ ?>
 
-        this.parentElement.classList.toggle('active');
+            <tr>
 
-    });
+                <td><?= $no++; ?></td>
+                <td><?= $row['nama_siswa']; ?></td>
+                <td><?= $row['kelas']; ?></td>
+                <td><?= $row['total_poin']; ?></td>
 
-});
+                <td>
+                    <a href="detail_riwayat_tindaklanjut.php?id=<?= $row['id_siswa']; ?>" class="btn-detail-riwayat">
+                        <i class="fas fa-eye"></i> Lihat
+                    </a>
+                </td>
 
-document.addEventListener('click', function(e){
+                <td>
+                    <a href="input_komunikasi_ortu.php?id=<?= $row['id_siswa']; ?>" class="btn-proses">
+                        <i class="fas fa-comments"></i> Input Hasil
+                    </a>
+                </td>
 
-    if(!e.target.closest('.dropdown')){
+            </tr>
 
-        document.querySelectorAll('.dropdown').forEach(item => {
+            <?php } ?>
 
-            item.classList.remove('active');
+            </tbody>
 
-        });
+        </table>
 
-    }
+    </div>
 
-});
+</div>
+    
+<div class="bottom-action">
 
-</script>
+<a href="dashboard_walikelas.php" class="btn-back">
+
+<i class="fas fa-chevron-left"></i>
+
+</a>
+
+</div>
 
 </body>
 </html>

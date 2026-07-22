@@ -436,7 +436,7 @@ table tbody tr:hover{
 
             <a href="riwayat_komunikasi_kepsek.php" class="tab">
                 <i class="fas fa-history"></i>
-                Riwayat Komunikasi
+                Riwayat Pembinaan
             </a>
 
         </div>

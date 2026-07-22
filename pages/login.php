@@ -60,6 +60,19 @@ $_SESSION['kelas'] = $data['kelas'];
 
 }
 
+
+// role orang tua
+elseif($data['role']=='orang_tua'){
+
+    $_SESSION['id_user'] = $data['id_user'];
+    $_SESSION['id_siswa'] = $data['id_siswa'];
+    $_SESSION['nama'] = $data['nama'];
+    $_SESSION['role'] = $data['role'];
+
+    header("Location: dashboard_ortu.php");
+    exit;
+}
+
     }else{
 
         $error = "Username atau Password salah!";
@@ -465,7 +478,7 @@ body::after{
 
         <img src="../assets/img/g_logo_pui.png">
 
-        <h1>SI-BK</h1>
+        <h1>SIMPEL</h1>
 
         <p>
             Sistem Informasi Bimbingan Konseling

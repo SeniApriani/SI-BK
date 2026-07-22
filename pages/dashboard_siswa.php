@@ -66,6 +66,31 @@ if(!$result){
 
 $data = mysqli_fetch_assoc($result);
 $notif_count = $data['jml'];
+
+
+/* =========================================
+   CEK PEMANGGILAN SISWA
+   Mengambil pemanggilan yang masih
+   berstatus Menunggu Pembinaan
+========================================= */
+
+$qPemanggilan = mysqli_query($koneksi, "
+SELECT
+    p.id_pemanggilan,
+    p.tanggal_pemanggilan,
+    p.keterangan,
+    p.status
+FROM pemanggilan_siswa p
+JOIN pelanggaran_siswa ps
+ON p.id_pelanggaran_siswa = ps.id
+WHERE ps.id_siswa = '$id_siswa'
+AND p.status = 'Menunggu Pembinaan'
+ORDER BY p.tanggal_pemanggilan DESC
+LIMIT 1
+");
+
+$pemanggilan = mysqli_fetch_assoc($qPemanggilan);
+
 ?>
 
 <!DOCTYPE html>
@@ -123,7 +148,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
-            <a href="riwayat_pelanggaran.php"
+            <a href="riwayat_pelanggaran_siswa.php"
             class="menu-link">
 
                 <i class="fas fa-triangle-exclamation"></i>
@@ -137,7 +162,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <i class="fas fa-phone"></i>
 
-                <span>Komunikasi Orang Tua</span>
+                <span>Riwayat Pembinaan</span>
 
             </a>
 
@@ -230,6 +255,35 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 </div>
 
         </section>
+
+        <!-- nontifikasi pemanggilan siswa -->
+         <?php if($pemanggilan){ ?>
+
+<div class="pemanggilan-alert">
+
+    <div class="pemanggilan-icon">
+        <i class="fas fa-bell"></i>
+    </div>
+
+    <div class="pemanggilan-content">
+
+        <h3>Pemanggilan dari Wali Kelas</h3>
+
+        <p>
+            <strong>Jadwal :</strong>
+            <?= date('d-m-Y', strtotime($pemanggilan['tanggal_pemanggilan'])); ?>
+        </p>
+
+        <p>
+            <strong>Keterangan :</strong>
+            <?= $pemanggilan['keterangan']; ?>
+        </p>
+
+    </div>
+
+</div>
+
+<?php } ?>
 
         <!-- DASHBOARD CARD -->
 

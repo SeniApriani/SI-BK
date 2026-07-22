@@ -2,9 +2,8 @@
 include __DIR__ . '/../config/koneksi.php';
 session_start();
 
-
-// ambil kelas wali kelas yang login
-$kelasLogin = $_SESSION['kelas'];
+// role user yang login: wali_kelas, wakasek, kepala_sekolah, siswa, orang_tua
+$role = $_SESSION['role'] ?? '';
 
 $limit = 20;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -13,7 +12,32 @@ $offset = ($page - 1) * $limit;
 $bulan = $_GET['bulan'] ?? '';
 $nama = $_GET['nama'] ?? '';
 
-$where = "WHERE s.kelas='$kelasLogin'";
+/* ===================== AKSES DATA BERDASARKAN ROLE ===================== */
+switch ($role) {
+
+    case 'wali_kelas':
+        $kelasLogin = $_SESSION['kelas'];
+        $where = "WHERE s.kelas='$kelasLogin'";
+        break;
+
+    case 'siswa':
+    case 'orang_tua':
+        // siswa hanya lihat data dirinya, orang tua hanya lihat data anaknya
+        $idSiswaLogin = (int)($_SESSION['id_siswa'] ?? 0);
+        $where = "WHERE s.id_siswa='$idSiswaLogin'";
+        break;
+
+    case 'wakasek':
+    case 'kepala_sekolah':
+        // lihat semua kelas, tanpa filter kepemilikan data
+        $where = "WHERE 1=1";
+        break;
+
+    default:
+        // role tidak dikenali / belum login -> jangan tampilkan data apapun
+        $where = "WHERE 1=0";
+        break;
+}
 
 if ($bulan != '') {
     $where .= " AND MONTH(ps.tanggal) = '$bulan'";
@@ -22,24 +46,55 @@ if ($nama != '') {
     $where .= " AND s.nama_siswa = '$nama'";
 }
 
+// wali kelas satu-satunya role yang boleh MEMBUAT laporan awal / kirim pemanggilan / hapus data
+$bisaAksi = ($role === 'wali_kelas');
+
+// tombol back disesuaikan dengan dashboard masing-masing role
+$dashboardMap = [
+    'wali_kelas'     => 'dashboard_walikelas.php',
+    'wakasek'        => 'dashboard_wakasek.php',
+    'kepala_sekolah' => 'dashboard_kepsek.php',
+    'siswa'          => 'dashboard_siswa.php',
+    'orang_tua'      => 'dashboard_ortu.php',
+];
+$linkDashboard = $dashboardMap[$role] ?? 'dashboard_walikelas.php';
+
 
 /* ===================== DATA ===================== */
 $data = mysqli_query($koneksi, "
-SELECT ps.id,
-       ps.tanggal,
-       s.nama_siswa,
-       s.nisn,
-       s.kelas,
-       jp.kategori,
-       jp.jenis_pelanggaran,
-       jp.poin,
-       ps.catatan,
-       lk.id_laporan
+SELECT
+ps.id,
+ps.tanggal,
+s.nama_siswa,
+s.nisn,
+s.kelas,
+jp.kategori,
+jp.jenis_pelanggaran,
+jp.poin,
+ps.catatan,
+
+lk.id_laporan,
+
+p.id_pemanggilan,
+p.status AS status_pemanggilan,
+p.tanggal_pemanggilan,
+p.keterangan,
+p.tanggal_pembinaan,
+p.hasil_pembinaan
+
 FROM pelanggaran_siswa ps
-JOIN data_siswa s ON ps.id_siswa = s.id_siswa
-JOIN jenis_pelanggaran jp ON ps.id_pelanggaran = jp.id_pelanggaran
+
+JOIN data_siswa s
+ON ps.id_siswa=s.id_siswa
+
+JOIN jenis_pelanggaran jp
+ON ps.id_pelanggaran=jp.id_pelanggaran
+
 LEFT JOIN laporan_konseling lk
-ON ps.id = lk.id_pelanggaran_siswa
+ON ps.id=lk.id_pelanggaran_siswa
+
+LEFT JOIN pemanggilan_siswa p
+ON ps.id=p.id_pelanggaran_siswa
 $where
 ORDER BY ps.tanggal DESC
 LIMIT $limit OFFSET $offset
@@ -415,6 +470,11 @@ table tbody tr:hover{
     color:#15803d;
 }
 
+.status-menunggu{
+    background:#fef3c7;
+    color:#b45309;
+}
+
 /* MODAL */
 .modal{
     display:none;
@@ -479,60 +539,46 @@ table tbody tr:hover{
 </head>
 <body>
 
-<!-- MODAL POP-UP -->
- <div id="modalLaporan" class="modal">
+<!-- MODAL POP-UP (dipakai semua role untuk lihat; form input khusus wali kelas) -->
+<div id="modalLaporan" class="modal">
     <div class="modal-content">
 
         <span class="close-modal">&times;</span>
 
-       <h3>Tindak Lanjut Pelanggaran</h3>
+        <h3>Tindak Lanjut Pelanggaran</h3>
 
-<div id="detailPelanggaran"></div>
+        <div id="detailPelanggaran"></div>
 
-<div id="formLaporan">
+        <?php if ($bisaAksi) { ?>
+        <div id="formLaporan">
 
-<div style="margin-top:15px;">
-    <label>Tanggal Tindak Lanjut</label>
+            <div style="margin-top:15px;">
+                <label>Jadwal Pemanggilan</label>
+                <input
+                    type="date"
+                    id="tanggal_pemanggilan"
+                    style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;margin-top:8px;">
+            </div>
 
-    <input
-        type="date"
-        id="tanggal_tindak_lanjut"
-        style="
-        width:100%;
-        padding:10px;
-        border:1px solid #d1d5db;
-        border-radius:10px;
-        margin-top:8px;"
-    >
-</div>
+            <div style="margin-top:15px;">
+                <label>Keterangan Pemanggilan</label>
+                <textarea
+                    id="keterangan"
+                    placeholder="Contoh : Siswa diminta hadir ke ruang guru pukul 09.00 WIB."
+                    style="width:100%;min-height:100px;padding:10px;border:1px solid #d1d5db;border-radius:10px;margin-top:8px;"></textarea>
+            </div>
 
-<div style="margin-top:15px;">
-    <label>Catatan Konseling/Tindak Lanjut</label>
+            <input type="hidden" id="id_pelanggaran_siswa">
 
-    <textarea
-        id="catatan_konseling"
-        style="
-        width:100%;
-        min-height:120px;
-        padding:10px;
-        border:1px solid #d1d5db;
-        border-radius:10px;
-        margin-top:8px;"
-    ></textarea>
-</div>
+            <button id="btnKirimPemanggilan" class="btn-filter">
+                Kirim Pemanggilan
+            </button>
 
-<input type="hidden" id="id_pelanggaran_siswa">
+        </div> <!-- formLaporan -->
+        <?php } ?>
 
-<button id="btnSimpanLaporan"
-        class="btn-filter"
-        style="margin-top:15px;">
-    Simpan
-</button>
-    </div>
-</div>
-</div>
-
-
+    </div> <!-- modal-content -->
+</div> <!-- modal -->
 
 <!-- CONTAINER -->
 <div class="container">
@@ -541,6 +587,7 @@ table tbody tr:hover{
 
     <div class="tab-card">
 
+        <?php if ($bisaAksi) { ?>
         <a href="data_pelanggaran_siswa.php" class="tab">
 
             <i class="fas fa-pen-to-square"></i>
@@ -548,6 +595,7 @@ table tbody tr:hover{
             Pencatatan
 
         </a>
+        <?php } ?>
 
         <a href="riwayat_pelanggaran_siswa.php" class="tab tab-right active">
 
@@ -573,9 +621,10 @@ table tbody tr:hover{
 
         <!-- FILTER -->
 
+        <?php if (in_array($role, ['wali_kelas', 'wakasek', 'kepala_sekolah'])) { ?>
         <div class="filter-section">
 
-          
+
             <form method="GET" class="filter-wrap" id="filterForm">
 
     <!-- BULAN -->
@@ -605,9 +654,15 @@ table tbody tr:hover{
         <option value="">Semua Siswa</option>
 
 <?php
-$q = mysqli_query($koneksi,"SELECT nama_siswa FROM data_siswa
-WHERE kelas='$kelasLogin'
-ORDER BY nama_siswa ASC");
+if ($role === 'wali_kelas') {
+    $q = mysqli_query($koneksi,"SELECT nama_siswa FROM data_siswa
+    WHERE kelas='$kelasLogin'
+    ORDER BY nama_siswa ASC");
+} else {
+    // wakasek & kepala sekolah lihat semua siswa dari semua kelas
+    $q = mysqli_query($koneksi,"SELECT nama_siswa FROM data_siswa
+    ORDER BY nama_siswa ASC");
+}
 
 while($s=mysqli_fetch_assoc($q)){ ?>
     <option value="<?= $s['nama_siswa']; ?>"
@@ -616,9 +671,14 @@ while($s=mysqli_fetch_assoc($q)){ ?>
     </option>
 <?php } ?>
 
-        
+
     </select>
 </div>
+
+            </form>
+
+        </div>
+        <?php } ?>
 
         <!-- TABLE -->
 
@@ -647,11 +707,16 @@ while($s=mysqli_fetch_assoc($q)){ ?>
 <td><?= $r['nisn']; ?></td>
 <td><?= $r['kelas']; ?></td>
 <td><?= $r['kategori']; ?></td>
-            <td><a href="hapus_pelanggaran.php?id=<?= $r['id']; ?>"
+            <td>
+<?php if ($bisaAksi) { ?>
+    <a href="hapus_pelanggaran.php?id=<?= $r['id']; ?>"
        onclick="return confirm('Data ini akan dihapus dan total poin akan berkurang. Lanjutkan?');"
        style="color:#374151;; font-weight:500; text-decoration:none;">
         <?= $r['jenis_pelanggaran']; ?>
     </a>
+<?php } else { ?>
+    <?= $r['jenis_pelanggaran']; ?>
+<?php } ?>
 </td>
             <td><?= $r['poin']; ?></td>
             <td><?= $r['catatan']; ?></td>
@@ -659,23 +724,50 @@ while($s=mysqli_fetch_assoc($q)){ ?>
 
 <?php if(empty($r['id_laporan'])){ ?>
 
-    <a href="#"
-   class="laporan-awal status-awal"
-   data-id="<?= $r['id']; ?>">
+    <?php if ($bisaAksi) { ?>
 
-   <i class="fas fa-triangle-exclamation"></i>
-   Laporan Awal
+    <!-- belum ada laporan: hanya wali kelas yang bisa klik untuk kirim pemanggilan -->
+    <a href="#"
+    class="laporan-awal status-awal"
+    data-id="<?= $r['id']; ?>">
+
+    <i class="fas fa-triangle-exclamation"></i>
+    Laporan Awal
+
+    </a>
+
+    <?php } else { ?>
+
+    <!-- role lain: belum ada apa-apa yang bisa dilihat -->
+    <span class="status-awal">
+        <i class="fas fa-triangle-exclamation"></i>
+        Laporan Awal
+    </span>
+
+    <?php } ?>
+
+
+<?php } elseif($r['status_pemanggilan']=="Menunggu Pembinaan"){ ?>
+
+<!-- sudah dikirim pemanggilan: SEMUA role boleh klik untuk lihat -->
+<a href="#"
+class="lihat-laporan status-menunggu"
+data-id="<?= $r['id_pemanggilan']; ?>">
+
+<i class="fas fa-hourglass-half"></i>
+Menunggu Pembinaan
 
 </a>
 
-<?php } else { ?>
+<?php } elseif($r['status_pemanggilan']=="Sudah Dibina"){ ?>
 
-    <a href="#"
-   class="lihat-laporan status-laporan"
-   data-id="<?= $r['id']; ?>">
+<!-- sudah dibina: SEMUA role boleh klik untuk lihat hasil -->
+<a href="#"
+class="lihat-laporan status-laporan"
+data-id="<?= $r['id_pemanggilan']; ?>">
 
-   <i class="fas fa-file-lines"></i>
-   Lihat Laporan
+<i class="fas fa-file-lines"></i>
+Sudah Dibina
 
 </a>
 
@@ -715,7 +807,7 @@ for ($i = $start; $i <= $end; $i++) { ?>
 
     <div class="bottom-action">
 
-        <a href="dashboard_walikelas.php" class="btn-back">
+        <a href="<?= $linkDashboard; ?>" class="btn-back">
             <i class="fas fa-chevron-left"></i>
         </a>
 
@@ -732,7 +824,7 @@ const modal = document.getElementById('modalLaporan');
 
 document.addEventListener('click', function(e){
 
-    // LAPORAN AWAL
+    // LAPORAN AWAL (elemen ini cuma ada di DOM untuk wali kelas)
     if(e.target.classList.contains('laporan-awal')){
 
         e.preventDefault();
@@ -740,9 +832,9 @@ document.addEventListener('click', function(e){
         let id = e.target.dataset.id;
         document.getElementById('formLaporan').style.display = 'block';
 
-        document.getElementById('tanggal_tindak_lanjut').style.display = 'block';
-        document.getElementById('catatan_konseling').style.display = 'block';
-        document.getElementById('btnSimpanLaporan').style.display = 'inline-block';
+       document.getElementById('tanggal_pemanggilan').style.display = 'block';
+document.getElementById('keterangan').style.display = 'block';
+document.getElementById('btnKirimPemanggilan').style.display = 'inline-block';
 
         fetch('get_detail_pelanggaran.php?id=' + id)
         .then(response => response.json())
@@ -788,113 +880,171 @@ document.addEventListener('click', function(e){
 
     }
 
-    // LIHAT LAPORAN
-    if(e.target.classList.contains('lihat-laporan')){
+    // ======================================================
+// LIHAT LAPORAN / HASIL PEMBINAAN (bisa diklik semua role)
+// ======================================================
 
-        e.preventDefault();
+if(e.target.classList.contains('lihat-laporan')){
 
-        let id = e.target.dataset.id;
+    e.preventDefault();
 
-        fetch('get_laporan_konseling.php?id=' + id)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('detailPelanggaran').innerHTML = `
-    <div class="detail-card">
-        <div class="detail-grid">
+    let id = e.target.dataset.id;
 
-            <div class="detail-label">Nama Siswa</div>
-            <div class="detail-value">${data.nama_siswa}</div>
+    fetch("get_detail_pemanggilan.php?id=" + id)
 
-            <div class="detail-label">NISN</div>
-            <div class="detail-value">${data.nisn}</div>
+    .then(response => response.json())
 
-            <div class="detail-label">Kelas</div>
-            <div class="detail-value">${data.kelas}</div>
+    .then(data => {
 
-            <div class="detail-label">Kategori</div>
-            <div class="detail-value">${data.kategori}</div>
+        document.getElementById("detailPelanggaran").innerHTML = `
 
-            <div class="detail-label">Jenis Pelanggaran</div>
-            <div class="detail-value">${data.jenis_pelanggaran}</div>
+        <div class="detail-card">
 
-            <div class="detail-label">Bobot Poin</div>
-            <div class="detail-value">${data.poin}</div>
+            <div class="detail-grid">
 
-            <div class="detail-label">Detail Pelanggaran</div>
-            <div class="detail-value">${data.catatan ?? '-'}</div>
+                <div class="detail-label">Nama Siswa</div>
+                <div class="detail-value">${data.nama_siswa}</div>
 
-        </div>
-    </div>
+                <div class="detail-label">NISN</div>
+                <div class="detail-value">${data.nisn}</div>
 
-    <div class="detail-card">
-        <div class="detail-grid">
+                <div class="detail-label">Kelas</div>
+                <div class="detail-value">${data.kelas}</div>
 
-            <div class="detail-label">Tanggal Tindak Lanjut</div>
-            <div class="detail-value">${data.tanggal_tindak_lanjut}</div>
+                <div class="detail-label">Kategori</div>
+                <div class="detail-value">${data.kategori}</div>
 
-            <div class="detail-label">Catatan Konseling</div>
-            <div class="detail-value">${data.catatan_konseling}</div>
+                <div class="detail-label">Jenis Pelanggaran</div>
+                <div class="detail-value">${data.jenis_pelanggaran}</div>
+
+                <div class="detail-label">Bobot Poin</div>
+                <div class="detail-value">${data.poin}</div>
+
+                <div class="detail-label">Detail Pelanggaran</div>
+                <div class="detail-value">${data.catatan ?? '-'}</div>
+
+            </div>
 
         </div>
-    </div>
-`;
 
-           document.getElementById('formLaporan').style.display = 'none';
-            modal.style.display = 'block';
+        <div class="detail-card">
 
-        });
+            <div class="detail-grid">
 
-    }
+                <div class="detail-label">Tanggal Pemanggilan</div>
+                <div class="detail-value">${data.tanggal_pemanggilan}</div>
+
+                <div class="detail-label">Keterangan Pemanggilan</div>
+                <div class="detail-value">${data.keterangan}</div>
+
+                <div class="detail-label">Status</div>
+                <div class="detail-value">${data.status}</div>
+
+                <div class="detail-label">Tanggal Pembinaan</div>
+                <div class="detail-value">${data.tanggal_pembinaan ?? '-'}</div>
+
+                <div class="detail-label">Hasil Pembinaan</div>
+                <div class="detail-value">${data.hasil_pembinaan ?? '-'}</div>
+
+            </div>
+
+        </div>
+
+        `;
+
+        // Sembunyikan form karena hanya melihat hasil
+        let formLaporan = document.getElementById("formLaporan");
+        if (formLaporan) {
+            formLaporan.style.display = "none";
+        }
+
+        modal.style.display = "block";
+
+    });
+
+}
 
 });
 
-document.querySelector('.close-modal').onclick = function(){
-    modal.style.display = 'none';
+// ======================================================
+// TUTUP MODAL
+// ======================================================
+
+document.querySelector(".close-modal").onclick = function(){
+
+    modal.style.display = "none";
+
 }
 
 window.onclick = function(event){
+
     if(event.target == modal){
-        modal.style.display = 'none';
+
+        modal.style.display = "none";
+
     }
+
 }
 
-document.getElementById('btnSimpanLaporan').addEventListener('click', function(){
+// ======================================================
+// KIRIM PEMANGGILAN (tombolnya cuma ada di DOM untuk wali kelas)
+// ======================================================
 
-    let id = document.getElementById('id_pelanggaran_siswa').value;
-    let catatan = document.getElementById('catatan_konseling').value;
-    let tanggal = document.getElementById('tanggal_tindak_lanjut').value;
+const btnKirimPemanggilan = document.getElementById("btnKirimPemanggilan");
 
-    if(tanggal == ''){
-        alert('Tanggal tindak lanjut wajib diisi!');
+if (btnKirimPemanggilan) {
+btnKirimPemanggilan.addEventListener("click", function(){
+
+    let id = document.getElementById("id_pelanggaran_siswa").value;
+
+    let catatan = document.getElementById("keterangan").value;
+
+    let tanggal = document.getElementById("tanggal_pemanggilan").value;
+
+    if(tanggal == ""){
+
+        alert("Tanggal pemanggilan wajib diisi!");
+
         return;
+
     }
 
-    if(catatan.trim() == ''){
-        alert('Catatan konseling wajib diisi!');
+    if(catatan.trim() == ""){
+
+        alert("Keterangan pemanggilan wajib diisi!");
+
         return;
+
     }
 
-    fetch('simpan_laporan_konseling.php', {
+    fetch("simpan_laporan_konseling.php",{
 
-        method:'POST',
+        method:"POST",
 
         headers:{
-            'Content-Type':'application/x-www-form-urlencoded'
+
+            "Content-Type":"application/x-www-form-urlencoded"
+
         },
 
         body:
-        'id_pelanggaran_siswa=' + id +
-        '&catatan_konseling=' + encodeURIComponent(catatan) +
-        '&tanggal_tindak_lanjut=' + tanggal
+
+        "id_pelanggaran_siswa=" + encodeURIComponent(id) +
+
+        "&catatan_konseling=" + encodeURIComponent(catatan) +
+
+        "&tanggal_tindak_lanjut=" + encodeURIComponent(tanggal)
 
     })
 
     .then(response => response.text())
-    .then(result => {
 
-        if(result.trim() == 'success'){
+    .then(result=>{
 
-            alert('Laporan berhasil disimpan');
+        if(result.trim()=="success"){
+
+            alert("Pemanggilan berhasil dikirim.");
+
             location.reload();
 
         }else{
@@ -906,7 +1056,10 @@ document.getElementById('btnSimpanLaporan').addEventListener('click', function()
     });
 
 });
+}
 
 </script>
+
 </body>
+
 </html>

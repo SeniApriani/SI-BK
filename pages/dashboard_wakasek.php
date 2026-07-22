@@ -176,7 +176,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <i class="fas fa-chalkboard-teacher"></i>
 
-    Data Guru
+    Data Wali Kelas
 
 </a>
 
@@ -211,18 +211,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <div class="submenu">
 
-                    <a href="rp_siswa_2.php">
+                    <a href="riwayat_pelanggaran_siswa.php">
 
                         <i class="fas fa-file-circle-exclamation"></i>
 
-                        Data Pelanggaran Siswa
+                       Riwayat Pelanggaran Siswa
 
                     </a> 
                     <a href="pengajuan_remisi_wakasek.php">
 
                         <i class="fas fa-star"></i>
 
-                        Penilaian Poin Pelanggaran
+                        Penilaian Pelanggaran
 
                     </a>
 

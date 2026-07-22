@@ -1,3 +1,28 @@
+<?php
+session_start();
+include __DIR__ . '/config/koneksi.php';
+
+// tabel jadwal pemanggilan ditampilkan ke semua pengunjung (publik & yang sudah login)
+$daftarPemanggilan = [];
+
+$q = mysqli_query($koneksi, "
+    SELECT
+        s.nama_siswa,
+        s.kelas,
+        p.tanggal_pemanggilan
+    FROM pemanggilan_siswa p
+    JOIN pelanggaran_siswa ps ON p.id_pelanggaran_siswa = ps.id
+    JOIN data_siswa s ON ps.id_siswa = s.id_siswa
+    WHERE p.status = 'Menunggu Pembinaan'
+    ORDER BY p.tanggal_pemanggilan ASC
+");
+
+if ($q) {
+    while ($row = mysqli_fetch_assoc($q)) {
+        $daftarPemanggilan[] = $row;
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="id">
@@ -435,6 +460,48 @@ html
     color:#6b7280;
     line-height:1.8;
 }
+
+/* NOTIFIKASI PEMANGGILAN (khusus user yang sudah login) */
+
+.notif-pemanggilan{
+    padding:90px 8%;
+    background:#ffffff;
+}
+
+.notif-table-wrap{
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 8px 20px rgba(0,0,0,.05);
+    overflow-x:auto;
+}
+
+.notif-table-wrap table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.notif-table-wrap th{
+    background:#dcfce7;
+    color:#166534;
+    font-weight:600;
+    padding:14px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+}
+
+.notif-table-wrap td{
+    padding:14px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+    color:#374151;
+}
+
+.notif-empty{
+    text-align:center;
+    padding:30px;
+    color:#9ca3af;
+}
 </style>
 </head>
 <body>
@@ -507,6 +574,50 @@ html
             </path>
 
         </svg>
+
+    </div>
+
+</section>
+
+<!-- NOTIFIKASI PEMANGGILAN (tampil untuk semua pengunjung) -->
+<section class="notif-pemanggilan">
+
+    <div class="section-title">
+        <h2>Jadwal Pemanggilan Siswa</h2>
+        <p>Daftar siswa yang sedang menunggu proses pembinaan.</p>
+    </div>
+
+    <div class="notif-table-wrap">
+
+        <?php if (empty($daftarPemanggilan)) { ?>
+
+            <div class="notif-empty">
+                <i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:10px;"></i>
+                Belum ada jadwal pemanggilan saat ini.
+            </div>
+
+        <?php } else { ?>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Jadwal Pemanggilan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($daftarPemanggilan as $row) { ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['nama_siswa']); ?></td>
+                    <td><?= htmlspecialchars($row['kelas']); ?></td>
+                    <td><?= date('d/m/Y', strtotime($row['tanggal_pemanggilan'])); ?></td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <?php } ?>
 
     </div>
 
@@ -939,5 +1050,3 @@ html
 
 </body>
 </html>
-```
-

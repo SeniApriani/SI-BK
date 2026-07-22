@@ -267,42 +267,6 @@ table tbody tr:hover{
     color:#fff;
 }
 
-.pagination{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.page{
-    min-width:40px;
-    height:40px;
-    padding:0 14px;
-    border-radius:12px;
-    background:#fff;
-    border:1px solid #e5e7eb;
-    color:#6b7280;
-    text-decoration:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    font-weight:500;
-    transition:.3s;
-}
-
-.page:hover{
-    background:#dcfce7;
-    border-color:#16a34a;
-    color:#16a34a;
-}
-
-.page.active{
-    background:#16a34a;
-    border-color:#16a34a;
-    color:#fff;
-    box-shadow:0 4px 12px rgba(22,163,74,.25);
-}
-
 <style>
 
 .page{
@@ -492,21 +456,6 @@ table tbody tr:hover{
 <i class="fas fa-chevron-left"></i>
 </a>
 
-<div class="pagination">
-
-    <a href="#" class="page">
-        <i class="fas fa-chevron-left"></i>
-    </a>
-
-    <a href="#" class="page active">1</a>
-    <a href="#" class="page">2</a>
-    <a href="#" class="page">3</a>
-
-    <a href="#" class="page">
-        <i class="fas fa-chevron-right"></i>
-    </a>
-
-</div>
 
 <a href="cetak_rekap_poin.php?kelas=<?= $kelas; ?>" class="btn-download">
     <i class="fas fa-download"></i>

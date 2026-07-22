@@ -239,12 +239,12 @@ body{
 
 /* BACK BUTTON */
 
-.bottom-action{
+.form-action{
     display:flex;
     justify-content:flex-end;
-    margin-top:15px;
+    margin-top:25px;
+    width:100%;
 }
-
 .btn-back{
     width:45px;
     height:45px;
@@ -282,8 +282,11 @@ body{
     }
 
     .bottom-action{
-        justify-content:center;
-    }
+    max-width:1100px;
+    margin:15px auto 0;
+    display:flex;
+    justify-content:flex-end;
+}
 
 }
 
@@ -384,9 +387,7 @@ body{
 
 </div>
 
-                </div>
-
-            </div>
+                
 
             <div class="form-action">
                 

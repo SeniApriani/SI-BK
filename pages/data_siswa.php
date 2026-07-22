@@ -274,36 +274,7 @@ table tbody tr:hover{
     color:#fff;
 }
 
-.pagination{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    margin-top:20px;
-}
 
-.page-btn{
-    width:40px;
-    height:40px;
-    border:none;
-    border-radius:10px;
-    background:#fff;
-    border:1px solid #d1d5db;
-    cursor:pointer;
-    font-weight:500;
-    transition:.3s;
-}
-
-.page-btn:hover{
-    background:#16a34a;
-    color:#fff;
-    border-color:#16a34a;
-}
-
-.page-btn.active{
-    background:#16a34a;
-    color:#fff;
-    border-color:#16a34a;
-}
 
 /* RESPONSIVE */
 
@@ -452,24 +423,7 @@ while($row = mysqli_fetch_assoc($query)){
 
     </div>
 
-    <!-- PAGINATION -->
-     <div class="pagination">
-
-    <button class="page-btn">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-
-    <button class="page-btn active">1</button>
-
-    <button class="page-btn">2</button>
-
-    <button class="page-btn">3</button>
-
-    <button class="page-btn">
-        <i class="fas fa-chevron-right"></i>
-    </button>
-
-</div>
+    
 
     <!-- BACK -->
 

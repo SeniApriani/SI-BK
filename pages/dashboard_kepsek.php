@@ -137,12 +137,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
-            <a href="rp_siswa_2.php"
+            <a href="riwayat_pelanggaran_siswa.php"
             class="menu-link">
 
                 <i class="fas fa-triangle-exclamation"></i>
 
-                <span>Data Pelanggaran Siswa</span>
+                <span>Riwayat Pelanggaran Siswa</span>
 
             </a>
 
@@ -151,7 +151,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <i class="fas fa-phone"></i>
 
-                <span>Monitoring Poin Siswa</span>
+                <span>Penilaian Pelanggaran</span>
 
             </a>
 
@@ -160,7 +160,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 <i class="fas fa-phone"></i>
 
-                <span>Riwayat Tindak Lanjut Siswa</span>
+                <span>Riwayat Pembinaan Siswa</span>
 
             </a>
 
