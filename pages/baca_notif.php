@@ -4,13 +4,13 @@ include "../config/koneksi.php";
 
 $id_siswa = $_SESSION['id_siswa'];
 
-mysqli_query($koneksi,"
+// tandai semua notifikasi pelanggaran milik siswa ini sebagai sudah dibaca
+mysqli_query($koneksi, "
 UPDATE notifikasi
 SET status_baca = 1
 WHERE id_user = '$id_siswa'
+AND status_baca = 0
 ");
 
-$redirect = $_GET['redirect'] ?? 'dashboard_siswa.php';
-header("Location: $redirect");
+header("Location: riwayat_pelanggaran_siswa.php");
 exit;
-?>

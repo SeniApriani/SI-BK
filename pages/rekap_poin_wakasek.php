@@ -1,5 +1,3 @@
-
-
 <?php
 include "../config/koneksi.php";
 
@@ -25,12 +23,25 @@ function predikat($poin){
 }
 $kelas = $_GET['kelas'] ?? '';
 
-// QUERY REKAP REALTIME
+/* =========================
+   PAGINATION
+========================= */
+$page     = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) $page = 1;
 
+$per_page = 20;
+$offset   = ($page - 1) * $per_page;
 
-if($kelas != ''){
+$where_kelas = $kelas !== '' ? "WHERE ds.kelas='" . mysqli_real_escape_string($koneksi, $kelas) . "'" : "";
 
-    $rekap = mysqli_query($koneksi,"
+// hitung total data untuk pagination
+$sql_count  = "SELECT COUNT(*) AS total FROM data_siswa ds $where_kelas";
+$total_row  = mysqli_fetch_assoc(mysqli_query($koneksi, $sql_count));
+$total_data = (int) $total_row['total'];
+$total_page = max(1, ceil($total_data / $per_page));
+
+// QUERY REKAP REALTIME (sudah termasuk pagination)
+$rekap = mysqli_query($koneksi,"
 SELECT 
     ds.id_siswa,
     ds.nisn,
@@ -40,29 +51,12 @@ SELECT
     rp.updated_at
 FROM data_siswa ds
 LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
-WHERE ds.kelas='$kelas'
+$where_kelas
 ORDER BY ds.nama_siswa ASC
+LIMIT $per_page OFFSET $offset
 ");
 
-
-}else{
-
-    
-    $rekap = mysqli_query($koneksi,"
-SELECT 
-    ds.id_siswa,
-    ds.nisn,
-    ds.nama_siswa,
-    ds.kelas,
-    COALESCE(rp.total_poin,0) AS total_poin,
-    rp.updated_at
-FROM data_siswa ds
-LEFT JOIN rekap_poin rp ON rp.id_siswa = ds.id_siswa
-ORDER BY ds.nama_siswa ASC
-");
-
-}
-$no = 1;
+$no = $offset + 1;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -304,44 +298,9 @@ table tbody tr:hover{
     box-shadow:0 4px 12px rgba(22,163,74,.25);
 }
 
-<style>
-
-.page{
-    width:38px;
-    height:38px;
-    border-radius:10px;
-    border:1px solid #d1d5db;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-decoration:none;
-    color:#374151;
-    transition:.3s;
-}
-
-.page:hover,
-.page.active{
-    background:#16a34a;
-    border-color:#16a34a;
-    color:#fff;
-}
-
-.btn-download{
-    border:none;
-    background:#16a34a;
-    color:#fff;
-    padding:12px 22px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    transition:.3s;
-}
-
-.btn-download:hover{
-    background:#15803d;
+.page.disabled{
+    opacity:.4;
+    pointer-events:none;
 }
 
 @media(max-width:768px){
@@ -414,8 +373,6 @@ table tbody tr:hover{
 
 <div class="filter-box">
 
-</select>
-
 <form method="GET">
     <select name="kelas" onchange="this.form.submit()">
 
@@ -456,7 +413,7 @@ table tbody tr:hover{
 
 <tbody>
 
-<?php $no = 1; while($s = mysqli_fetch_assoc($rekap)) { ?>
+<?php while($s = mysqli_fetch_assoc($rekap)) { ?>
 
 <tr>
     <td><?= $no++; ?></td>
@@ -479,6 +436,12 @@ table tbody tr:hover{
 
 <?php } ?>
 
+<?php if ($total_data === 0) { ?>
+<tr>
+    <td colspan="5">Belum ada data siswa.</td>
+</tr>
+<?php } ?>
+
 </tbody>
 </table>
 
@@ -493,24 +456,25 @@ table tbody tr:hover{
 
 <div class="pagination">
 
-    <a href="#" class="page">
+<?php
+    function buildPageLink($p, $kelas) {
+        return '?kelas=' . urlencode($kelas) . '&page=' . $p;
+    }
+?>
+
+    <a href="<?= buildPageLink(max(1, $page - 1), $kelas); ?>" class="page <?= $page <= 1 ? 'disabled' : ''; ?>">
         <i class="fas fa-chevron-left"></i>
     </a>
 
-    <a href="#" class="page active">1</a>
-    <a href="#" class="page">2</a>
-    <a href="#" class="page">3</a>
+<?php for ($i = 1; $i <= $total_page; $i++) { ?>
+    <a href="<?= buildPageLink($i, $kelas); ?>" class="page <?= $i == $page ? 'active' : ''; ?>"><?= $i; ?></a>
+<?php } ?>
 
-    <a href="#" class="page">
+    <a href="<?= buildPageLink(min($total_page, $page + 1), $kelas); ?>" class="page <?= $page >= $total_page ? 'disabled' : ''; ?>">
         <i class="fas fa-chevron-right"></i>
     </a>
 
 </div>
-
-<a href="cetak_rekap_poin.php?kelas=<?= $kelas; ?>" class="btn-download">
-    <i class="fas fa-download"></i>
-    Unduh
-</a>
 
 </div>
 

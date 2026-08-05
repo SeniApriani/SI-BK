@@ -294,15 +294,16 @@ while($row = mysqli_fetch_assoc($data)){
 
             <div class="dropdown-content">
 
-                <a href="edit_guru.php?id=<?= $row['id_guru']; ?>">
-                    <i class="fas fa-pen"></i>
-                    Edit
-                </a>
+              <a href="edit_guru.php?id=<?= $row['id_guru']; ?>">
+    <i class="fas fa-pen"></i>
+    Edit
+</a>
 
-                <a href="hapus_guru.php?id=<?= $row['id_guru']; ?>">
-                    <i class="fas fa-trash"></i>
-                    Hapus
-                </a>
+<a href="hapus_guru.php?id=<?= $row['id_guru']; ?>"
+   onclick="return confirm('Yakin hapus data guru ini?');">
+    <i class="fas fa-trash"></i>
+    Hapus
+</a>
 
             </div>
 

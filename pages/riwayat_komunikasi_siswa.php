@@ -1,4 +1,3 @@
-
 <?php
 include "../config/koneksi.php";
 session_start();
@@ -9,6 +8,29 @@ include "../config/koneksi.php";
 
 $id_siswa = $_SESSION['id_siswa'] ?? 0;
 
+// ======================================================
+// PAGINATION
+// ======================================================
+
+$limit = 20;
+$page  = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+// total data (untuk menentukan jumlah halaman)
+$totalRow = mysqli_fetch_assoc(mysqli_query($koneksi,"
+SELECT COUNT(*) AS jml
+FROM komunikasi_ortu k
+WHERE k.id_siswa = '$id_siswa'
+"));
+
+$total_data  = $totalRow['jml'];
+$total_pages = max(1, (int) ceil($total_data / $limit));
+
+// kalau page yang diminta melebihi total halaman, kembalikan ke halaman terakhir
+if ($page > $total_pages) $page = $total_pages;
+$offset = ($page - 1) * $limit;
+
 $data = mysqli_query($koneksi,"
 SELECT 
     k.*,
@@ -18,6 +40,7 @@ FROM komunikasi_ortu k
 JOIN data_siswa s ON k.id_siswa = s.id_siswa
 WHERE k.id_siswa = '$id_siswa'
 ORDER BY k.id_komunikasi DESC
+LIMIT $limit OFFSET $offset
 ");
 ?>
 
@@ -195,6 +218,12 @@ table tbody tr:hover{
     border:1px solid #d1d5db;
     cursor:pointer;
     transition:.3s;
+    text-decoration:none;
+    color:#374151;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Poppins',sans-serif;
 }
 
 .page-btn:hover{
@@ -207,6 +236,11 @@ table tbody tr:hover{
     background:#16a34a;
     color:#fff;
     border-color:#16a34a;
+}
+
+.page-btn.disabled{
+    opacity:.4;
+    pointer-events:none;
 }
 
 /* BACK */
@@ -391,7 +425,7 @@ table tbody tr:hover{
 
                 <tbody>
 
-<?php $no = 1; while($row = mysqli_fetch_assoc($data)) { ?>
+<?php $no = $offset + 1; while($row = mysqli_fetch_assoc($data)) { ?>
 
 <tr>
     <td><?= $no++; ?></td>
@@ -422,6 +456,12 @@ Lihat Hasil Komunikasi
 
 <?php } ?>
 
+<?php if ($total_data == 0) { ?>
+<tr>
+    <td colspan="6">Belum ada data riwayat komunikasi.</td>
+</tr>
+<?php } ?>
+
 </tbody>
             </table>
 
@@ -430,28 +470,35 @@ Lihat Hasil Komunikasi
     </div>
 
     <!-- PAGINATION -->
+    <!-- Aktif otomatis: 20 data pertama tampil di halaman 1,
+         data ke-21 dan seterusnya otomatis masuk ke halaman 2, dst. -->
 
     <div class="pagination-wrapper">
 
         <div class="pagination">
 
-            <button class="page-btn">
+            <a href="?page=<?= max(1,$page-1); ?>"
+               class="page-btn <?= $page<=1 ? 'disabled':''; ?>">
 
                 <i class="fas fa-chevron-left"></i>
 
-            </button>
+            </a>
 
-            <button class="page-btn active">1</button>
+<?php for ($i = 1; $i <= $total_pages; $i++) { ?>
 
-            <button class="page-btn">2</button>
+            <a href="?page=<?= $i; ?>"
+               class="page-btn <?= $i==$page ? 'active':''; ?>">
+                <?= $i; ?>
+            </a>
 
-            <button class="page-btn">3</button>
+<?php } ?>
 
-            <button class="page-btn">
+            <a href="?page=<?= min($total_pages,$page+1); ?>"
+               class="page-btn <?= $page>=$total_pages ? 'disabled':''; ?>">
 
                 <i class="fas fa-chevron-right"></i>
 
-            </button>
+            </a>
 
         </div>
 
@@ -529,4 +576,3 @@ window.onclick = function(e){
 </script>
 </body>
 </html>
-

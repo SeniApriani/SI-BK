@@ -33,8 +33,9 @@ FROM (
 "));
 
 $total = $q['saldo'];
-
-$total = $q['saldo'];
+if($total > 100){
+    $total = 100;
+}
 
 /* =========================================
    AKTIVITAS PELANGGARAN BULAN BERJALAN
@@ -52,7 +53,7 @@ AND MONTH(tanggal)='$bulan'
 AND YEAR(tanggal)='$tahun'
 "))['jml'];
 
-// NOTIF)
+// NOTIF
 $result = mysqli_query($koneksi,"
 SELECT COUNT(*) AS jml
 FROM notifikasi
@@ -202,18 +203,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </div>
 
-            <div class="user-dropdown">
-
-                <div class="avatar">
-
-                    <i class="fas fa-user-graduate"></i>
-
-                </div>
-
-                <span><?= $nama; ?></span>
-
-            </div>
-
+            <a href="profile_siswa.php" class="user-dropdown" style="text-decoration:none;color:inherit;">
+    <div class="avatar">
+        <i class="fas fa-user-graduate"></i>
+    </div>
+    <span><?= $nama; ?></span>
+</a>
         </header>
 
         <!-- WELCOME -->
@@ -242,7 +237,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 
            <div class="remisi-notification">
-    <a href="riwayat_pelanggaran.php" class="notif-icon">
+    <a href="baca_notif.php" class="notif-icon">
         <i class="fas fa-bell"></i>
 
         <?php if($notif_count > 0){ ?>

@@ -20,76 +20,12 @@ $id_siswa = $_SESSION['id_siswa'];
 $nama = $_SESSION['nama'] ?? 'Orang Tua';
 
 // ======================================================
-// MENGAMBIL TOTAL SALDO POIN ANAK
-// ======================================================
-
-$q = mysqli_fetch_assoc(mysqli_query($koneksi,"
-
-SELECT
-100 +
-COALESCE(SUM(poin),0) AS saldo
-
-FROM(
-
-    /* TOTAL POIN PELANGGARAN */
-
-    SELECT -ps.poin AS poin
-
-    FROM pelanggaran_siswa ps
-
-    WHERE ps.id_siswa='$id_siswa'
-
-    UNION ALL
-
-    /* REMISI PRESTASI */
-
-    SELECT pr.potongan_poin
-
-    FROM pengajuan_remisi pr
-
-    WHERE pr.id_siswa='$id_siswa'
-    AND pr.status='Disetujui'
-
-    UNION ALL
-
-    /* REMISI OTOMATIS */
-
-    SELECT ro.potongan_poin
-
-    FROM remisi_otomatis ro
-
-    WHERE ro.id_siswa='$id_siswa'
-
-)x
-
-"));
-
-$total = $q['saldo'];
-
-// ======================================================
-// JUMLAH PELANGGARAN BULAN INI
-// ======================================================
-
-$bulan = date('m');
-$tahun = date('Y');
-
-$aktivitas_bulan_ini = mysqli_fetch_assoc(mysqli_query($koneksi,"
-
-SELECT COUNT(*) AS jml
-
-FROM pelanggaran_siswa
-
-WHERE id_siswa='$id_siswa'
-
-AND MONTH(tanggal)='$bulan'
-
-AND YEAR(tanggal)='$tahun'
-
-"))['jml'];
-
-// ======================================================
 // MENGAMBIL NAMA SISWA
 // ======================================================
+// Catatan: saldo poin & jumlah pelanggaran bulan ini SUDAH TIDAK
+// diquery/ditampilkan di sini karena data tersebut hanya relevan
+// dan sudah ditampilkan di dashboard SISWA. Dashboard orang tua
+// cukup menampilkan identitas anak + akses ke halaman rekap.
 
 $siswa = mysqli_fetch_assoc(mysqli_query($koneksi,"
 
@@ -307,31 +243,36 @@ href="../assets/css/2_style.css">
             </div>
 
         </section>
-                <!-- ======================================================
+
+        <!-- ======================================================
              DASHBOARD CARD
+             Saldo poin & pelanggaran bulan ini SENGAJA TIDAK
+             ditampilkan di sini (itu porsi dashboard siswa).
+             Orang tua cukup diberi akses cepat ke halaman rekap
+             berupa kartu visual (ikon), bukan angka live.
         ======================================================= -->
 
         <section class="dashboard-grid">
 
             <!-- ======================================================
-                 CARD 1
-                 MENAMPILKAN SALDO POIN PELANGGARAN SISWA
+                 CARD REKAP
+                 KARTU VISUAL MENUJU HALAMAN REKAP / RIWAYAT PELANGGARAN
             ======================================================= -->
 
             <div class="dashboard-card">
 
-                <a href="rekap_poin_siswa.php?id=<?= $id_siswa; ?>"
+                <a href="riwayat_pelanggaran_siswa.php"
                 style="text-decoration:none;color:inherit;">
 
                 <div class="card-header">
 
                     <div class="header-icon">
 
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-clipboard-list"></i>
 
                     </div>
 
-                    <h3>Saldo Poin Pelanggaran</h3>
+                    <h3>Rekap Pelanggaran Anak</h3>
 
                 </div>
 
@@ -346,18 +287,17 @@ href="../assets/css/2_style.css">
 
                     <div
                     style="
-                    font-size:50px;
-                    font-weight:700;
+                    font-size:56px;
                     color:#dc2626;
                     ">
 
-                        <?= $total; ?>
+                        <i class="fas fa-file-lines"></i>
 
                     </div>
 
                     <p style="margin-top:10px;color:#6b7280;">
 
-                        Lihat Monitoring Poin
+                        Lihat Rekap &amp; Riwayat Lengkap
 
                     </p>
 
@@ -368,49 +308,55 @@ href="../assets/css/2_style.css">
             </div>
 
             <!-- ======================================================
-                 CARD 2
-                 MENAMPILKAN JUMLAH PELANGGARAN BULAN INI
+                 CARD RIWAYAT PEMBINAAN
+                 KARTU VISUAL MENUJU HALAMAN RIWAYAT KOMUNIKASI/PEMBINAAN
             ======================================================= -->
 
             <div class="dashboard-card">
+
+                <a href="riwayat_komunikasi_siswa.php"
+                style="text-decoration:none;color:inherit;">
 
                 <div class="card-header">
 
                     <div class="header-icon">
 
-                        <i class="fas fa-triangle-exclamation"></i>
+                        <i class="fas fa-phone"></i>
 
                     </div>
 
-                    <h3>Pelanggaran Bulan Ini</h3>
+                    <h3>Riwayat Pembinaan</h3>
 
                 </div>
 
-                <div class="donut-wrapper">
+                <div
+                style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:160px;
+                flex-direction:column;
+                ">
 
-                    <div class="donut-chart">
+                    <div
+                    style="
+                    font-size:56px;
+                    color:#2563eb;
+                    ">
 
-                        <div class="donut-content">
-
-                            <h2><?= $aktivitas_bulan_ini; ?></h2>
-
-                        </div>
+                        <i class="fas fa-comments"></i>
 
                     </div>
 
-                </div>
+                    <p style="margin-top:10px;color:#6b7280;">
 
-                <div class="date-box">
+                        Lihat Riwayat Komunikasi &amp; Pembinaan
 
-                    <i class="fas fa-calendar-days"></i>
-
-                    <div>
-
-                        <h4><?= date('F Y'); ?></h4>
-
-                    </div>
+                    </p>
 
                 </div>
+
+                </a>
 
             </div>
 

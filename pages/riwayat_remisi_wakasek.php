@@ -1,18 +1,41 @@
-
-
 <?php
 include "../config/koneksi.php";
- include "remisi_otomatis.php";
+include "remisi_otomatis.php";
 
+/* =========================
+   PAGINATION
+========================= */
+$page     = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) $page = 1;
 
+$per_page = 20;
+$offset   = ($page - 1) * $per_page;
+
+/* hitung total data untuk pagination */
+$sql_count = "
+SELECT COUNT(*) AS total FROM (
+    SELECT pr.id_siswa AS id
+    FROM pengajuan_remisi pr
+    WHERE pr.status='Disetujui'
+
+    UNION ALL
+
+    SELECT ro.id_siswa AS id
+    FROM remisi_otomatis ro
+) AS gabungan
+";
+$total_row  = mysqli_fetch_assoc(mysqli_query($koneksi, $sql_count));
+$total_data = (int) $total_row['total'];
+$total_page = max(1, ceil($total_data / $per_page));
 
 /* =========================
    QUERY RIWAYAT REMISI
-   (TETAP DIPAKAI)
+   (dengan kolom kelas & pagination)
 ========================= */
 $remisi = mysqli_query($koneksi,"
 SELECT
     ds.nama_siswa,
+    ds.kelas,
     pr.tanggal_pengajuan AS tanggal,
     'Prestasi' AS tipe_remisi,
     pr.nama_prestasi AS keterangan,
@@ -27,6 +50,7 @@ UNION ALL
 
 SELECT
     ds.nama_siswa,
+    ds.kelas,
     ro.tanggal_remisi AS tanggal,
     'Otomatis' AS tipe_remisi,
     ro.keterangan,
@@ -36,6 +60,7 @@ FROM remisi_otomatis ro
 JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
 
 ORDER BY tanggal DESC
+LIMIT $per_page OFFSET $offset
 ");
 ?>
 <!DOCTYPE html>
@@ -309,6 +334,12 @@ table tbody tr:hover{
     cursor:pointer;
     font-weight:500;
     transition:.3s;
+    text-decoration:none;
+    color:#374151;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Poppins',sans-serif;
 }
 
 .page-btn:hover{
@@ -321,6 +352,11 @@ table tbody tr:hover{
     background:#16a34a;
     color:#fff;
     border-color:#16a34a;
+}
+
+.page-btn.disabled{
+    opacity:.4;
+    pointer-events:none;
 }
 
 /* BACK */
@@ -423,6 +459,7 @@ table tbody tr:hover{
                     <tr>
                         <th>No</th>
                         <th>Nama Siswa</th>
+                        <th>Kelas</th>
                         <th>Tanggal</th>
                         <th>Tipe Remisi</th>
                         <th>Keterangan</th>
@@ -436,35 +473,7 @@ table tbody tr:hover{
 
 <?php
 
-$remisi = mysqli_query($koneksi,"
-SELECT
-    ds.nama_siswa,
-    pr.tanggal_pengajuan AS tanggal,
-    'Prestasi' AS tipe_remisi,
-    pr.nama_prestasi AS keterangan,
-    CONCAT(pr.poin_remisi,'%') AS remisi,
-    pr.bukti
-FROM pengajuan_remisi pr
-JOIN data_siswa ds ON pr.id_siswa = ds.id_siswa
-WHERE pr.status='Disetujui'
-
-UNION ALL
-
-SELECT
-    ds.nama_siswa,
-    ro.tanggal_remisi AS tanggal,
-    'Otomatis' AS tipe_remisi,
-    ro.keterangan,
-    CONCAT(ro.persen_remisi,'%') AS remisi,
-    '' AS bukti
-FROM remisi_otomatis ro
-JOIN data_siswa ds ON ro.id_siswa = ds.id_siswa
-
-ORDER BY tanggal DESC
-");
-
-
-$no = 1;
+$no = $offset + 1;
 
 while($r = mysqli_fetch_assoc($remisi)){
 
@@ -475,6 +484,8 @@ while($r = mysqli_fetch_assoc($remisi)){
     <td><?= $no++; ?></td>
 
     <td><?= $r['nama_siswa']; ?></td>
+
+    <td><?= $r['kelas']; ?></td>
 
     <td><?= date('d/m/Y', strtotime($r['tanggal'])); ?></td>
     <td><?= $r['tipe_remisi']; ?></td>
@@ -498,6 +509,12 @@ while($r = mysqli_fetch_assoc($remisi)){
 
 <?php } ?>
 
+<?php if ($total_data === 0) { ?>
+<tr>
+    <td colspan="8">Belum ada data remisi.</td>
+</tr>
+<?php } ?>
+
 </tbody>
             </table>
 
@@ -509,19 +526,26 @@ while($r = mysqli_fetch_assoc($remisi)){
 
         <div class="pagination">
 
-            <button class="page-btn">
+<?php
+    function buildPageLink($p) {
+        return '?page=' . $p;
+    }
+?>
+
+            <a class="page-btn <?= $page <= 1 ? 'disabled' : ''; ?>"
+               href="<?= buildPageLink(max(1, $page - 1)); ?>">
                 <i class="fas fa-chevron-left"></i>
-            </button>
+            </a>
 
-            <button class="page-btn active">1</button>
+<?php for ($i = 1; $i <= $total_page; $i++) { ?>
+            <a class="page-btn <?= $i == $page ? 'active' : ''; ?>"
+               href="<?= buildPageLink($i); ?>"><?= $i; ?></a>
+<?php } ?>
 
-            <button class="page-btn">2</button>
-
-            <button class="page-btn">3</button>
-
-            <button class="page-btn">
+            <a class="page-btn <?= $page >= $total_page ? 'disabled' : ''; ?>"
+               href="<?= buildPageLink(min($total_page, $page + 1)); ?>">
                 <i class="fas fa-chevron-right"></i>
-            </button>
+            </a>
 
         </div>
 
@@ -543,4 +567,3 @@ while($r = mysqli_fetch_assoc($remisi)){
 
 </body>
 </html>
-remisi wakasek 

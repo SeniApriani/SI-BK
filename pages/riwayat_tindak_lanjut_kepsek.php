@@ -1,6 +1,19 @@
-
 <?php
 include "../config/koneksi.php";
+
+// ======================================================
+// FILTER KELAS
+// ======================================================
+
+$kelas_filter = $_GET['kelas'] ?? '';
+
+$where = "WHERE COALESCE(p.total_poin,0) >= 21";
+
+if ($kelas_filter !== '') {
+    $kelas_filter_esc = mysqli_real_escape_string($koneksi, $kelas_filter);
+    $where .= " AND s.kelas = '$kelas_filter_esc'";
+}
+
 $query = mysqli_query($koneksi, "
 SELECT
     s.id_siswa,
@@ -14,11 +27,18 @@ FROM data_siswa s
 LEFT JOIN rekap_poin p
 ON p.id_siswa = s.id_siswa
 
+$where
 
-WHERE COALESCE(p.total_poin,0) >= 21
 ORDER BY total_poin DESC
 
 ") or die(mysqli_error($koneksi));
+
+// daftar kelas untuk isi dropdown filter
+$daftar_kelas = mysqli_query($koneksi, "
+SELECT DISTINCT kelas
+FROM data_siswa
+ORDER BY kelas ASC
+");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -122,24 +142,35 @@ body{
 
 .filter-grid{
     display:grid;
-    grid-template-columns:1fr 60px;
+    grid-template-columns:220px auto;
     gap:12px;
+    align-items:center;
 }
 
-.filter-grid input{
+.filter-grid select{
     height:45px;
     border:1px solid #d1d5db;
     border-radius:10px;
     padding:0 15px;
     font-family:'Poppins',sans-serif;
+    background:#fff;
+    color:#374151;
+    cursor:pointer;
 }
 
-.btn-search{
-    border:none;
-    background:#16a34a;
-    color:#fff;
-    border-radius:10px;
-    cursor:pointer;
+.filter-grid select:focus{
+    border-color:#16a34a;
+    outline:none;
+}
+
+.btn-reset-filter{
+    text-decoration:none;
+    color:#6b7280;
+    font-size:13px;
+}
+
+.btn-reset-filter:hover{
+    color:#16a34a;
 }
 
 .table-header{
@@ -380,6 +411,10 @@ table tbody tr:hover{
         grid-template-columns:1fr;
     }
 
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
+
     .bottom-action{
         justify-content:center;
     }
@@ -455,20 +490,27 @@ table tbody tr:hover{
 
         </div>
 
-        <div class="filter-grid">
+        <form method="get" class="filter-grid">
 
-            <input
-                type="text"
-                placeholder="Cari nama siswa..."
-            >
+            <select name="kelas" onchange="this.form.submit()">
 
-            <button class="btn-search">
+                <option value="">Semua Kelas</option>
 
-                <i class="fas fa-search"></i>
+<?php while ($k = mysqli_fetch_assoc($daftar_kelas)) { ?>
+                <option value="<?= $k['kelas']; ?>" <?= $kelas_filter == $k['kelas'] ? 'selected' : ''; ?>>
+                    <?= $k['kelas']; ?>
+                </option>
+<?php } ?>
 
-            </button>
+            </select>
 
-        </div>
+<?php if ($kelas_filter !== '') { ?>
+            <a href="daftar_tindaklanjut.php" class="btn-reset-filter">
+                <i class="fas fa-xmark"></i> Reset filter
+            </a>
+<?php } ?>
+
+        </form>
 
     </div>
 
@@ -516,7 +558,7 @@ table tbody tr:hover{
     <a href="detail_riwayat_tindaklanjut.php?id=<?= $row['id_siswa']; ?>" class="btn-detail-riwayat">
         <i class="fas fa-eye"></i> Lihat
     </a>
-</td/>
+</td>
 
     
    <!-- <td>
@@ -526,6 +568,13 @@ table tbody tr:hover{
 </td> -->
 </tr>
 <?php } ?>
+
+<?php if (mysqli_num_rows($query) == 0) { ?>
+<tr>
+    <td colspan="5">Tidak ada siswa untuk kelas ini.</td>
+</tr>
+<?php } ?>
+
 </tbody>
             </table>
 
@@ -673,5 +722,3 @@ document.addEventListener('click', function(e){
 
 </body>
 </html>
-
-

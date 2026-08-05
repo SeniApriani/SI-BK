@@ -7,7 +7,7 @@ if(isset($_POST['simpan'])){
     $nip = $_POST['nip'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $role = $_POST['role'];
+    $role = 'wali_kelas'; // role di-set tetap, tidak dari form
     $kelas_wali = $_POST['kelas_wali'];
 
     mysqli_query($koneksi,"
@@ -244,21 +244,7 @@ body{
 
     </div>
 
-    <div class="form-group">
-
-        <label>Role</label>
-
-        <select name="role" required>
-
-            <option value="">Pilih Role</option>
-            <option value="wali_kelas">Wali Kelas</option>
-            <option value="wakasek">Wakasek Kesiswaan</option>
-            <option value="kepala_sekolah">Kepala Sekolah</option>
-
-        </select>
-
-    </div>
-
+    
     <div class="form-group">
 
         <label>Kelas Wali</label>

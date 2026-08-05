@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2026 at 07:50 PM
+-- Generation Time: Aug 03, 2026 at 03:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -73,9 +73,9 @@ CREATE TABLE `data_guru` (
 --
 
 INSERT INTO `data_guru` (`id_guru`, `nama_guru`, `nip`, `username`, `password`, `role`, `kelas_wali`) VALUES
-(5, 'Kiki Saepullah', '12345678', 'walikelas10', 'siBK2026', 'wali_kelas', 'X TKJ'),
-(6, 'Rita Ratnasari', '666666666', 'walikelas11', 'siBK2026', 'wali_kelas', 'XI TKJ'),
-(8, 'Liyana Septiani', '87654321', 'walikelas12', 'siBK2026', 'wali_kelas', 'XII TKJ');
+(5, 'Kiki Saepullah', '	198811302012011008', 'walikelas10', 'siBK2026', 'wali_kelas', 'X TKJ'),
+(6, 'Rita Ratnasari', '	199007222015022003', 'walikelas11', 'siBK2026', 'wali_kelas', 'XI TKJ'),
+(8, 'Liyana Septiani', '	198503152010011009', 'walikelas12', 'siBK2026', 'wali_kelas', 'XII TKJ');
 
 -- --------------------------------------------------------
 
@@ -101,7 +101,8 @@ INSERT INTO `data_orang_tua` (`id_orangtua`, `id_siswa`, `nama_orangtua`, `hubun
 (2, 93, 'Yamin', 'Ibu', NULL, NULL),
 (3, 47, 'Amina', 'Ibu', NULL, NULL),
 (4, 74, 'Adi ', 'Ayah', '088200285532', 'Desa Mekargalih, Jatinangor'),
-(5, 87, 'Mia Ningsih', 'Ibu', '0875423889', 'Desa Cipacing, Jatinangor');
+(5, 87, 'Mia Ningsih', 'Ibu', '0875423889', 'Desa Cipacing, Jatinangor'),
+(7, 56, 'Jajang Arif', 'Ayah', '088200285679', 'Jl. Kiara Beres Rt 06/Rw 05 Kec. Jatinangor, Kab. Sumedang');
 
 -- --------------------------------------------------------
 
@@ -188,7 +189,8 @@ INSERT INTO `data_siswa` (`id_siswa`, `nama_siswa`, `nisn`, `kelas`) VALUES
 (107, 'Fajar Nugraha', '0091847317', 'XII TKJ'),
 (108, 'Nisa Rahmawati', '0091847318', 'XII TKJ'),
 (109, 'Dian Saputra', '0091847319', 'XII TKJ'),
-(111, 'Revina Ayu', '0091887303', 'XII TKJ');
+(111, 'Revina Ayu', '0091887303', 'XII TKJ'),
+(119, 'sensen', '10522003', 'XI TKJ');
 
 -- --------------------------------------------------------
 
@@ -695,7 +697,10 @@ INSERT INTO `laporan_konseling` (`id_laporan`, `id_pelanggaran_siswa`, `catatan_
 (580, 924, 'kitaaa', '2026-07-07', '2026-07-21 22:23:03', 'menunggu_pembinaan', NULL),
 (581, 925, 'hemmmmmm', '2026-07-22', '2026-07-21 22:38:23', 'menunggu_pembinaan', NULL),
 (582, 926, 'okeyyy', '2026-07-21', '2026-07-21 22:56:26', 'menunggu_pembinaan', NULL),
-(583, 927, 'Siswa Diminta hadir di ruang kelas oleh walas', '2026-07-22', '2026-07-22 16:05:04', 'menunggu_pembinaan', NULL);
+(583, 927, 'Siswa Diminta hadir di ruang kelas oleh walas', '2026-07-22', '2026-07-22 16:05:04', 'menunggu_pembinaan', NULL),
+(584, 929, 'Siswa di minta hadir di ruang wali kelas', '2026-07-24', '2026-07-24 13:26:47', 'menunggu_pembinaan', NULL),
+(585, 930, 'Siswa diminta hadir di ruang guru', '2026-07-25', '2026-07-25 17:08:51', 'menunggu_pembinaan', NULL),
+(586, 935, 'i', '2026-08-28', '2026-08-02 20:42:42', 'menunggu_pembinaan', NULL);
 
 -- --------------------------------------------------------
 
@@ -745,22 +750,22 @@ INSERT INTO `notifikasi` (`id_notifikasi`, `id_user`, `role`, `judul`, `pesan`, 
 (67, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 14:52:31'),
 (68, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 14:54:02'),
 (69, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 14:55:08'),
-(70, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-04 15:21:51'),
-(71, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-04 15:23:41'),
+(70, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:21:51'),
+(71, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:23:41'),
 (72, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:27:00'),
 (73, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:28:25'),
-(74, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-04 15:29:51'),
+(74, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:29:51'),
 (75, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:30:53'),
 (76, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:55:57'),
 (77, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-04 15:57:51'),
-(78, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-05 11:04:15'),
-(79, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-05 11:06:47'),
-(80, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-05 11:23:24'),
-(81, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-05 11:29:37'),
+(78, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-05 11:04:15'),
+(79, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-05 11:06:47'),
+(80, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-05 11:23:24'),
+(81, 111, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-05 11:29:37'),
 (82, 110, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-07 22:42:31'),
 (83, 115, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-09 13:34:16'),
 (84, 115, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-09 13:35:40'),
-(85, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-09 13:46:47'),
+(85, 0, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-09 13:46:47'),
 (86, 115, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-09 13:49:41'),
 (87, 115, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-09 16:07:08'),
 (88, 117, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-11 21:19:52'),
@@ -778,7 +783,15 @@ INSERT INTO `notifikasi` (`id_notifikasi`, `id_user`, `role`, `judul`, `pesan`, 
 (100, 65, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-21 22:22:42'),
 (101, 56, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-21 22:37:23'),
 (102, 65, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-21 22:55:56'),
-(103, 47, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-22 15:53:28');
+(103, 47, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-22 15:53:28'),
+(104, 73, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-07-24 12:51:15'),
+(105, 105, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-24 13:20:42'),
+(106, 82, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-25 17:08:22'),
+(107, 62, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-26 10:22:20'),
+(108, 62, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-26 10:22:33'),
+(109, 90, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 0, '2026-07-26 10:23:07'),
+(110, 119, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-08-02 17:25:49'),
+(111, 119, 'siswa', 'Pelanggaran Baru', 'Kamu mendapatkan pelanggaran: ', 'pelanggaran', 'riwayat_pelanggaran.php', 1, '2026-08-02 20:40:35');
 
 -- --------------------------------------------------------
 
@@ -1260,7 +1273,15 @@ INSERT INTO `pelanggaran_siswa` (`id`, `id_siswa`, `id_pelanggaran`, `tanggal`, 
 (924, 65, 1, '2026-07-21', '-oksss', 10),
 (925, 56, 2, '2026-07-21', '-', 7),
 (926, 65, 7, '2026-07-21', '-', 5),
-(927, 47, 23, '2026-07-22', 'Memakai jaket pada saat jam pelajaran di kelas', 2);
+(927, 47, 23, '2026-07-22', 'Memakai jaket pada saat jam pelajaran di kelas', 2),
+(928, 73, 23, '2026-07-24', 'Siswa memakai jaket ketika pembelajaran berlangsung', 2),
+(929, 105, 7, '2026-07-24', 'Siswa mengecat rambut dengan warna pink', 5),
+(930, 82, 45, '2026-07-25', 'Siswa merusak kursi kelas', 25),
+(931, 62, 23, '2026-07-26', 'Siswa memakai jaket ketika berada di dalam kelas, saat pembelajaran berlangsung.', 2),
+(932, 62, 23, '2026-07-26', 'Siswa memakai jaket ketika berada di dalam kelas, saat pembelajaran berlangsung.', 2),
+(933, 90, 23, '2026-07-26', 'Siswa memakai jaket ketika berada di dalam kelas, saat pembelajaran berlangsung.', 2),
+(934, 119, 23, '2026-07-01', '-', 2),
+(935, 119, 1, '2026-08-02', '-', 10);
 
 -- --------------------------------------------------------
 
@@ -1284,12 +1305,14 @@ CREATE TABLE `pemanggilan_siswa` (
 --
 
 INSERT INTO `pemanggilan_siswa` (`id_pemanggilan`, `id_pelanggaran_siswa`, `tanggal_pemanggilan`, `keterangan`, `status`, `tanggal_pembinaan`, `hasil_pembinaan`, `created_at`) VALUES
-(1, 922, '2026-07-21', 'ya', 'Sudah Dibina', '2026-07-21', 'okenn', '2026-07-21 14:25:12'),
-(2, 923, '2026-07-22', 'ditunggu ya di ruang bk', 'Sudah Dibina', '2026-07-21', 'hemmmmm', '2026-07-21 15:21:20'),
-(3, 924, '2026-07-07', 'kitaaa', 'Sudah Dibina', '2026-07-21', 'masuk', '2026-07-21 15:23:03'),
-(4, 925, '2026-07-22', 'hemmmmmm', 'Sudah Dibina', '2026-07-22', 'Siswaberkomitmentidak akanmengulangi pelanggran serupa', '2026-07-21 15:38:23'),
-(5, 926, '2026-07-21', 'okeyyy', 'Sudah Dibina', '2026-07-15', 'bagus', '2026-07-21 15:56:26'),
-(6, 927, '2026-07-22', 'Siswa Diminta hadir di ruang kelas oleh walas', 'Sudah Dibina', '2026-07-22', 'Siswa diberikan suatu peringatan agar tidak lagi memakai jaket di ruang kelas ketika pembelajaran berlangsung', '2026-07-22 09:05:04');
+(1, 922, '2026-07-21', 'Siswa dipanggil ke ruang BK terkait tindakan mencoret-coret sarana prasarana sekolah', 'Sudah Dibina', '2026-07-21', 'Siswa mengakui perbuatannya, menyatakan menyesal, dan bersedia membersihkan serta memperbaiki fasilitas yang dicoret', '2026-07-21 14:25:12'),
+(2, 923, '2026-07-22', 'Siswa dipanggil terkait sikap tidak sopan yang ditunjukkan kepada guru di dalam kelas', 'Sudah Dibina', '2026-07-21', 'Siswa diberikan pengertian mengenai pentingnya sopan santun terhadap guru dan berjanji akan memperbaiki sikapnya', '2026-07-21 15:21:20'),
+(3, 924, '2026-07-07', 'Siswa dipanggil terkait tindakan mencoret-coret fasilitas sekolah', 'Sudah Dibina', '2026-07-21', 'Siswa menyatakan menyesal atas perbuatannya dan bersedia memperbaiki fasilitas yang rusak', '2026-07-21 15:23:03'),
+(4, 925, '2026-07-22', 'Siswa dipanggil karena tidak masuk sekolah tanpa keterangan', 'Sudah Dibina', '2026-07-22', 'Siswa menjelaskan alasan ketidakhadirannya dan berjanji tidak akan absen tanpa izin yang jelas di kemudian hari', '2026-07-21 15:38:23'),
+(5, 926, '2026-07-21', 'Siswa dipanggil terkait pengecatan rambut dengan warna yang tidak sesuai ketentuan sekolah', 'Sudah Dibina', '2026-07-15', 'Siswa bersedia mengembalikan warna rambut sesuai ketentuan sekolah dalam waktu dekat', '2026-07-21 15:56:26'),
+(6, 927, '2026-07-22', 'Siswa diminta hadir di ruang kelas oleh wali kelas terkait pemakaian jaket saat jam pelajaran', 'Sudah Dibina', '2026-07-22', 'Siswa diberikan peringatan agar tidak lagi memakai jaket di ruang kelas ketika pembelajaran berlangsung', '2026-07-22 09:05:04'),
+(7, 929, '2026-07-24', 'Siswa dipanggil terkait pengecatan rambut dengan warna pink yang tidak sesuai ketentuan sekolah', 'Menunggu Pembinaan', NULL, NULL, '2026-07-24 06:26:47'),
+(8, 930, '2026-07-25', 'Siswa dipanggil terkait tindakan merusak kursi kelas', 'Menunggu Pembinaan', NULL, NULL, '2026-07-25 10:08:51');
 
 -- --------------------------------------------------------
 
@@ -1320,7 +1343,7 @@ INSERT INTO `pengajuan_remisi` (`id_remisi`, `id_siswa`, `jenis_prestasi`, `nama
 (92, 40, '25', 'Juara 2 Lomba Menyanyi', 25, 'mockup_laporan_awal 1.png', '2026-07-01 21:39:39', 'Menunggu', NULL, 0),
 (93, 111, '15', 'Juara 3 Hafalan Tahsin', 15, 'Sertifikat_SMK_PUI_Jatinangor_Revina_Ayu_Juara_III 1.pdf', '2026-07-05 11:52:51', 'Disetujui', '', 11),
 (94, 110, '15', 'Juara  2 kelas', 15, 'Sertifikat_SMK_PUI_Jatinangor_Revina_Ayu_Juara_III 1.pdf', '2026-07-05 21:24:50', 'Disetujui', NULL, 11),
-(95, 117, '15', 'juara di hati', 15, 'Group 1.png', '2026-07-11 21:23:19', 'Disetujui', NULL, 4);
+(98, 119, '15', 'Juara HafalanTansin Per bulan', 15, 'FORM PERMOHONAN SIDANG (1).docx', '2026-08-02 20:49:15', 'Disetujui', '', 14);
 
 -- --------------------------------------------------------
 
@@ -1340,7 +1363,7 @@ CREATE TABLE `rekap_poin` (
 --
 
 INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VALUES
-(39, 38, 26, '2026-07-08 15:20:13'),
+(39, 38, 22, '2026-07-30 04:17:37'),
 (40, 39, 4, '2026-07-05 04:08:57'),
 (41, 42, 50, '2026-06-26 09:54:43'),
 (52, 0, 102, '2026-07-09 06:46:47'),
@@ -1350,69 +1373,70 @@ INSERT INTO `rekap_poin` (`id_rekap`, `id_siswa`, `total_poin`, `updated_at`) VA
 (56, 94, 44, '2026-07-16 03:38:15'),
 (57, 95, 39, '2026-07-16 03:38:15'),
 (58, 96, 33, '2026-07-22 08:54:12'),
-(59, 97, 32, '2026-07-04 13:23:51'),
-(60, 98, 30, '2026-07-04 13:23:51'),
-(61, 99, 34, '2026-07-04 13:23:51'),
-(62, 100, 32, '2026-07-04 13:23:51'),
+(59, 97, 28, '2026-07-24 05:35:30'),
+(60, 98, 26, '2026-07-24 05:35:30'),
+(61, 99, 30, '2026-07-30 04:17:37'),
+(62, 100, 28, '2026-07-30 04:17:37'),
 (63, 101, 23, '2026-07-11 14:18:14'),
 (64, 102, 23, '2026-07-11 14:18:14'),
 (65, 103, 23, '2026-07-11 14:18:14'),
 (66, 104, 23, '2026-07-11 14:18:14'),
-(67, 105, 23, '2026-07-11 14:18:14'),
+(67, 105, 28, '2026-07-24 06:20:42'),
 (68, 106, 23, '2026-07-11 14:18:14'),
 (69, 107, 23, '2026-07-11 14:18:14'),
 (70, 108, 23, '2026-07-11 14:18:14'),
 (71, 109, 23, '2026-07-11 14:18:14'),
-(72, 67, 25, '2026-07-08 15:20:13'),
-(73, 68, 29, '2026-07-08 15:20:13'),
-(74, 69, 47, '2026-07-08 15:20:13'),
-(75, 70, 35, '2026-07-08 15:20:13'),
-(76, 71, 28, '2026-07-08 15:20:13'),
-(77, 72, 24, '2026-07-08 15:20:13'),
-(78, 73, 25, '2026-07-08 15:20:13'),
-(79, 74, 36, '2026-07-08 15:20:13'),
-(80, 75, 38, '2026-07-08 15:20:13'),
-(81, 76, 40, '2026-07-08 15:20:13'),
-(82, 77, 24, '2026-07-08 15:20:13'),
-(83, 78, 31, '2026-07-08 15:20:13'),
-(84, 79, 24, '2026-07-08 15:20:13'),
-(85, 80, 21, '2026-07-08 15:20:13'),
-(86, 81, 30, '2026-07-08 15:20:13'),
-(87, 82, 81, '2026-07-20 09:46:33'),
-(88, 83, 41, '2026-07-08 15:20:13'),
-(89, 84, 35, '2026-07-08 15:20:13'),
-(90, 85, 35, '2026-07-08 15:20:13'),
-(91, 86, 30, '2026-07-08 15:20:13'),
-(92, 87, 31, '2026-07-08 15:20:13'),
-(93, 88, 26, '2026-07-08 15:20:13'),
-(94, 89, 47, '2026-07-08 15:20:13'),
-(95, 90, 40, '2026-07-08 15:20:13'),
+(72, 67, 20, '2026-07-30 04:17:37'),
+(73, 68, 25, '2026-07-30 04:17:37'),
+(74, 69, 44, '2026-07-30 04:17:37'),
+(75, 70, 31, '2026-07-30 04:17:37'),
+(76, 71, 24, '2026-07-30 04:17:37'),
+(77, 72, 19, '2026-07-30 04:17:37'),
+(78, 73, 27, '2026-07-24 05:51:15'),
+(79, 74, 32, '2026-07-30 04:17:37'),
+(80, 75, 34, '2026-07-30 04:17:37'),
+(81, 76, 36, '2026-07-30 04:17:37'),
+(82, 77, 19, '2026-07-30 04:17:37'),
+(83, 78, 27, '2026-07-30 04:17:37'),
+(84, 79, 19, '2026-07-30 04:17:37'),
+(85, 80, 16, '2026-07-30 04:17:37'),
+(86, 81, 26, '2026-07-30 04:17:37'),
+(87, 82, 106, '2026-07-25 10:08:22'),
+(88, 83, 37, '2026-07-30 04:17:37'),
+(89, 84, 31, '2026-07-30 04:17:37'),
+(90, 85, 31, '2026-07-30 04:17:37'),
+(91, 86, 26, '2026-07-30 04:17:37'),
+(92, 87, 27, '2026-07-30 04:17:37'),
+(93, 88, 22, '2026-07-30 04:17:37'),
+(94, 89, 44, '2026-07-30 04:17:37'),
+(95, 90, 42, '2026-07-26 03:23:07'),
 (121, 37, 19, '2026-07-09 06:36:28'),
 (122, 41, 30, '2026-07-16 03:38:15'),
 (123, 46, 19, '2026-07-19 08:14:38'),
 (124, 47, 41, '2026-07-22 08:53:28'),
 (125, 48, 12, '2026-07-21 15:31:39'),
 (126, 49, 27, '2026-07-22 08:54:12'),
-(127, 50, 40, '2026-07-05 02:34:40'),
-(128, 51, 33, '2026-07-05 02:34:40'),
+(127, 50, 36, '2026-07-24 05:35:30'),
+(128, 51, 29, '2026-07-24 05:35:30'),
 (129, 52, 28, '2026-07-19 08:14:38'),
-(130, 53, 33, '2026-07-05 02:34:40'),
-(131, 54, 41, '2026-07-05 02:34:40'),
+(130, 53, 29, '2026-07-30 04:17:37'),
+(131, 54, 37, '2026-07-24 05:35:30'),
 (132, 55, 26, '2026-07-19 08:14:38'),
 (133, 56, 85, '2026-07-21 15:37:23'),
 (134, 57, 25, '2026-07-19 08:14:38'),
-(135, 58, 32, '2026-07-05 02:34:40'),
+(135, 58, 28, '2026-07-30 04:17:37'),
 (136, 59, 30, '2026-07-22 08:54:12'),
-(137, 60, 39, '2026-07-05 02:34:40'),
+(137, 60, 35, '2026-07-24 05:35:30'),
 (138, 61, 25, '2026-07-19 08:14:38'),
-(139, 62, 25, '2026-07-19 08:14:38'),
-(140, 63, 37, '2026-07-05 02:34:40'),
-(141, 64, 32, '2026-07-05 02:34:40'),
+(139, 62, 29, '2026-07-26 03:22:33'),
+(140, 63, 33, '2026-07-30 04:17:37'),
+(141, 64, 28, '2026-07-24 05:35:30'),
 (142, 65, 57, '2026-07-21 15:55:56'),
 (143, 110, 23, '2026-07-07 15:42:31'),
 (146, 111, 19, '2026-07-05 04:53:01'),
 (148, 115, 47, '2026-07-09 09:07:15'),
-(149, 117, 0, '2026-07-11 14:29:47');
+(149, 117, 0, '2026-07-11 14:29:47'),
+(150, 119, 0, '2026-08-02 13:49:51');
 
 -- --------------------------------------------------------
 
@@ -1475,7 +1499,42 @@ INSERT INTO `remisi_otomatis` (`id_remisi_otomatis`, `id_siswa`, `persen_remisi`
 (98, 48, 6, '2026-06-17', 'Tidak melakukan pelanggaran 30 hari', 5),
 (99, 96, 6, '2026-07-22', 'Tidak melakukan pelanggaran 30 hari', 4),
 (100, 49, 6, '2026-07-22', 'Tidak melakukan pelanggaran 30 hari', 4),
-(101, 59, 6, '2026-07-22', 'Tidak melakukan pelanggaran 30 hari', 4);
+(101, 59, 6, '2026-07-22', 'Tidak melakukan pelanggaran 30 hari', 4),
+(102, 97, 6, '2026-07-23', 'Tidak melakukan pelanggaran 30 hari', 4),
+(103, 98, 6, '2026-07-24', 'Tidak melakukan pelanggaran 30 hari', 4),
+(104, 50, 6, '2026-07-24', 'Tidak melakukan pelanggaran 30 hari', 4),
+(105, 51, 6, '2026-07-23', 'Tidak melakukan pelanggaran 30 hari', 4),
+(106, 54, 6, '2026-07-24', 'Tidak melakukan pelanggaran 30 hari', 4),
+(107, 60, 6, '2026-07-24', 'Tidak melakukan pelanggaran 30 hari', 4),
+(108, 64, 6, '2026-07-23', 'Tidak melakukan pelanggaran 30 hari', 4),
+(109, 99, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(110, 100, 6, '2026-07-26', 'Tidak melakukan pelanggaran 30 hari', 4),
+(111, 53, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(112, 58, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(113, 63, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(114, 38, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(115, 67, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 5),
+(116, 68, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 4),
+(117, 69, 6, '2026-07-25', 'Tidak melakukan pelanggaran 30 hari', 3),
+(118, 70, 6, '2026-07-26', 'Tidak melakukan pelanggaran 30 hari', 4),
+(119, 71, 6, '2026-07-26', 'Tidak melakukan pelanggaran 30 hari', 4),
+(120, 72, 6, '2026-07-26', 'Tidak melakukan pelanggaran 30 hari', 5),
+(121, 74, 6, '2026-07-30', 'Tidak melakukan pelanggaran 30 hari', 4),
+(122, 75, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 4),
+(123, 76, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 4),
+(124, 77, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 5),
+(125, 78, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 4),
+(126, 79, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 5),
+(127, 80, 6, '2026-07-27', 'Tidak melakukan pelanggaran 30 hari', 5),
+(128, 81, 6, '2026-07-28', 'Tidak melakukan pelanggaran 30 hari', 4),
+(129, 83, 6, '2026-07-30', 'Tidak melakukan pelanggaran 30 hari', 4),
+(130, 84, 6, '2026-07-28', 'Tidak melakukan pelanggaran 30 hari', 4),
+(131, 85, 6, '2026-07-28', 'Tidak melakukan pelanggaran 30 hari', 4),
+(132, 86, 6, '2026-07-29', 'Tidak melakukan pelanggaran 30 hari', 4),
+(133, 87, 6, '2026-07-29', 'Tidak melakukan pelanggaran 30 hari', 4),
+(134, 88, 6, '2026-07-29', 'Tidak melakukan pelanggaran 30 hari', 4),
+(135, 89, 6, '2026-07-30', 'Tidak melakukan pelanggaran 30 hari', 3),
+(136, 119, 6, '2026-07-31', 'Tidak melakukan pelanggaran 30 hari', 6);
 
 -- --------------------------------------------------------
 
@@ -1511,7 +1570,6 @@ INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `id_sisw
 (51, 'Feri Irawan', '0078361952', '0078361952', 'siswa', 43, NULL),
 (52, 'Dani Tirtana', '0062958471', '0062958471', 'siswa', 44, NULL),
 (53, 'Rama', '0084172639', '0084172639', 'siswa', 45, NULL),
-(54, 'Liyana Septiani', 'walikelas12', 'siBK2026', 'wali_kelas', NULL, 'XII TKJ'),
 (55, 'Asep Nugraha', '0091847256', '0091847256', 'siswa', 46, 'X TKJ'),
 (56, 'Dede Suhendar', '0091847257', '0091847257', 'siswa', 47, 'X TKJ'),
 (57, 'Rina Apriani', '0091847258', '0091847258', 'siswa', 48, 'X TKJ'),
@@ -1578,7 +1636,10 @@ INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `id_sisw
 (128, 'Yamin', 'ortu0091847303', '0091847303', 'orang_tua', 93, 'XII TKJ'),
 (129, 'Amina', 'ortu0091847257', '0091847257', 'orang_tua', 47, 'X TKJ'),
 (130, 'Adi ', 'ortu0091847284', '0091847284', 'orang_tua', 74, 'XI TKJ'),
-(131, 'Mia Ningsih', 'ortu0091847297', '0091847297', 'orang_tua', 87, 'XI TKJ');
+(131, 'Mia Ningsih', 'ortu0091847297', '0091847297', 'orang_tua', 87, 'XI TKJ'),
+(135, 'Jajang Arif', 'ortu0091847266', '0091847266', 'orang_tua', 56, 'X TKJ'),
+(137, 'sensen', '10522003', '10522003', 'siswa', 119, NULL),
+(138, 'Liyana Septiani', 'walikelas12', 'siBK2026', 'wali_kelas', NULL, 'XII TKJ');
 
 --
 -- Indexes for dumped tables
@@ -1686,19 +1747,19 @@ ALTER TABLE `catatan_semester`
 -- AUTO_INCREMENT for table `data_guru`
 --
 ALTER TABLE `data_guru`
-  MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `data_orang_tua`
 --
 ALTER TABLE `data_orang_tua`
-  MODIFY `id_orangtua` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_orangtua` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `data_siswa`
 --
 ALTER TABLE `data_siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
 
 --
 -- AUTO_INCREMENT for table `jenis_pelanggaran`
@@ -1716,49 +1777,49 @@ ALTER TABLE `komunikasi_ortu`
 -- AUTO_INCREMENT for table `laporan_konseling`
 --
 ALTER TABLE `laporan_konseling`
-  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=584;
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=587;
 
 --
 -- AUTO_INCREMENT for table `notifikasi`
 --
 ALTER TABLE `notifikasi`
-  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id_notifikasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT for table `pelanggaran_siswa`
 --
 ALTER TABLE `pelanggaran_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=928;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=936;
 
 --
 -- AUTO_INCREMENT for table `pemanggilan_siswa`
 --
 ALTER TABLE `pemanggilan_siswa`
-  MODIFY `id_pemanggilan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_pemanggilan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `pengajuan_remisi`
 --
 ALTER TABLE `pengajuan_remisi`
-  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `id_remisi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `rekap_poin`
 --
 ALTER TABLE `rekap_poin`
-  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+  MODIFY `id_rekap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `remisi_otomatis`
 --
 ALTER TABLE `remisi_otomatis`
-  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `id_remisi_otomatis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- Constraints for dumped tables

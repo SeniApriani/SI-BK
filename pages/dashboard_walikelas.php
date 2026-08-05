@@ -271,23 +271,16 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     <i class="fas fa-chevron-down arrow"></i>
 
                 </button>
-
-                <div class="submenu">
-
-                    <a href="komunikasi_orangtua.php">
-
-                        <i class="fas fa-phone"></i>
-
-                        Komunikasi Orang Tua
-                        
-                           <a href="pemanggilan_siswa.php">
-
-                        <i class="fas fa-phone"></i>
-
-                       Riwayat Pemanggilan Siswa
-                    
-                </div>
-
+<div class="submenu">
+    <a href="komunikasi_orangtua.php">
+        <i class="fas fa-phone"></i>
+        Komunikasi Orang Tua
+    </a>
+    <a href="pemanggilan_siswa.php">
+        <i class="fas fa-phone"></i>
+        Riwayat Pemanggilan Siswa
+    </a>
+</div>
             </div>
 
         </div>
@@ -312,23 +305,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             <div class="topbar-title">
 
                 <h3>Dashboard Wali Kelas</h3>
-
             </div>
-
-            <div class="user-dropdown">
-
+            <a href="profil_walas.php" class="user-dropdown" style="text-decoration:none; color:inherit;">
                 <div class="avatar">
-
                     <i class="fas fa-user-tie"></i>
-
                 </div>
-
                 <span><?= $nama; ?> </span>
-
                 <i class="fas fa-chevron-down"></i>
-
-            </div>
-
+            </a>
         </header>
 
         <!-- WELCOME -->

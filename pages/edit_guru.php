@@ -1,0 +1,353 @@
+<?php
+include "../config/koneksi.php";
+
+$id = $_GET['id'] ?? '';
+
+if($id === ''){
+    header("Location: data_guru.php");
+    exit;
+}
+
+/* =========================================
+   PROSES UPDATE
+========================================= */
+if(isset($_POST['simpan'])){
+
+   $id_guru        = $_POST['id_guru'];
+$username_lama  = $_POST['username_lama'];
+
+$nama_guru = $_POST['nama_guru'];
+$nip       = $_POST['nip'];
+$username  = $_POST['username'];
+$role      = 'wali_kelas'; // role di-set tetap, tidak dari form
+$kelas_wali= $_POST['kelas_wali'];
+
+    // password opsional: kalau dikosongkan, password lama tetap dipakai
+    $password_baru = $_POST['password'];
+
+    if($password_baru !== ''){
+
+        mysqli_query($koneksi,"
+            UPDATE data_guru SET
+            nama_guru='$nama_guru',
+            nip='$nip',
+            username='$username',
+            password='$password_baru',
+            role='$role',
+            kelas_wali='$kelas_wali'
+            WHERE id_guru='$id_guru'
+        ");
+
+        mysqli_query($koneksi,"
+            UPDATE users SET
+            nama='$nama_guru',
+            username='$username',
+            password='$password_baru',
+            role='$role',
+            kelas='$kelas_wali'
+            WHERE username='$username_lama'
+        ");
+
+    }else{
+
+        mysqli_query($koneksi,"
+            UPDATE data_guru SET
+            nama_guru='$nama_guru',
+            nip='$nip',
+            username='$username',
+            role='$role',
+            kelas_wali='$kelas_wali'
+            WHERE id_guru='$id_guru'
+        ");
+
+        mysqli_query($koneksi,"
+            UPDATE users SET
+            nama='$nama_guru',
+            username='$username',
+            role='$role',
+            kelas='$kelas_wali'
+            WHERE username='$username_lama'
+        ");
+
+    }
+
+    header("Location: data_guru.php");
+    exit;
+}
+
+/* =========================================
+   AMBIL DATA GURU YANG AKAN DIEDIT
+========================================= */
+$q = mysqli_query($koneksi,"
+    SELECT * FROM data_guru WHERE id_guru='$id'
+");
+
+if(!$q){
+    die(mysqli_error($koneksi));
+}
+
+$guru = mysqli_fetch_assoc($q);
+
+if(!$guru){
+    header("Location: data_guru.php");
+    exit;
+}
+?>
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Edit Data Guru</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+    color:#374151;
+    padding:30px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.page-header{
+    margin-bottom:25px;
+}
+
+.page-header h1{
+    color:#15803d;
+    font-size:28px;
+    margin-bottom:5px;
+}
+
+.page-header p{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.form-group{
+    margin-bottom:20px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:500;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    height:48px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    padding:0 15px;
+    font-family:'Poppins',sans-serif;
+    outline:none;
+    transition:.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,.1);
+}
+
+.form-group small{
+    display:block;
+    margin-top:6px;
+    color:#9ca3af;
+    font-size:12px;
+}
+
+.form-action{
+    display:flex;
+    justify-content:space-between;
+    margin-top:25px;
+}
+
+.btn-back{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    border:1px solid #15803d;
+    color:#15803d;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.btn-back:hover{
+    background:#15803d;
+    color:#fff;
+}
+
+.btn-save{
+    border:none;
+    background:#16a34a;
+    color:#fff;
+    padding:12px 24px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:.3s;
+}
+
+.btn-save:hover{
+    background:#15803d;
+}
+
+@media(max-width:768px){
+
+    body{
+        padding:15px;
+    }
+
+    .form-action{
+        gap:10px;
+    }
+
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="page-header">
+
+            <h1>Edit Data Guru</h1>
+
+            <p>Perbarui data guru / wali kelas.</p>
+
+        </div>
+
+        <form method="POST">
+
+    <input type="hidden" name="id_guru" value="<?= $guru['id_guru']; ?>">
+    <input type="hidden" name="username_lama" value="<?= $guru['username']; ?>">
+
+    <div class="form-group">
+
+        <label>Nama Guru</label>
+
+        <input
+        type="text"
+        name="nama_guru"
+        value="<?= $guru['nama_guru']; ?>"
+        required>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>NIP</label>
+
+        <input
+        type="text"
+        name="nip"
+        value="<?= $guru['nip']; ?>"
+        required>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Username</label>
+
+        <input
+        type="text"
+        name="username"
+        value="<?= $guru['username']; ?>"
+        required>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Password</label>
+
+        <input
+        type="text"
+        name="password"
+        placeholder="Kosongkan jika tidak ingin mengubah password">
+
+        <small>Biarkan kosong untuk tetap memakai password lama.</small>
+
+    </div>
+
+    
+    <div class="form-group">
+
+        <label>Kelas Wali</label>
+
+        <input
+        type="text"
+        name="kelas_wali"
+        value="<?= $guru['kelas_wali']; ?>"
+        placeholder="Contoh: X TKJ"
+        required>
+
+    </div>
+
+    <div class="form-action">
+
+        <a href="data_guru.php" class="btn-back">
+
+            <i class="fas fa-chevron-left"></i>
+
+        </a>
+
+        <button type="submit" name="simpan" class="btn-save">
+
+            <i class="fas fa-save"></i>
+
+            Simpan Perubahan
+
+        </button>
+
+    </div>
+
+</form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

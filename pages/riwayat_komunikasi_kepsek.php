@@ -1,15 +1,42 @@
-
 <?php
 include "../config/koneksi.php";
 
-$data = mysqli_query($koneksi,"
-SELECT 
-    k.*,
-    s.nama_siswa,
-    s.kelas
-FROM komunikasi_ortu k
-JOIN data_siswa s ON k.id_siswa = s.id_siswa
-ORDER BY k.id_komunikasi DESC
+// ambil parameter filter kelas & halaman
+$kelas   = isset($_GET['kelas']) ? trim($_GET['kelas']) : '';
+$page    = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
+$per_page = 10;
+$offset   = ($page - 1) * $per_page;
+
+$kelas_esc  = mysqli_real_escape_string($koneksi, $kelas);
+$where_kelas = $kelas !== '' ? "WHERE s.kelas = '$kelas_esc'" : "";
+
+// ambil daftar kelas unik untuk dropdown filter
+$list_kelas = mysqli_query($koneksi, "SELECT DISTINCT kelas FROM data_siswa ORDER BY kelas ASC");
+
+// hitung total data (untuk pagination)
+$sql_count = "
+    SELECT COUNT(*) AS total
+    FROM komunikasi_ortu k
+    JOIN data_siswa s ON k.id_siswa = s.id_siswa
+    $where_kelas
+";
+$total_row  = mysqli_fetch_assoc(mysqli_query($koneksi, $sql_count));
+$total_data = (int) $total_row['total'];
+$total_page = max(1, ceil($total_data / $per_page));
+
+// ambil data sesuai halaman aktif
+$data = mysqli_query($koneksi, "
+    SELECT 
+        k.*,
+        s.nama_siswa,
+        s.kelas
+    FROM komunikasi_ortu k
+    JOIN data_siswa s ON k.id_siswa = s.id_siswa
+    $where_kelas
+    ORDER BY k.id_komunikasi DESC
+    LIMIT $per_page OFFSET $offset
 ");
 ?>
 
@@ -126,21 +153,25 @@ body{
 /* FILTER */
 
 .filter-grid{
-    display:grid;
-    grid-template-columns:1fr 60px;
+    display:flex;
+    align-items:center;
     gap:12px;
+    max-width:280px;
 }
 
-.filter-grid input{
+.filter-grid select{
+    flex:1;
     height:45px;
     border:1px solid #d1d5db;
     border-radius:10px;
     padding:0 15px;
     font-family:'Poppins',sans-serif;
     outline:none;
+    background:#fff;
+    cursor:pointer;
 }
 
-.filter-grid input:focus{
+.filter-grid select:focus{
     border-color:#16a34a;
 }
 
@@ -241,6 +272,12 @@ table tbody tr:hover{
     border:1px solid #d1d5db;
     cursor:pointer;
     transition:.3s;
+    text-decoration:none;
+    color:#374151;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Poppins',sans-serif;
 }
 
 .page-btn:hover{
@@ -253,6 +290,11 @@ table tbody tr:hover{
     background:#16a34a;
     color:#fff;
     border-color:#16a34a;
+}
+
+.page-btn.disabled{
+    opacity:.4;
+    pointer-events:none;
 }
 
 /* BACK */
@@ -450,20 +492,18 @@ table tbody tr:hover{
 
     <div class="card">
 
-        <div class="filter-grid">
+        <form method="GET" class="filter-grid">
 
-            <input
-                type="text"
-                placeholder="Cari nama siswa..."
-            >
+            <select name="kelas" onchange="this.form.submit()">
+                <option value="">Semua kelas</option>
+<?php while ($k = mysqli_fetch_assoc($list_kelas)) { ?>
+                <option value="<?= htmlspecialchars($k['kelas']); ?>" <?= $kelas === $k['kelas'] ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($k['kelas']); ?>
+                </option>
+<?php } ?>
+            </select>
 
-            <button class="btn-search">
-
-                <i class="fas fa-search"></i>
-
-            </button>
-
-        </div>
+        </form>
 
     </div>
 
@@ -504,7 +544,7 @@ table tbody tr:hover{
 
                 <tbody>
 
-<?php $no = 1; while($row = mysqli_fetch_assoc($data)) { ?>
+<?php $no = $offset + 1; while($row = mysqli_fetch_assoc($data)) { ?>
 
 <tr>
     <td><?= $no++; ?></td>
@@ -514,7 +554,7 @@ table tbody tr:hover{
     <td><?= $row['tanggal']; ?></td>
     <td><?= $row['jenis_pertemuan']; ?></td>
 
-    <<td>
+    <td>
 <button
 type="button"
 class="btn-icon btn-view-hasil"
@@ -540,6 +580,12 @@ title="Berita Acara">
 
 <?php } ?>
 
+<?php if ($total_data === 0) { ?>
+<tr>
+    <td colspan="8">Tidak ada data ditemukan.</td>
+</tr>
+<?php } ?>
+
 </tbody>
             </table>
 
@@ -553,23 +599,27 @@ title="Berita Acara">
 
         <div class="pagination">
 
-            <button class="page-btn">
+<?php
+    // helper untuk membangun query string tanpa merusak parameter 'kelas'
+    function buildPageLink($p, $kelas) {
+        return '?kelas=' . urlencode($kelas) . '&page=' . $p;
+    }
+?>
 
+            <a class="page-btn <?= $page <= 1 ? 'disabled' : ''; ?>"
+               href="<?= buildPageLink(max(1, $page - 1), $kelas); ?>">
                 <i class="fas fa-chevron-left"></i>
+            </a>
 
-            </button>
+<?php for ($i = 1; $i <= $total_page; $i++) { ?>
+            <a class="page-btn <?= $i == $page ? 'active' : ''; ?>"
+               href="<?= buildPageLink($i, $kelas); ?>"><?= $i; ?></a>
+<?php } ?>
 
-            <button class="page-btn active">1</button>
-
-            <button class="page-btn">2</button>
-
-            <button class="page-btn">3</button>
-
-            <button class="page-btn">
-
+            <a class="page-btn <?= $page >= $total_page ? 'disabled' : ''; ?>"
+               href="<?= buildPageLink(min($total_page, $page + 1), $kelas); ?>">
                 <i class="fas fa-chevron-right"></i>
-
-            </button>
+            </a>
 
         </div>
 
